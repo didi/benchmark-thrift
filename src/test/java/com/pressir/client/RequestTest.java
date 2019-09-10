@@ -35,18 +35,18 @@ public class RequestTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void parseRequest0() throws IOException, ClassNotFoundException {
+    public void should_throw_exception_given_no_argument_specified() throws IOException, ClassNotFoundException {
         Request request = Request.parseRequest("Soda", "getShopStatus", new ArrayList<>(), file);
         request.parseArguments();
     }
 
     @Test(expected = NoClassDefFoundError.class)
-    public void parseRequest1() throws IOException, ClassNotFoundException {
-        Request.parseRequest("Soda1", "getShopStatus", Collections.singletonList("2019"), file);
+    public void should_throw_exception_given_invalid_service_name() throws IOException, ClassNotFoundException {
+        Request.parseRequest("invalid service", "getShopStatus", Collections.singletonList("2019"), file);
     }
 
     @Test(expected = NoSuchMethodError.class)
-    public void parseRequest2() throws IOException, ClassNotFoundException {
-        Request.parseRequest("Soda", "getShopStatus1", Collections.singletonList("2019"), file);
+    public void should_throw_exception_given_invalid_method_name() throws IOException, ClassNotFoundException {
+        Request.parseRequest("Soda", "invalid method", Collections.singletonList("2019"), file);
     }
 }
