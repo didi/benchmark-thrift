@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+    <Properties>
+        <Property name="log.file.info">${sys:user.dir}/logs/pressir-thrift.log</Property>
+        <Property name="log.file.error">${sys:user.dir}/logs/pressir-thrift-error.log</Property>
+    </Properties>
+    <Appenders>
+        <!-- 定义控制台输出 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%m%n" />
+        </Console>
+        <!-- 普通日志输出 -->
+        <RollingFile name="Info" fileName="${log.file.info}" filePattern="${log.file.info}.%d{yyyy-MM-dd}">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %t %c{1} - %m%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="7" modulate="true" />
+            </Policies>
+        </RollingFile>
+        <!-- 异常日志输出 -->
+        <RollingFile name="Error" fileName="${log.file.error}" filePattern="${log.file.error}.%d{yyyy-MM-dd}">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %t %c{1} - %m%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="7" modulate="true" />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="Info" /><AppenderRef ref="Error" />
+        </Root>
+        <Logger name="com.pressir" level="INFO" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+    </Loggers>
+</Configuration>

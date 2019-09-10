@@ -1,0 +1,52 @@
+#version: 0.9.0
+version: 0.11.0
+
+jar: /Users/didi/IdeaProjects/open/open/benchmarkthrift/src/test/resources/base-1.0-SNAPSHOT.jar
+
+#TSocket
+# transport:
+#   type: TSocket  #required
+#   props:
+#     - socketTimeout: 0   #non-required, default: 0
+#       connectTimeout: 0   #non-required, default: 0
+
+#TFramedTransport
+transport:
+ type: TFramedTransport  #required
+#  props:
+#    transport:   #required
+#      type: TSocket   #required
+#      props:
+#        - socketTimeout: 0   #non-required, default: 0
+#          connectTimeout: 0   #non-required, default: 0
+#    maxLength: 0   #non-required, default: 0
+
+protocol:
+  type: TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol
+#  props:
+#    - stringLengthLimit: -1   #non-required, default: -1
+#      containerLengthLimit: -1   #non-required, default: -1
+#      strictRead: false   #non-required, default: false
+#      strictWrite: false   #non-required, default: false
+
+##TCompactProtocol
+#protocol:
+#  type: TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol
+#  props:
+#    - stringLengthLimit: -1   #non-required, default: -1
+#      containerLengthLimit: -1   #non-required, default: -1
+
+##TMultiplexedProtocol
+#protocol:
+#  type: TMultiplexedProtocol  #required, options: TMultiplexedProtocol
+#  props:
+#    - serviceName: xxx   #required
+#      protocol:
+#        type: TBinaryProtocol  #options: TBinaryProtocol, TCompactProtocol
+#        props:
+#          - stringLengthLimit: -1   #non-required, default: -1
+#            containerLengthLimit: -1   #non-required, default: -1
+#            strictRead: false   #non-required, default: false
+#            strictWrite: false   #non-required, default: false
+
+
