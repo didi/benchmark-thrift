@@ -19,16 +19,8 @@ public class TProtocolFactoryTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void test() {
-        String protocol = "TCompactProtocol";
-        TProtocolFactory.valueOf(protocol).getProtocol(tTransport);
-        protocol = "TJSONProtocol";
-        TProtocolFactory.valueOf(protocol).getProtocol(tTransport);
-        protocol = "TSimpleJSONProtocol";
-        TProtocolFactory.valueOf(protocol).getProtocol(tTransport);
-        protocol = "TBinaryProtocol";
-        TProtocolFactory.valueOf(protocol).getProtocol(tTransport);
-        protocol = "TBinary1Protocol";
+    public void should_throw_exception_given_invalid_protocol() {
+        String protocol = "InvalidProtocol";
         TProtocolFactory.valueOf(protocol).getProtocol(tTransport);
     }
 }

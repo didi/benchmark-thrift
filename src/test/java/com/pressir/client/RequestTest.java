@@ -11,14 +11,15 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class RequestTest {
 
     private File file;
 
     @Before
-    public void getJarFile() {
-        file = new File(System.getProperty("user.dir") + "/src/test/resources/base-1.0-SNAPSHOT.jar");
+    public void before() {
+        file = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath() + "base-1.0-SNAPSHOT.jar");
     }
 
     @Test

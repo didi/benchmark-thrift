@@ -38,14 +38,12 @@ public class ThriftConf {
         }
         Object protocolObj = map.get("protocol");
         if (protocolObj == null) {
-            LOGGER.debug("Because the protocol is not specified, the default TBinaryProtocol is adopted!");
-            protocolObj = Protocol.DEFAULT_PROTOCOL;
+            throw new IllegalArgumentException("Must pointed the protocol");
         }
 
         Object transportObj = map.get("transport");
         if (transportObj == null) {
-            LOGGER.debug("Because the transport is not specified, the default TSocket is adopted!");
-            transportObj = Transport.DEFAULT_TRANSPORT;
+            throw new IllegalArgumentException("Must pointed the transport");
         }
         return new ThriftConf((String) jarObj,
                 JSON.parseObject(JSON.toJSONString(protocolObj), Protocol.class),
@@ -78,16 +76,8 @@ public class ThriftConf {
 
     public static class Protocol {
 
-        private static final Protocol DEFAULT_PROTOCOL = new Protocol("TBinaryProtocol");
         private String type;
         private JSONArray props = new JSONArray();
-
-        Protocol() {
-        }
-
-        private Protocol(String type) {
-            this.type = type;
-        }
 
         public String getType() {
             return type;
@@ -107,16 +97,8 @@ public class ThriftConf {
     }
 
     public static class Transport {
-        private static final Transport DEFAULT_TRANSPORT = new Transport("TSocket");
         private String type;
         private JSONArray props = new JSONArray();
-
-        Transport() {
-        }
-
-        private Transport(String type) {
-            this.type = type;
-        }
 
         public String getType() {
             return type;

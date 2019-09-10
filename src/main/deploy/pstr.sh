@@ -55,6 +55,7 @@ function validate(){
 concurrency=1
 duration=60
 startparam=""
+types=0
 while getopts ":n:c:D:q:p:d:hv" opt
 do
   case "$opt" in
@@ -64,6 +65,7 @@ do
       ;;
     c)
       concurrency="$OPTARG"
+      type=$[type+1]
       startparam="-c $concurrency $startparam "
       ;;
     D)
@@ -72,6 +74,7 @@ do
       ;;
     q)
       throughput="$OPTARG"
+      type=$[type+1]
       startparam="-q $throughput $startparam "
       ;;
     p)
@@ -116,6 +119,10 @@ do
       ;;
     esac
 done
+if [ $type == 2 ];  then
+  echo "error: pressure type must be -c or -q!"
+  exit 1
+fi
 
 shift $(($OPTIND - 1))
 if [[ $1 == "" ]];  then

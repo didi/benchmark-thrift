@@ -35,6 +35,11 @@ public abstract class BaseClientFactory<T extends TServiceClient> {
         return serviceClientFactory.getClient(tProtocolFactory.getProtocol(tTransportFactory.getTransport()));
     }
 
+    /**
+     * open a socket
+     * @param client
+     * @throws TTransportException
+     */
     public abstract void open(T client) throws TTransportException;
 
     void open0(T client) throws TTransportException {

@@ -127,6 +127,8 @@ public class Main {
             LOGGER.info("Pressure Service: {}", this.url.service);
             LOGGER.info("Pressure Method: {}", this.url.method);
             LOGGER.info("Pressure Type: {}", this.threadNum == null ? Constants.THROUGHPUT : Constants.CONCURRENCY);
+            LOGGER.info("Pressure: {}", this.threadNum == null ? throughput : threadNum);
+            LOGGER.info("Pressure duration: {}", duration);
             LOGGER.info("Benchmarking {} {}/{}", this.url.hostAndPort, this.url.service, this.url.method);
             pressureExecutor.start(1);
         }
@@ -158,6 +160,11 @@ public class Main {
 
     private <T extends TServiceClient> BaseClientFactory getClientFactory(TServiceClientFactory<T> serviceClientFactory) throws Exception {
         TProtocolFactory protocolFactory = TProtocolFactory.valueOf(this.thriftConf.getProtocol().getType());
+        TTransportFactory transportFactory = getTTransportFactory();
+        return new DefaultClientFactory<>(serviceClientFactory, protocolFactory, transportFactory);
+    }
+
+    private TTransportFactory getTTransportFactory() throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
         Class<?>[] innerClasses = TTransportFactory.class.getClasses();
         String factoryName = this.thriftConf.getTransport().getType() + Constants.FACTORY;
         TTransportFactory transportFactory = null;
@@ -167,7 +174,7 @@ public class Main {
                 break;
             }
         }
-        return new DefaultClientFactory<>(serviceClientFactory, protocolFactory, transportFactory);
+        return transportFactory;
     }
 
     private static class Url {

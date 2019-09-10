@@ -6,7 +6,6 @@ import com.pressir.constant.Constants;
 import com.pressir.monitor.Monitor;
 import com.pressir.utils.ClientUtils;
 import org.apache.thrift.TApplicationException;
-import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TProtocolException;
 import org.apache.thrift.transport.TTransportException;
@@ -31,6 +30,7 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
     private static final Map<Integer, String> TRANSPORT_EXCEPTION_TYPE_MAP = new HashMap<>();
     private static final Map<Integer, String> PROTOCOL_EXCEPTION_TYPE_MAP = new HashMap<>();
     private static final Map<Integer, String> APPLICATION_EXCEPTION_TYPE_MAP = new HashMap<>();
+
     static {
         TRANSPORT_EXCEPTION_TYPE_MAP.put(0, "Unknown");
         TRANSPORT_EXCEPTION_TYPE_MAP.put(1, "Socket not open");
@@ -59,6 +59,7 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
         APPLICATION_EXCEPTION_TYPE_MAP.put(9, "Invalid protocol");
         APPLICATION_EXCEPTION_TYPE_MAP.put(10, "Unsupported client type");
     }
+
     private final BaseClientFactory<T> clientFactory;
     private final Method method;
     private final Object[] args;
@@ -92,37 +93,38 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
         T client = this.clientFactory.getClient();
         String keyword = getKeyword(client.getClass(), this.method);
         try {
-            long connectStartAt = System.currentTimeMillis();
+            long startAt = System.currentTimeMillis();
             if (!ClientUtils.isOpen(client)) {
                 Monitor.onConnect(keyword);
-                //socket connection
                 this.clientFactory.open(client);
-                long connectStopAt = System.currentTimeMillis();
-                if (connectStopAt - connectStartAt > Constants.CONNECT_THRESHOLD) {
-                    LOGGER.error("Connected cost time {}", connectStopAt - connectStartAt);
+                long connectCost = System.currentTimeMillis() - startAt;
+                if (connectCost > Constants.CONNECT_THRESHOLD) {
+                    LOGGER.error("Connected cost time {}", connectCost);
                 }
             }
             Monitor.onSend(keyword);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Request() prepare to send!", args);
+            }
             Object obj = this.method.invoke(client, this.args);
-            Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - connectStartAt));
-//            System.out.println(result.cast(obj).toString());
+            Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - startAt));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Response() has received!", result.cast(obj));
+            }
         } catch (Exception e) {
-            onException(keyword, e);
+            if (e instanceof TTransportException) {
+                Monitor.onError(keyword, e, TRANSPORT_EXCEPTION_TYPE_MAP.get(((TTransportException) e).getType()));
+            }
+            if (e instanceof TProtocolException) {
+                Monitor.onError(keyword, e, PROTOCOL_EXCEPTION_TYPE_MAP.get(((TProtocolException) e).getType()));
+            }
+            if (e instanceof TApplicationException) {
+                Monitor.onError(keyword, e, APPLICATION_EXCEPTION_TYPE_MAP.get(((TApplicationException) e).getType()));
+            } else {
+                Monitor.onError(keyword, e, null);
+            }
         } finally {
             this.clientFactory.close(client);
-        }
-    }
-
-
-    private void onException(String keyword, Exception t) {
-        if (t instanceof TException) {
-            if (t instanceof TTransportException) {
-                Monitor.onError(keyword, t, TRANSPORT_EXCEPTION_TYPE_MAP.get(((TTransportException) t).getType()));
-            } else if (t instanceof TProtocolException) {
-                Monitor.onError(keyword, t, PROTOCOL_EXCEPTION_TYPE_MAP.get(((TProtocolException) t).getType()));
-            } else if (t instanceof TApplicationException) {
-                Monitor.onError(keyword, t, APPLICATION_EXCEPTION_TYPE_MAP.get(((TApplicationException) t).getType()));
-            }
         }
     }
 }

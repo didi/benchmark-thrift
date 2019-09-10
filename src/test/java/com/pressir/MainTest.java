@@ -1,30 +1,35 @@
 package com.pressir;
 
-import com.beust.jcommander.ParameterException;
-import com.pressir.idl.service.Service;
-import org.apache.thrift.transport.TTransportException;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 
-import java.util.concurrent.TimeUnit;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class MainTest {
-//
-//    @Before
-//    public void before() {
-//        new Thread(() -> {
-//            try {
-//                Service.run();
-//            } catch (TTransportException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//    }
+
+    private String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath();
+    private String thriftConf = path + "thrift.yml";
+    private String paramConf = path + "data.text";
+
+    @Before
+    public void before() {
+        Yaml yaml = new Yaml();
+        try (FileInputStream fileInputStream = new FileInputStream(thriftConf)) {
+            Map<String, Object> map = yaml.load(fileInputStream);
+            map.put("jar", path + "base-1.0-SNAPSHOT.jar");
+            yaml.dump(map, new FileWriter(thriftConf));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 //    @Test(expected = ParameterException.class)
-//    public void main_test_no_D() throws InterruptedException {
+//    public void should_throw_exception_when_no_Duration_given() throws InterruptedException {
 //        TimeUnit.SECONDS.sleep(1);
 //        String thriftConf = System.getProperty("user.dir") + "/src/test/resources/thrift.yml";
 //        String paramConf = System.getProperty("user.dir") + "/src/test/resources/data.text";
@@ -46,17 +51,12 @@ public class MainTest {
 //    }
 
     @org.junit.Test
-    public void main_test_throughtput() throws InterruptedException {
-        String thriftConf = System.getProperty("user.dir") + "/src/test/resources/thrift.yml";
-        String paramConf = System.getProperty("user.dir") + "/src/test/resources/data.text";
+    public void should_running_when_given_right_params_on_throughtput() {
         Main.main("-q", "100", "-D", "20s", "-p", thriftConf, "-d", paramConf, "-u", "127.0.0.1:8090/Soda/getInfos");
     }
 
     @org.junit.Test
-    public void main_test_concurrency() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(1);
-        String thriftConf = System.getProperty("user.dir") + "/src/test/resources/thrift.yml";
-        String paramConf = System.getProperty("user.dir") + "/src/test/resources/data.text";
+    public void should_running_when_given_right_params_on_concurrency() {
         Main.main("-c", "2", "-D", "20s", "-p", thriftConf, "-d", paramConf, "-u", "127.0.0.1:8090/Soda/getInfos");
     }
 }

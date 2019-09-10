@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.pressir.constant.Constants.MAX_TIME_SPENT;
@@ -36,6 +38,7 @@ class Statistic {
     private int responses = 0;
     private int timeTaken = 0;
     private List<Integer> timeSpent = new ArrayList<>();
+    private TreeMap<Long, Integer> timeAndCounts = new TreeMap<>();
 
     Statistic(int interval) {
         this.interval = interval;
@@ -110,6 +113,11 @@ class Statistic {
             timeTaken += time;
             timeSpent.add(time);
             responses += 1;
+            Integer count = timeAndCounts.get(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE);
+            if (count == null) {
+                count = 0;
+            }
+            timeAndCounts.put(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE, ++count);
         }
         if (responses % interval == 0) {
             LOGGER.info("\tCompleted {} requests", responses);
@@ -168,7 +176,6 @@ class Statistic {
                 .append("\t99% ").append(p99 == Integer.MAX_VALUE ? "--" : p99);
         return stringBuilder.toString();
     }
-
     void onConnect() {
         connects.getAndIncrement();
     }

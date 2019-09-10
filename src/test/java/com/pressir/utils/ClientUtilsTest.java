@@ -28,7 +28,7 @@ public class ClientUtilsTest {
     }
 
     @Test
-    public void test() throws InterruptedException, TTransportException {
+    public void test_open_close_client() throws InterruptedException, TTransportException {
         TimeUnit.SECONDS.sleep(1);
         TTransport tTransport = new TSocket("127.0.0.1", 8090);
         TFramedTransport tFramedTransport = new TFramedTransport(tTransport);
