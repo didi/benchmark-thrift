@@ -51,7 +51,7 @@ public class ThriftConf {
     }
 
     public Transport getTransport() {
-        return transport;
+        return this.transport;
     }
 
     public void setTransport(Transport transport) {
@@ -59,7 +59,7 @@ public class ThriftConf {
     }
 
     public Protocol getProtocol() {
-        return protocol;
+        return this.protocol;
     }
 
     public void setProtocol(Protocol protocol) {
@@ -67,7 +67,7 @@ public class ThriftConf {
     }
 
     public String getJar() {
-        return jar;
+        return this.jar;
     }
 
     public void setJar(String jar) {
@@ -80,7 +80,7 @@ public class ThriftConf {
         private JSONArray props = new JSONArray();
 
         public String getType() {
-            return type;
+            return this.type;
         }
 
         public void setType(String type) {
@@ -88,7 +88,7 @@ public class ThriftConf {
         }
 
         public JSONArray getProps() {
-            return props;
+            return this.props;
         }
 
         public void setProps(JSONArray props) {
@@ -101,7 +101,7 @@ public class ThriftConf {
         private JSONArray props = new JSONArray();
 
         public String getType() {
-            return type;
+            return this.type;
         }
 
         public void setType(String type) {
@@ -109,7 +109,7 @@ public class ThriftConf {
         }
 
         public JSONArray getProps() {
-            return props;
+            return this.props;
         }
 
         public void setProps(JSONArray props) {

@@ -91,21 +91,21 @@ do
 ./pstr.sh -p <protocol.conf> -d <data.conf> [ -c concurrency ] [ -n requests ] [options] host:port/service/method \n
 ####OPTIONS\n
 
-   -p protocolfile  File pointed the protocol and the transport and thrift version
+   -p thriftfile  File pointed the protocol and the transport and thrift version
 
-   -d parameterfile File containing data to the rpc method
+   -d paramsfile  File containing data to the rpc method
 
    -n requests    Number of requests to perform
 
    -c concurrency Number of multiple requests to make at a time
 
-   -D duration    Pressure Duration
+   -D duration    Pressure duration
 
-   -q throughput    Number of requests issued in 1 Second
+   -q throughput  Number of requests issued in 1 Second
 
-   -h           Display usage information (this message) and exit
+   -h             Display usage information (this message) and exit
 
-   -v         Print version number and exit"
+   -v             Print version number and exit"
 
       exit 1
       ;;

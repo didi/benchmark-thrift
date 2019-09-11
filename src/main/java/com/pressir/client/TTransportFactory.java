@@ -38,7 +38,7 @@ public class TTransportFactory {
 
         @Override
         public TTransport getTransport() {
-            return new TSocket(hostAndPort.getHost(), hostAndPort.getPort());
+            return new TSocket(this.hostAndPort.getHost(), this.hostAndPort.getPort());
         }
     }
 
@@ -50,7 +50,7 @@ public class TTransportFactory {
 
         @Override
         public TTransport getTransport() {
-            return new TFramedTransport(new TSocket(hostAndPort.getHost(), hostAndPort.getPort()));
+            return new TFramedTransport(new TSocket(this.hostAndPort.getHost(), this.hostAndPort.getPort()));
         }
     }
 }

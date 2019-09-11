@@ -127,8 +127,8 @@ public class Main {
             LOGGER.info("Pressure Service: {}", this.url.service);
             LOGGER.info("Pressure Method: {}", this.url.method);
             LOGGER.info("Pressure Type: {}", this.threadNum == null ? Constants.THROUGHPUT : Constants.CONCURRENCY);
-            LOGGER.info("Pressure: {}", this.threadNum == null ? throughput : threadNum);
-            LOGGER.info("Pressure duration: {}", duration);
+            LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput : this.threadNum);
+            LOGGER.info("Pressure duration: {}", this.duration);
             LOGGER.info("Benchmarking {} {}/{}", this.url.hostAndPort, this.url.service, this.url.method);
             pressureExecutor.start(1);
         }

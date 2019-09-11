@@ -45,82 +45,82 @@ class Statistic {
     }
 
     private void calculatePercentage() {
-        if (responses == 0) {
+        if (this.responses == 0) {
             return;
         }
-        if (timeSpent.size() == 0) {
+        if (this.timeSpent.size() == 0) {
             return;
         }
-        if (timeSpent.size() == 1) {
-            p50 = p75 = p90 = p95 = p99 = timeSpent.get(0);
+        if (this.timeSpent.size() == 1) {
+            this.p50 = this.p75 = this.p90 = this.p95 = this.p99 = this.timeSpent.get(0);
         }
-        if (max - min <= MAX_TIME_SPENT) {
+        if (this.max - this.min <= MAX_TIME_SPENT) {
             //桶排序
             int[] bucketNums = bucketSort();
             int nums = 0;
             for (int i = 0; i < bucketNums.length; i++) {
                 nums = nums + bucketNums[i];
-                if (nums >= requests.get() * 0.50 && p50 == 0) {
-                    p50 = min + i;
+                if (nums >= this.requests.get() * 0.50 && this.p50 == 0) {
+                    this.p50 = this.min + i;
                 }
-                if (nums >= requests.get() * 0.75 && p75 == 0) {
-                    p75 = min + i;
+                if (nums >= this.requests.get() * 0.75 && this.p75 == 0) {
+                    this.p75 = this.min + i;
                 }
-                if (nums >= requests.get() * 0.90 && p90 == 0) {
-                    p90 = min + i;
+                if (nums >= this.requests.get() * 0.90 && this.p90 == 0) {
+                    this.p90 = this.min + i;
                 }
-                if (nums >= requests.get() * 0.95 && p95 == 0) {
-                    p95 = min + i;
+                if (nums >= this.requests.get() * 0.95 && this.p95 == 0) {
+                    this.p95 = this.min + i;
                 }
-                if (nums >= requests.get() * 0.99 && p99 == 0) {
-                    p99 = min + i;
+                if (nums >= this.requests.get() * 0.99 && this.p99 == 0) {
+                    this.p99 = this.min + i;
                     break;
                 }
             }
         } else {
             //直接快排
-            Collections.sort(timeSpent);
-            p50 = timeSpent.get((int) (responses * 0.50));
-            p75 = timeSpent.get((int) (responses * 0.75));
-            p90 = timeSpent.get((int) (responses * 0.90));
-            p95 = timeSpent.get((int) (responses * 0.95));
-            p99 = timeSpent.get((int) (responses * 0.99));
+            Collections.sort(this.timeSpent);
+            this.p50 = this.timeSpent.get((int) (this.responses * 0.50));
+            this.p75 = this.timeSpent.get((int) (this.responses * 0.75));
+            this.p90 = this.timeSpent.get((int) (this.responses * 0.90));
+            this.p95 = this.timeSpent.get((int) (this.responses * 0.95));
+            this.p99 = this.timeSpent.get((int) (this.responses * 0.99));
         }
     }
 
     private int[] bucketSort() {
-        int[] bucket = new int[max - min + 1];
-        for (int time : timeSpent) {
-            int index = time - min;
+        int[] bucket = new int[this.max - this.min + 1];
+        for (int time : this.timeSpent) {
+            int index = time - this.min;
             bucket[index]++;
         }
         return bucket;
     }
 
     void onSend() {
-        requests.getAndIncrement();
-        connects.getAndDecrement();
+        this.requests.getAndIncrement();
+        this.connects.getAndDecrement();
     }
 
     void onReceived(int time) {
-        if (max < time) {
-            max = time;
+        if (this.max < time) {
+            this.max = time;
         }
-        if (min > time) {
-            min = time;
+        if (this.min > time) {
+            this.min = time;
         }
         synchronized (this) {
-            timeTaken += time;
-            timeSpent.add(time);
-            responses += 1;
-            Integer count = timeAndCounts.get(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE);
+            this.timeTaken += time;
+            this.timeSpent.add(time);
+            this.responses += 1;
+            Integer count = this.timeAndCounts.get(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE);
             if (count == null) {
                 count = 0;
             }
-            timeAndCounts.put(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE, ++count);
+            this.timeAndCounts.put(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE, ++count);
         }
-        if (responses % interval == 0) {
-            LOGGER.info("\tCompleted {} requests", responses);
+        if (this.responses % this.interval == 0) {
+            LOGGER.info("\tCompleted {} requests", this.responses);
         }
     }
 
@@ -134,18 +134,18 @@ class Statistic {
         // 计算分位耗时
         calculatePercentage();
         // 计算成功率
-        if (requests.get() != 0) {
-            sucRateWCS = (double) responses / requests.get() * 100;
-            sucRateWCS = (double) ((int) (sucRateWCS * 100)) / 100;
+        if (this.requests.get() != 0) {
+            this.sucRateWCS = (double) this.responses / this.requests.get() * 100;
+            this.sucRateWCS = (double) ((int) (this.sucRateWCS * 100)) / 100;
         }
 
-        sucRateCCS = (double) responses / (requests.get() + connects.get()) * 100;
-        sucRateCCS = (double) ((int) (sucRateCCS * 100)) / 100;
+        this.sucRateCCS = (double) this.responses / (this.requests.get() + this.connects.get()) * 100;
+        this.sucRateCCS = (double) ((int) (this.sucRateCCS * 100)) / 100;
 
         // 计算耗时
-        if (responses != 0) {
-            latency = (double) timeTaken / responses;
-            latency = (double) ((int) (latency * 100)) / 100;
+        if (this.responses != 0) {
+            this.latency = (double) this.timeTaken / this.responses;
+            this.latency = (double) ((int) (this.latency * 100)) / 100;
         }
         // 输出报告
         LOGGER.info(this.toString());
@@ -154,29 +154,29 @@ class Statistic {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (responses % interval != 0) {
-            stringBuilder.append("\tCompleted ").append(responses).append(" requests\n");
+        if (this.responses % this.interval != 0) {
+            stringBuilder.append("\tCompleted ").append(this.responses).append(" requests\n");
         }
         stringBuilder.append("\tFinished\n")
-                .append("Time taken for successful requests: ").append((double) timeTaken / Constants.TIME_CONVERT_BASE).append(" seconds\n")
-                .append("On connection stat: ").append(connects.get()).append("\n")
-                .append("Send requests: ").append(requests.get()).append("\n")
-                .append("Complete requests: ").append(responses).append("\n")
-                .append("Failed requests: ").append(requests.get() - responses).append("\n")
-                .append("Success rate without connection stat: ").append(sucRateWCS).append("%\n")
-                .append("Success rate contains connection stat: ").append(sucRateCCS).append("%\n")
-                .append("Time per request: ").append(latency == 0 ? "--" : latency).append(" [ms] \n")
-                .append("Minimum time taken ").append(min == Integer.MAX_VALUE ? "--" : min).append(" [ms]\n")
-                .append("Maximum time taken ").append(max == Integer.MIN_VALUE ? "--" : max).append(" [ms]\n")
+                .append("Time taken for successful requests: ").append((double) this.timeTaken / Constants.TIME_CONVERT_BASE).append(" seconds\n")
+                .append("On connection stat: ").append(this.connects.get()).append("\n")
+                .append("Send requests: ").append(this.requests.get()).append("\n")
+                .append("Complete requests: ").append(this.responses).append("\n")
+                .append("Failed requests: ").append(this.requests.get() - this.responses).append("\n")
+                .append("Success rate without connection stat: ").append(this.sucRateWCS).append("%\n")
+                .append("Success rate contains connection stat: ").append(this.sucRateCCS).append("%\n")
+                .append("Time per request: ").append(this.latency == 0 ? "--" : this.latency).append(" [ms] \n")
+                .append("Minimum time taken ").append(this.min == Integer.MAX_VALUE ? "--" : this.min).append(" [ms]\n")
+                .append("Maximum time taken ").append(this.max == Integer.MIN_VALUE ? "--" : this.max).append(" [ms]\n")
                 .append("Percentage of the requests served within a certain time (ms)\n ")
-                .append("\t50% ").append(p50 == Integer.MAX_VALUE ? "--" : p50).append("\n")
-                .append("\t75% ").append(p75 == Integer.MAX_VALUE ? "--" : p75).append("\n")
-                .append("\t90% ").append(p90 == Integer.MAX_VALUE ? "--" : p90).append("\n")
-                .append("\t95% ").append(p95 == Integer.MAX_VALUE ? "--" : p95).append("\n")
-                .append("\t99% ").append(p99 == Integer.MAX_VALUE ? "--" : p99);
+                .append("\t50% ").append(this.p50 == Integer.MAX_VALUE ? "--" : this.p50).append("\n")
+                .append("\t75% ").append(this.p75 == Integer.MAX_VALUE ? "--" : this.p75).append("\n")
+                .append("\t90% ").append(this.p90 == Integer.MAX_VALUE ? "--" : this.p90).append("\n")
+                .append("\t95% ").append(this.p95 == Integer.MAX_VALUE ? "--" : this.p95).append("\n")
+                .append("\t99% ").append(this.p99 == Integer.MAX_VALUE ? "--" : this.p99);
         return stringBuilder.toString();
     }
     void onConnect() {
-        connects.getAndIncrement();
+        this.connects.getAndIncrement();
     }
 }

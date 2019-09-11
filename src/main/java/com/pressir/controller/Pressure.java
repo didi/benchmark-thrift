@@ -55,7 +55,7 @@ public class Pressure {
         if (System.currentTimeMillis() / Constants.TIME_CONVERT_BASE - beginTime >= duration) {
             return -1;
         }
-        return quantity;
+        return this.quantity;
     }
 
 }

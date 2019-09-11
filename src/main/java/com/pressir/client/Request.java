@@ -67,26 +67,26 @@ public class Request<T extends TServiceClient> {
     }
 
     public Method getMethod() {
-        return method;
+        return this.method;
     }
 
     public Object[] parseArguments() {
-        Type[] parameterTypes = method.getGenericParameterTypes();
+        Type[] parameterTypes = this.method.getGenericParameterTypes();
         if (parameterTypes.length == 0) {
-            if (args != null && args.length > 0) {
-                throw new IllegalArgumentException("Invalid arguments count in request config. expect: 0, actual: " + args.length);
+            if (this.args != null && this.args.length > 0) {
+                throw new IllegalArgumentException("Invalid arguments count in request config. expect: 0, actual: " + this.args.length);
             }
             return new Object[0];
         }
-        if (args == null) {
+        if (this.args == null) {
             throw new IllegalArgumentException("Null arguments in request config. expect: " + parameterTypes.length);
         }
-        if (args.length != parameterTypes.length) {
-            throw new IllegalArgumentException("Invalid arguments count in request config. expect: " + parameterTypes.length + ", actual: " + args.length);
+        if (this.args.length != parameterTypes.length) {
+            throw new IllegalArgumentException("Invalid arguments count in request config. expect: " + parameterTypes.length + ", actual: " + this.args.length);
         }
         Object[] arguments = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
-            arguments[i] = ClassCastUtils.cast(args[i], parameterTypes[i]);
+            arguments[i] = ClassCastUtils.cast(this.args[i], parameterTypes[i]);
         }
         return arguments;
     }
@@ -94,7 +94,7 @@ public class Request<T extends TServiceClient> {
 
     public TServiceClientFactory<T> getInnerFactory() {
         Class<TServiceClientFactory<T>> clientFactoryClass = null;
-        Class<?>[] classes = clientClass.getClasses();
+        Class<?>[] classes = this.clientClass.getClasses();
         for (Class innerClass : classes) {
             if (!Constants.FACTORY.equals(innerClass.getSimpleName())) {
                 continue;
@@ -105,7 +105,7 @@ public class Request<T extends TServiceClient> {
             clientFactoryClass = innerClass;
         }
         if (clientFactoryClass == null) {
-            throw new NoClassDefFoundError("Can't find Factory in " + clientClass.getSimpleName());
+            throw new NoClassDefFoundError("Can't find Factory in " + this.clientClass.getSimpleName());
         }
         try {
             return clientFactoryClass.newInstance();
@@ -126,6 +126,6 @@ public class Request<T extends TServiceClient> {
 
 
     public Class<?> getResult() {
-        return method.getReturnType();
+        return this.method.getReturnType();
     }
 }

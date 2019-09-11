@@ -104,12 +104,12 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
             }
             Monitor.onSend(keyword);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Request() prepare to send!", args);
+                LOGGER.debug("Request() prepare to send!", this.args);
             }
             Object obj = this.method.invoke(client, this.args);
             Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - startAt));
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Response() has received!", result.cast(obj));
+                LOGGER.debug("Response() has received!", this.result.cast(obj));
             }
         } catch (Exception e) {
             if (e instanceof TTransportException) {
