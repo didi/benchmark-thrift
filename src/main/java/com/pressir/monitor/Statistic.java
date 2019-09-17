@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -34,8 +35,7 @@ class Statistic {
     private AtomicInteger requests = new AtomicInteger(0);
     private int responses = 0;
     private int timeTaken = 0;
-    private List<Integer> timeSpent = new ArrayList<>();
-    private TreeMap<Long, Integer> timeAndCounts = new TreeMap<>();
+    private Map<Integer, Integer> timeAndCounts = new ConcurrentHashMap<>();
 
     Statistic(int interval) {
         this.interval = interval;
@@ -45,18 +45,35 @@ class Statistic {
         if (this.responses == 0) {
             return;
         }
-        if (this.timeSpent.size() == 0) {
+        if (this.timeAndCounts.size() == 1) {
+            for (Map.Entry<Integer, Integer> entry : timeAndCounts.entrySet()) {
+                this.p50 = this.p75 = this.p90 = this.p95 = this.p99 = entry.getValue();
+            }
             return;
         }
-        if (this.timeSpent.size() == 1) {
-            this.p50 = this.p75 = this.p90 = this.p95 = this.p99 = this.timeSpent.get(0);
+        List<Map.Entry<Integer, Integer>> list = new ArrayList<>(timeAndCounts.entrySet());
+        //升序排序
+        list.sort(Comparator.comparing(Map.Entry::getKey));
+        int sum = 0;
+        for (Map.Entry<Integer, Integer> mapping : list) {
+            sum += mapping.getValue();
+            if (this.p50 == Integer.MAX_VALUE && sum >= this.responses * 0.50) {
+                this.p50 = mapping.getKey();
+            }
+            if (this.p75 == Integer.MAX_VALUE && sum >= this.responses * 0.75) {
+                this.p75 = mapping.getKey();
+            }
+            if (this.p90 == Integer.MAX_VALUE && sum >= this.responses * 0.90) {
+                this.p90 = mapping.getKey();
+            }
+            if (this.p95 == Integer.MAX_VALUE && sum >= this.responses * 0.95) {
+                this.p95 = mapping.getKey();
+            }
+            if (this.p99 == Integer.MAX_VALUE && sum >= this.responses * 0.99) {
+                this.p99 = mapping.getKey();
+                break;
+            }
         }
-        Collections.sort(this.timeSpent);
-        this.p50 = this.timeSpent.get((int) (this.responses * 0.50));
-        this.p75 = this.timeSpent.get((int) (this.responses * 0.75));
-        this.p90 = this.timeSpent.get((int) (this.responses * 0.90));
-        this.p95 = this.timeSpent.get((int) (this.responses * 0.95));
-        this.p99 = this.timeSpent.get((int) (this.responses * 0.99));
     }
 
     void onSend() {
@@ -64,23 +81,21 @@ class Statistic {
         this.connects.getAndDecrement();
     }
 
-    void onReceived(int time) {
+    synchronized void onReceived(int time) {
         if (this.max < time) {
             this.max = time;
         }
         if (this.min > time) {
             this.min = time;
         }
-        synchronized (this) {
-            this.timeTaken += time;
-            this.timeSpent.add(time);
-            this.responses += 1;
-            Integer count = this.timeAndCounts.get(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE);
-            if (count == null) {
-                count = 0;
-            }
-            this.timeAndCounts.put(System.currentTimeMillis() / Constants.TIME_CONVERT_BASE, ++count);
+        this.timeTaken += time;
+        this.responses += 1;
+        Integer count = this.timeAndCounts.get(time);
+        if (count == null) {
+            count = 0;
         }
+        this.timeAndCounts.put(time, ++count);
+
         if (this.responses % this.interval == 0) {
             LOGGER.info("\tCompleted {} requests", this.responses);
         }
@@ -94,7 +109,7 @@ class Statistic {
 
     void onStop() {
         // 计算分位耗时
-        calculatePercentage();
+        this.calculatePercentage();
         // 计算成功率
         if (this.requests.get() != 0) {
             this.sucRateWCS = (double) this.responses / this.requests.get() * 100;

@@ -37,14 +37,14 @@ public class Request<T extends TServiceClient> {
 
     public static <T extends TServiceClient> Request<T> parseRequest(String service, String method, List<String> args, File jarFile) throws IOException, ClassNotFoundException {
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
-        String clientClass = String.format("%s$Client.class", service);
+        String clientClass = service + "$Client.class";
         return parseRequest(clientClass, method, args, jarFile, classLoader);
     }
 
     private static <T extends TServiceClient> Request<T> parseRequest(String clientClassName, String method, List<String> args, File file, ClassLoader classLoader) throws IOException, ClassNotFoundException {
         clientClassName = getServiceName(clientClassName, file).replaceAll("/", ".");
         Class<?> clientClass = classLoader.loadClass(clientClassName);
-        return new Request<>((Class<T>) clientClass, method, args.toArray(new Object[0]));
+        return new Request(clientClass, method, args.toArray(new Object[0]));
     }
 
     private static String getServiceName(String clientClass, File file) throws IOException {

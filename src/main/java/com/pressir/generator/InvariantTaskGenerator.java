@@ -1,6 +1,6 @@
 package com.pressir.generator;
 
-import com.pressir.client.BaseClientFactory;
+import com.pressir.client.ClientFactory;
 import com.pressir.client.Request;
 import com.pressir.constant.Constants;
 import com.pressir.monitor.Monitor;
@@ -60,19 +60,19 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
         APPLICATION_EXCEPTION_TYPE_MAP.put(10, "Unsupported client type");
     }
 
-    private final BaseClientFactory<T> clientFactory;
+    private final ClientFactory<T> clientFactory;
     private final Method method;
     private final Object[] args;
     private final Class<?> result;
 
-    private InvariantTaskGenerator(BaseClientFactory<T> clientFactory, Method method, Object[] args, Class<?> result) {
+    private InvariantTaskGenerator(ClientFactory<T> clientFactory, Method method, Object[] args, Class<?> result) {
         this.clientFactory = clientFactory;
         this.method = method;
         this.args = args;
         this.result = result;
     }
 
-    public static <T extends TServiceClient> Generator newInstance(BaseClientFactory<T> clientFactory, Request request) {
+    public static <T extends TServiceClient> Generator newInstance(ClientFactory<T> clientFactory, Request request) {
         return new InvariantTaskGenerator<>(clientFactory, request.getMethod(), request.parseArguments(), request.getResult());
     }
 

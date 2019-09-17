@@ -1,7 +1,7 @@
 package com.pressir.monitor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @ClassName Monitor
@@ -10,7 +10,7 @@ import java.util.Map;
  * @Date 2019-08-30 17:25
  */
 public class Monitor {
-    private static Map<String, Statistic> map = new HashMap<>();
+    private static Map<String, Statistic> map = new ConcurrentHashMap<>();
 
     public static void init(String keyword, int interval) {
         if (map.get(keyword) == null) {

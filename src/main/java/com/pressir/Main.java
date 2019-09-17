@@ -7,20 +7,17 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
 import com.google.common.io.Files;
 import com.google.common.net.HostAndPort;
-import com.pressir.client.BaseClientFactory;
-import com.pressir.client.DefaultClientFactory;
-import com.pressir.client.Request;
-import com.pressir.client.TProtocolFactory;
-import com.pressir.client.TTransportFactory;
-import com.pressir.configuration.ThriftConf;
+import com.pressir.client.OneHostAndPort;
 import com.pressir.constant.Constants;
+import com.pressir.client.ClientFactory;
+import com.pressir.client.Request;
+import com.pressir.context.ThriftContext;
 import com.pressir.controller.Pressure;
 import com.pressir.executor.PressureExecutor;
 import com.pressir.generator.Generator;
 import com.pressir.generator.InvariantTaskGenerator;
 import com.pressir.monitor.Monitor;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.TServiceClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -29,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +54,7 @@ public class Main {
     private Integer requests;
 
     @Parameter(names = {"-p"}, description = "thrift conf", required = true, converter = FileConverter.class)
-    private File thriftConfFile;
+    private File thriftContextFile;
 
     @Parameter(names = {"-d"}, description = "params conf", required = true, converter = FileConverter.class)
     private File paramsConfFile;
@@ -64,7 +62,7 @@ public class Main {
     @Parameter(names = {"-u"}, description = "url", required = true, converter = UrlConverter.class)
     private Url url;
 
-    private ThriftConf thriftConf;
+    private ThriftContext thriftContext;
 
     public static void main(String... args) {
         Main main = new Main();
@@ -75,20 +73,19 @@ public class Main {
             main.stop();
             LOGGER.info("Thank you for using Benchmark-Thrift! Bye!");
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage() + ":" + e);
         } finally {
             System.exit(1);
         }
     }
 
-    private static ThriftConf yaml2JavaBean(File file) throws IOException {
+    private static ThriftContext yaml2JavaBean(File file) throws IOException {
         Map<String, Object> loaded;
         try (FileInputStream fis = new FileInputStream(file)) {
             Yaml yaml = new Yaml();
             loaded = yaml.load(fis);
         }
-        return ThriftConf.parse(loaded);
+        return ThriftContext.parse(loaded);
     }
 
     private void stop() {
@@ -97,8 +94,8 @@ public class Main {
 
     private void run() throws Exception {
         //Determine file format
-        if (this.thriftConfFile.getName().endsWith(Constants.YML)) {
-            this.thriftConf = yaml2JavaBean(this.thriftConfFile);
+        if (this.thriftContextFile.getName().endsWith(Constants.YML)) {
+            this.thriftContext = yaml2JavaBean(this.thriftContextFile);
         } else {
             throw new IllegalArgumentException("File format is error!");
         }
@@ -153,19 +150,10 @@ public class Main {
     }
 
     private <T extends TServiceClient> Generator getGenerator() throws Exception {
-        Request request = Request.parseRequest(this.url.service, this.url.method, Files.readLines(this.paramsConfFile, StandardCharsets.UTF_8), new File(this.thriftConf.getJar()));
-        BaseClientFactory<T> clientFactory = this.getClientFactory(request.getInnerFactory());
+        Request request = Request.parseRequest(this.url.service, this.url.method, Files.readLines(this.paramsConfFile, StandardCharsets.UTF_8), new File(this.thriftContext.getJar()));
+        ClientFactory<T> clientFactory = this.thriftContext.getClientFactory(request.getInnerFactory());
+        OneHostAndPort.hostAndPortList = Collections.singletonList(this.url.hostAndPort);
         return InvariantTaskGenerator.newInstance(clientFactory, request);
-    }
-
-    private <T extends TServiceClient> BaseClientFactory getClientFactory(TServiceClientFactory<T> serviceClientFactory) throws Exception {
-        TProtocolFactory protocolFactory = TProtocolFactory.valueOf(this.thriftConf.getProtocol().getType());
-        TTransportFactory transportFactory = getTTransportFactory();
-        return new DefaultClientFactory<>(serviceClientFactory, protocolFactory, transportFactory);
-    }
-
-    private TTransportFactory getTTransportFactory() {
-        return this.thriftConf.getTransport().getFactory(this.url.hostAndPort);
     }
 
     private static class Url {

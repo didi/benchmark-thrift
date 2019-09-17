@@ -1,13 +1,16 @@
 package com.pressir;
 
+import com.pressir.client.OneHostAndPortTest;
 import com.pressir.client.RequestTest;
-import com.pressir.client.TProtocolFactoryTest;
-import com.pressir.configuration.ThriftConfTest;
+import com.pressir.context.ProtocolContextTest;
+import com.pressir.context.ThriftContextTest;
+import com.pressir.context.TransportContextTest;
 import com.pressir.controller.DurationParserTest;
 import com.pressir.controller.PressureTest;
 import com.pressir.utils.ClassCastUtilsTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+
 
 /**
  * @ClassName Test
@@ -17,10 +20,12 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        ThriftContextTest.class,
+        OneHostAndPortTest.class,
+        TransportContextTest.class,
         DurationParserTest.class,
+        ProtocolContextTest.class,
         RequestTest.class,
-        TProtocolFactoryTest.class,
-        ThriftConfTest.class,
         PressureTest.class,
         ClassCastUtilsTest.class,
         MainTest.class})
