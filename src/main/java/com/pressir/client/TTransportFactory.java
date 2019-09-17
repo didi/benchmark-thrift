@@ -21,6 +21,10 @@ public class TTransportFactory {
         this.hostAndPort = hostAndPort;
     }
 
+    TTransportFactory() {
+    }
+
+
     /**
      * 获取TTransport
      *
@@ -31,26 +35,34 @@ public class TTransportFactory {
     }
 
     public static class TSocketFactory extends TTransportFactory {
+        int socketTimeout;
+        int connectTimeout;
 
-        public TSocketFactory(HostAndPort hostAndPort) {
+        public TSocketFactory(HostAndPort hostAndPort, int socketTimeout, int connectTimeout) {
             super(hostAndPort);
+            this.socketTimeout = socketTimeout;
+            this.connectTimeout = connectTimeout;
         }
 
         @Override
         public TTransport getTransport() {
-            return new TSocket(this.hostAndPort.getHost(), this.hostAndPort.getPort());
+            return new TSocket(this.hostAndPort.getHost(), this.hostAndPort.getPort(), this.socketTimeout, this.connectTimeout);
         }
     }
 
     public static class TFramedTransportFactory extends TTransportFactory {
 
-        public TFramedTransportFactory(HostAndPort hostAndPort) {
-            super(hostAndPort);
+        TTransportFactory factory;
+        int maxLength;
+
+        public TFramedTransportFactory(TTransportFactory factory, int maxLength) {
+            this.factory = factory;
+            this.maxLength = maxLength;
         }
 
         @Override
         public TTransport getTransport() {
-            return new TFramedTransport(new TSocket(this.hostAndPort.getHost(), this.hostAndPort.getPort()));
+            return new TFramedTransport(this.factory.getTransport(), this.maxLength);
         }
     }
 }

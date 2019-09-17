@@ -22,14 +22,4 @@ public class DefaultClientFactory<T extends TServiceClient> extends BaseClientFa
     public T getClient() {
         return getClient0();
     }
-
-    @Override
-    public void open(T client) throws TTransportException {
-        open0(client);
-    }
-
-    @Override
-    public void close(T client) {
-        close0(client);
-    }
 }

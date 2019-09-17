@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.pressir.constant.Constants.MAX_TIME_SPENT;
 
 /**
  * @ClassName Statistic
@@ -54,47 +51,12 @@ class Statistic {
         if (this.timeSpent.size() == 1) {
             this.p50 = this.p75 = this.p90 = this.p95 = this.p99 = this.timeSpent.get(0);
         }
-        if (this.max - this.min <= MAX_TIME_SPENT) {
-            //桶排序
-            int[] bucketNums = bucketSort();
-            int nums = 0;
-            for (int i = 0; i < bucketNums.length; i++) {
-                nums = nums + bucketNums[i];
-                if (nums >= this.requests.get() * 0.50 && this.p50 == 0) {
-                    this.p50 = this.min + i;
-                }
-                if (nums >= this.requests.get() * 0.75 && this.p75 == 0) {
-                    this.p75 = this.min + i;
-                }
-                if (nums >= this.requests.get() * 0.90 && this.p90 == 0) {
-                    this.p90 = this.min + i;
-                }
-                if (nums >= this.requests.get() * 0.95 && this.p95 == 0) {
-                    this.p95 = this.min + i;
-                }
-                if (nums >= this.requests.get() * 0.99 && this.p99 == 0) {
-                    this.p99 = this.min + i;
-                    break;
-                }
-            }
-        } else {
-            //直接快排
-            Collections.sort(this.timeSpent);
-            this.p50 = this.timeSpent.get((int) (this.responses * 0.50));
-            this.p75 = this.timeSpent.get((int) (this.responses * 0.75));
-            this.p90 = this.timeSpent.get((int) (this.responses * 0.90));
-            this.p95 = this.timeSpent.get((int) (this.responses * 0.95));
-            this.p99 = this.timeSpent.get((int) (this.responses * 0.99));
-        }
-    }
-
-    private int[] bucketSort() {
-        int[] bucket = new int[this.max - this.min + 1];
-        for (int time : this.timeSpent) {
-            int index = time - this.min;
-            bucket[index]++;
-        }
-        return bucket;
+        Collections.sort(this.timeSpent);
+        this.p50 = this.timeSpent.get((int) (this.responses * 0.50));
+        this.p75 = this.timeSpent.get((int) (this.responses * 0.75));
+        this.p90 = this.timeSpent.get((int) (this.responses * 0.90));
+        this.p95 = this.timeSpent.get((int) (this.responses * 0.95));
+        this.p99 = this.timeSpent.get((int) (this.responses * 0.99));
     }
 
     void onSend() {
@@ -176,6 +138,7 @@ class Statistic {
                 .append("\t99% ").append(this.p99 == Integer.MAX_VALUE ? "--" : this.p99);
         return stringBuilder.toString();
     }
+
     void onConnect() {
         this.connects.getAndIncrement();
     }

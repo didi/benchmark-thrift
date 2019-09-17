@@ -39,4 +39,9 @@ public class ThriftConfTest {
             ThriftConf.parse(map);
         }
     }
+
+
+    @Test
+    public void setTransport() {
+    }
 }

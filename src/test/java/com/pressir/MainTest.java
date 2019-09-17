@@ -1,5 +1,7 @@
 package com.pressir;
 
+import com.pressir.idl.service.Service;
+import org.apache.thrift.transport.TTransportException;
 import org.junit.Before;
 import org.yaml.snakeyaml.Yaml;
 
@@ -18,6 +20,13 @@ public class MainTest {
 
     @Before
     public void before() {
+        new Thread(() -> {
+            try {
+                Service.run();
+            } catch (TTransportException e) {
+                e.printStackTrace();
+            }
+        }).start();
         Yaml yaml = new Yaml();
         try (FileInputStream fileInputStream = new FileInputStream(thriftConf)) {
             Map<String, Object> map = yaml.load(fileInputStream);

@@ -73,7 +73,7 @@ public class Main {
             main.run();
             TimeUnit.SECONDS.sleep(3);
             main.stop();
-            LOGGER.info("Pressure finished! Thanks! Bye!");
+            LOGGER.info("Thank you for using Benchmark-Thrift! Bye!");
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage() + ":" + e);
@@ -117,7 +117,7 @@ public class Main {
         if (this.threadNum == null) {
             interval = this.throughput > 100 ? 500 : 200;
         }
-        Monitor.init(this.url.service + "." + this.url.method, interval);
+        Monitor.init(this.url.method, interval);
 
         //prepare executor
         try (PressureExecutor pressureExecutor = this.getExecutor()) {
@@ -128,7 +128,7 @@ public class Main {
             LOGGER.info("Pressure Method: {}", this.url.method);
             LOGGER.info("Pressure Type: {}", this.threadNum == null ? Constants.THROUGHPUT : Constants.CONCURRENCY);
             LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput : this.threadNum);
-            LOGGER.info("Pressure duration: {}", this.duration);
+            LOGGER.info("Pressure Duration: {}", this.duration);
             LOGGER.info("Benchmarking {} {}/{}", this.url.hostAndPort, this.url.service, this.url.method);
             pressureExecutor.start(1);
         }
@@ -164,17 +164,8 @@ public class Main {
         return new DefaultClientFactory<>(serviceClientFactory, protocolFactory, transportFactory);
     }
 
-    private TTransportFactory getTTransportFactory() throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
-        Class<?>[] innerClasses = TTransportFactory.class.getClasses();
-        String factoryName = this.thriftConf.getTransport().getType() + Constants.FACTORY;
-        TTransportFactory transportFactory = null;
-        for (Class innerClass : innerClasses) {
-            if (innerClass.getSimpleName().equals(factoryName)) {
-                transportFactory = (TTransportFactory) innerClass.getDeclaredConstructor(HostAndPort.class).newInstance(this.url.hostAndPort);
-                break;
-            }
-        }
-        return transportFactory;
+    private TTransportFactory getTTransportFactory() {
+        return this.thriftConf.getTransport().getFactory(this.url.hostAndPort);
     }
 
     private static class Url {

@@ -7,19 +7,19 @@ jar: base-1.0-SNAPSHOT.jar
 # transport:
 #   type: TSocket  #required
 #   props:
-#     - socketTimeout: 0   #non-required, default: 0
+#       socketTimeout: 0   #non-required, default: 0
 #       connectTimeout: 0   #non-required, default: 0
 
 #TFramedTransport
 transport:
  type: TFramedTransport  #required
-#  props:
-#    transport:   #required
-#      type: TSocket   #required
-#      props:
-#        - socketTimeout: 0   #non-required, default: 0
-#          connectTimeout: 0   #non-required, default: 0
-#    maxLength: 0   #non-required, default: 0
+ props:
+  transport:   #required
+   type: TSocket   #required
+   props:
+    socketTimeout: 0   #non-required, default:
+    connectTimeout: 0   #non-required, default: 0
+#  maxLength: 0   #non-required, default: 0
 
 protocol:
   type: TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol

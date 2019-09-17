@@ -4,7 +4,6 @@ import com.pressir.client.BaseClientFactory;
 import com.pressir.client.Request;
 import com.pressir.constant.Constants;
 import com.pressir.monitor.Monitor;
-import com.pressir.utils.ClientUtils;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TProtocolException;
@@ -12,6 +11,7 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,9 +76,6 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
         return new InvariantTaskGenerator<>(clientFactory, request.getMethod(), request.parseArguments(), request.getResult());
     }
 
-    private static <T extends TServiceClient> String getKeyword(Class<T> clientClass, Method method) {
-        return clientClass.getDeclaringClass().getSimpleName() + "." + method.getName();
-    }
 
     @Override
     public List<Runnable> generate(int num) {
@@ -90,36 +87,35 @@ public class InvariantTaskGenerator<T extends TServiceClient> implements Generat
     }
 
     private void execute() {
+        String keyword = this.method.getName();
         T client = this.clientFactory.getClient();
-        String keyword = getKeyword(client.getClass(), this.method);
         try {
             long startAt = System.currentTimeMillis();
-            if (!ClientUtils.isOpen(client)) {
+            if (!client.getInputProtocol().getTransport().isOpen()) {
+                client.getInputProtocol().getTransport().open();
                 Monitor.onConnect(keyword);
-                this.clientFactory.open(client);
                 long connectCost = System.currentTimeMillis() - startAt;
                 if (connectCost > Constants.CONNECT_THRESHOLD) {
-                    LOGGER.error("Connected cost time {}", connectCost);
+                    LOGGER.debug("Connected cost time {}", connectCost);
                 }
             }
             Monitor.onSend(keyword);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Request() prepare to send!", this.args);
-            }
+            LOGGER.debug("Request() prepare to send!", this.args);
             Object obj = this.method.invoke(client, this.args);
             Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - startAt));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Response() has received!", this.result.cast(obj));
-            }
+            LOGGER.debug("Response() has received!", this.result.cast(obj));
         } catch (Exception e) {
-            if (e instanceof TTransportException) {
-                Monitor.onError(keyword, e, TRANSPORT_EXCEPTION_TYPE_MAP.get(((TTransportException) e).getType()));
-            }
-            if (e instanceof TProtocolException) {
-                Monitor.onError(keyword, e, PROTOCOL_EXCEPTION_TYPE_MAP.get(((TProtocolException) e).getType()));
-            }
-            if (e instanceof TApplicationException) {
-                Monitor.onError(keyword, e, APPLICATION_EXCEPTION_TYPE_MAP.get(((TApplicationException) e).getType()));
+            if (e instanceof InvocationTargetException) {
+                Throwable throwable = ((InvocationTargetException) e).getTargetException();
+                if (throwable instanceof TTransportException) {
+                    Monitor.onError(keyword, e, TRANSPORT_EXCEPTION_TYPE_MAP.get(((TTransportException) throwable).getType()));
+                }
+                if (throwable instanceof TProtocolException) {
+                    Monitor.onError(keyword, e, PROTOCOL_EXCEPTION_TYPE_MAP.get(((TProtocolException) throwable).getType()));
+                }
+                if (throwable instanceof TApplicationException) {
+                    Monitor.onError(keyword, e, APPLICATION_EXCEPTION_TYPE_MAP.get(((TApplicationException) throwable).getType()));
+                }
             } else {
                 Monitor.onError(keyword, e, null);
             }

@@ -2,8 +2,8 @@ package com.pressir.client;
 
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
-import com.pressir.utils.ClientUtils;
-import org.apache.thrift.transport.TTransportException;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TTransport;
 
 /**
  * @ClassName BaseClientFactory
@@ -15,44 +15,51 @@ public abstract class BaseClientFactory<T extends TServiceClient> {
 
     private final TServiceClientFactory<T> serviceClientFactory;
 
-    private final TProtocolFactory tProtocolFactory;
+    private final TProtocolFactory protocolFactory;
 
-    private final TTransportFactory tTransportFactory;
+    private final TTransportFactory transportFactory;
 
     BaseClientFactory(TServiceClientFactory<T> serviceClientFactory, TProtocolFactory protocolFactory, TTransportFactory transportFactory) {
         this.serviceClientFactory = serviceClientFactory;
-        this.tProtocolFactory = protocolFactory;
-        this.tTransportFactory = transportFactory;
+        this.protocolFactory = protocolFactory;
+        this.transportFactory = transportFactory;
     }
 
     /**
      * get A client
+     *
      * @return
      */
     public abstract T getClient();
 
     T getClient0() {
-        return serviceClientFactory.getClient(tProtocolFactory.getProtocol(tTransportFactory.getTransport()));
-    }
-
-    /**
-     * open a socket
-     * @param client
-     * @throws TTransportException
-     */
-    public abstract void open(T client) throws TTransportException;
-
-    void open0(T client) throws TTransportException {
-        ClientUtils.open(client);
+        TTransport transport = this.transportFactory.getTransport();
+        TProtocol protocol = this.protocolFactory.getProtocol(transport);
+        return this.serviceClientFactory.getClient(protocol);
     }
 
     /**
      * close client
      * @param client
      */
-    public abstract void close(T client);
-
-    void close0(T client){
-        ClientUtils.close(client);
+    public void close(T client) {
+        TProtocol iprot = client.getInputProtocol();
+        TProtocol oprot = client.getOutputProtocol();
+        if (oprot == iprot) {
+            iprot.getTransport().close();
+            return;
+        }
+        TTransport itrans = iprot.getTransport();
+        TTransport otrans = oprot.getTransport();
+        if (otrans == itrans) {
+            itrans.close();
+            return;
+        }
+        try {
+            itrans.close();
+            otrans.close();
+        } finally {
+            otrans.close();
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.pressir.client;
 
 
 import com.google.common.net.HostAndPort;
+import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +15,7 @@ public class TProtocolFactoryTest {
     @Before
     public void before() {
         HostAndPort hostAndPort = HostAndPort.fromString("127.0.0.1:8090");
-        TTransportFactory tTransportFactory = new TTransportFactory.TFramedTransportFactory(hostAndPort);
-        tTransport = tTransportFactory.getTransport();
+        tTransport = new TSocket(hostAndPort.getHost(),hostAndPort.getPort());
     }
 
     @Test(expected = IllegalArgumentException.class)

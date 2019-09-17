@@ -3,9 +3,9 @@ package com.pressir;
 import com.pressir.client.RequestTest;
 import com.pressir.client.TProtocolFactoryTest;
 import com.pressir.configuration.ThriftConfTest;
+import com.pressir.controller.DurationParserTest;
 import com.pressir.controller.PressureTest;
 import com.pressir.utils.ClassCastUtilsTest;
-import com.pressir.utils.ClientUtilsTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -17,11 +17,11 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        DurationParserTest.class,
         RequestTest.class,
         TProtocolFactoryTest.class,
         ThriftConfTest.class,
         PressureTest.class,
         ClassCastUtilsTest.class,
-        ClientUtilsTest.class,
         MainTest.class})
 public class Test {}
