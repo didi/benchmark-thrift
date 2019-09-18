@@ -1,5 +1,7 @@
 package com.pressir.client;
 
+import com.alibaba.fastjson.util.IOUtils;
+import com.google.common.io.Closeables;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
 import org.apache.thrift.protocol.TProtocol;

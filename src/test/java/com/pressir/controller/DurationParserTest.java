@@ -3,11 +3,13 @@ package com.pressir.controller;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 public class DurationParserTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_exception() {
-       DurationParser.parse("s");
+        DurationParser.parse("s");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -78,5 +80,19 @@ public class DurationParserTest {
     @Test
     public void should_return_10800_multi_72() {
         Assert.assertEquals(3600 * 72, DurationParser.parse("3days"));
+    }
+
+    /**
+     * perf test
+     */
+    @Test
+    public void perf_should_parse_1m_within_2_seconds() {
+        long start = System.currentTimeMillis();
+        int count = 1000000;
+        for (int i = 0; i < count; i++) {
+            DurationParser.parse(i + "hours");
+        }
+        long timeSpent = System.currentTimeMillis() - start;
+        assertTrue("expects <2000ms, actual is " + timeSpent + "ms", timeSpent < 2000);
     }
 }

@@ -1,11 +1,8 @@
 package com.pressir.controller;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.pressir.constant.Constants.MIN_GROUP_COUNT;
 
 /**
  * @ClassName DurationParser
@@ -15,46 +12,36 @@ import static com.pressir.constant.Constants.MIN_GROUP_COUNT;
  */
 class DurationParser {
 
-    static int parse(String duration) {
-        String pattern = "(\\d+)(((s|second|seconds)?)|((m|minute|minutes)?)|((h|hour|hours)?)|((d|day|days)?))";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(duration);
-        if (m.matches()) {
-            int time = Integer.parseInt(m.group(1));
-            if (m.groupCount() >= MIN_GROUP_COUNT) {
-                switch (m.group(2)) {
-                    case "":
-                    case "s":
-                    case "second":
-                    case "seconds":
-                        return time;
-                    case "m":
-                    case "minute":
-                    case "minutes":
-                        return TimeParser.MINUTE.function.apply(time);
-                    case "h":
-                    case "hour":
-                    case "hours":
-                        return TimeParser.HOUR.function.apply(time);
-                    case "d":
-                    case "day":
-                    case "days":
-                        return TimeParser.DAY.function.apply(time);
-                    default:
-                        throw new IllegalArgumentException("Duration format error!");
-                }
-            }
-        }
-        throw new IllegalArgumentException("Duration format error!");
-    }
+    public static final Pattern PATTERN = Pattern.compile("(\\d+)(((s|second|seconds)?)|((m|minute|minutes)?)|((h|hour|hours)?)|((d|day|days)?))");
 
-    public enum TimeParser {
-        MINUTE((duration) -> (int) TimeUnit.MINUTES.toSeconds(duration)),
-        HOUR((duration) -> (int) TimeUnit.HOURS.toSeconds(duration)),
-        DAY((duration) -> (int) TimeUnit.DAYS.toSeconds(duration));
-        private Function<Integer, Integer> function;
-        TimeParser(Function<Integer, Integer> function) {
-            this.function = function;
+    static int parse(String duration) {
+        Matcher m = PATTERN.matcher(duration);
+        if (!m.matches() || m.groupCount() < 2) {
+            throw new IllegalArgumentException("Duration format error!");
+        }
+
+        int time = Integer.parseInt(m.group(1));
+        String unit = m.group(2);
+        switch (unit) {
+            case "":
+            case "s":
+            case "second":
+            case "seconds":
+                return time;
+            case "m":
+            case "minute":
+            case "minutes":
+                return (int) TimeUnit.MINUTES.toSeconds(time);
+            case "h":
+            case "hour":
+            case "hours":
+                return (int) TimeUnit.HOURS.toSeconds(time);
+            case "d":
+            case "day":
+            case "days":
+                return (int) TimeUnit.DAYS.toSeconds(time);
+            default:
+                throw new IllegalArgumentException("Duration format error!");
         }
     }
 }
