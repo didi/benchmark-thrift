@@ -65,11 +65,14 @@ Note that spaces in directory names can cause problems.
    * -h
    Display usage information
 
-##License
-This project is licensed under the Apache License 2.0. See the ![LICENSE](https://github.com/didi/thrift-mock/blob/master/LICENSE) file.
+##Contributing
+Welcome to contribute by creating issues or sending pull requests. See Contributing Guide for guidelines.
 
-##Contact
-Welcome to contribute and you could contact authors for any questions.
+##License
+thrift-mock is licensed under the Apache License 2.0. See the LICENSE file.
+
+##Note
+This is not an official Didi product (experimental or otherwise), it is just code that happens to be owned by Didi.
 
 Thank you for using Benchmark-Thrift
 
