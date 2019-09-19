@@ -5,9 +5,6 @@ import com.pressir.constant.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +38,22 @@ class Statistic {
         this.interval = interval;
     }
 
+    private int[] bucketSort(int max, int min, int interval, Map<Integer, Integer> timeAndCounts) {
+        int[] bucket;
+        if (interval > 1) {
+            bucket = new int[10000];
+            for (Map.Entry<Integer, Integer> entry : timeAndCounts.entrySet()) {
+                bucket[(entry.getKey() - min) / interval] += entry.getValue();
+            }
+        } else {
+            bucket = new int[max - min + 1];
+            for (Map.Entry<Integer, Integer> entry : timeAndCounts.entrySet()) {
+                bucket[entry.getKey() - min] += entry.getValue();
+            }
+        }
+        return bucket;
+    }
+
     private void calculatePercentage() {
         if (this.responses == 0) {
             return;
@@ -51,26 +64,26 @@ class Statistic {
             }
             return;
         }
-        List<Map.Entry<Integer, Integer>> list = new ArrayList<>(timeAndCounts.entrySet());
-        //升序排序
-        list.sort(Comparator.comparing(Map.Entry::getKey));
+
         int sum = 0;
-        for (Map.Entry<Integer, Integer> mapping : list) {
-            sum += mapping.getValue();
+        int interval = (this.max - this.min) / 10000 + 1;
+        int[] bucket = bucketSort(this.max, this.min, interval, this.timeAndCounts);
+        for (int i = 0; i < bucket.length; i++) {
+            sum += bucket[i];
             if (this.p50 == Integer.MAX_VALUE && sum >= this.responses * 0.50) {
-                this.p50 = mapping.getKey();
+                this.p50 = this.min + i * interval;
             }
             if (this.p75 == Integer.MAX_VALUE && sum >= this.responses * 0.75) {
-                this.p75 = mapping.getKey();
+                this.p75 = this.min + i * interval;
             }
             if (this.p90 == Integer.MAX_VALUE && sum >= this.responses * 0.90) {
-                this.p90 = mapping.getKey();
+                this.p90 = this.min + i * interval;
             }
             if (this.p95 == Integer.MAX_VALUE && sum >= this.responses * 0.95) {
-                this.p95 = mapping.getKey();
+                this.p95 = this.min + i * interval;
             }
             if (this.p99 == Integer.MAX_VALUE && sum >= this.responses * 0.99) {
-                this.p99 = mapping.getKey();
+                this.p99 = this.min + i * interval;
                 break;
             }
         }

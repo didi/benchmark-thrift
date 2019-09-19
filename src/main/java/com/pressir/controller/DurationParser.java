@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.pressir.constant.Constants.PATTERN;
+
 /**
  * @ClassName DurationParser
  * @Description TODO
@@ -12,7 +14,6 @@ import java.util.regex.Pattern;
  */
 class DurationParser {
 
-    public static final Pattern PATTERN = Pattern.compile("(\\d+)(((s|second|seconds)?)|((m|minute|minutes)?)|((h|hour|hours)?)|((d|day|days)?))");
 
     static int parse(String duration) {
         Matcher m = PATTERN.matcher(duration);
