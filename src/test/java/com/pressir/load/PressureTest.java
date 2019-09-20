@@ -1,4 +1,4 @@
-package com.pressir.controller;
+package com.pressir.load;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.pressir.controller;
+package com.pressir.load;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -13,8 +13,6 @@ import static com.pressir.constant.Constants.PATTERN;
  * @Date 2019-09-16 10:59
  */
 class DurationParser {
-
-
     static int parse(String duration) {
         Matcher m = PATTERN.matcher(duration);
         if (!m.matches() || m.groupCount() < 2) {

@@ -22,8 +22,8 @@ public class Monitor {
         map.get(keyword).onSend();
     }
 
-    public static void onError(String keyword, Exception e, String msg) {
-        map.get(keyword).onError(e, msg);
+    public static void onError(String keyword, Exception e) {
+        map.get(keyword).onError(e);
     }
 
     public static void onReceived(String keyword, int timeSpent) {

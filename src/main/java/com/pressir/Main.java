@@ -1,33 +1,18 @@
 package com.pressir;
 
-import com.beust.jcommander.IStringConverter;
-import com.beust.jcommander.IStringConverterFactory;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
-import com.google.common.io.Files;
-import com.google.common.net.HostAndPort;
-import com.pressir.client.OneHostAndPort;
 import com.pressir.constant.Constants;
-import com.pressir.client.ClientFactory;
-import com.pressir.client.Request;
-import com.pressir.context.ThriftContext;
-import com.pressir.controller.Pressure;
+import com.pressir.context.InvocationContext;
 import com.pressir.executor.PressureExecutor;
 import com.pressir.generator.Generator;
-import com.pressir.generator.InvariantTaskGenerator;
+import com.pressir.load.Pressure;
 import com.pressir.monitor.Monitor;
-import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -50,90 +35,61 @@ public class Main {
     @Parameter(names = {"-q"}, description = "throughput")
     private Integer throughput;
 
-    @Parameter(names = {"-n"}, description = "requests")
-    private Integer requests;
-
     @Parameter(names = {"-p"}, description = "thrift conf", required = true, converter = FileConverter.class)
-    private File thriftContextFile;
+    private File contextFile;
 
-    @Parameter(names = {"-d"}, description = "params conf", required = true, converter = FileConverter.class)
-    private File paramsConfFile;
+    @Parameter(names = {"-d"}, description = "params conf", converter = FileConverter.class)
+    private File paramsFile;
 
-    @Parameter(names = {"-u"}, description = "url", required = true, converter = UrlConverter.class)
-    private Url url;
-
-    private ThriftContext thriftContext;
+    @Parameter(names = {"-u"}, description = "url", required = true)
+    private String url;
 
     public static void main(String... args) {
         Main main = new Main();
-        JCommander.newBuilder().addObject(main).addConverterFactory(new ConverterFactory()).build().parse(args);
+        JCommander.newBuilder().addObject(main).build().parse(args);
         try {
             main.run();
             TimeUnit.SECONDS.sleep(3);
             main.stop();
             LOGGER.info("Thank you for using Benchmark-Thrift! Bye!");
         } catch (Exception e) {
-            LOGGER.error(e.getMessage() + ":" + e);
+            LOGGER.error(e.getMessage());
         } finally {
             System.exit(1);
         }
     }
 
-    private static ThriftContext yaml2JavaBean(File file) throws IOException {
-        Map<String, Object> loaded;
-        try (FileInputStream fis = new FileInputStream(file)) {
-            Yaml yaml = new Yaml();
-            loaded = yaml.load(fis);
-        }
-        return ThriftContext.parse(loaded);
-    }
 
     private void stop() {
         Monitor.onStop();
     }
 
-    private void run() throws Exception {
-        //Determine file format
-        if (this.thriftContextFile.getName().endsWith(Constants.YML)) {
-            this.thriftContext = yaml2JavaBean(this.thriftContextFile);
-        } else {
-            throw new IllegalArgumentException("File format is error!");
-        }
+    private void run() {
 
-        //validate for pressure type
-        if (this.threadNum == null && this.throughput == null) {
-            throw new IllegalArgumentException("Must pointed the pressure type!");
-        }
-
-        if (this.threadNum != null && this.throughput != null) {
-            throw new IllegalArgumentException("Only one pressure type can be pointed!");
-        }
-
+        InvocationContext invocationContext = new InvocationContext(contextFile, paramsFile, url);
         //prepare monitor
         int interval = 1000;
         if (this.threadNum == null) {
             interval = this.throughput > 100 ? 500 : 200;
         }
-        Monitor.init(this.url.method, interval);
+        Monitor.init(invocationContext.getMethod(), interval);
 
         //prepare executor
-        try (PressureExecutor pressureExecutor = this.getExecutor()) {
+        try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
             LOGGER.info("This is Thrift-Pressure-Tool");
-            LOGGER.info("Server Hostname: {}", this.url.hostAndPort.getHost());
-            LOGGER.info("Server Port: {}", this.url.hostAndPort.getPort());
-            LOGGER.info("Pressure Service: {}", this.url.service);
-            LOGGER.info("Pressure Method: {}", this.url.method);
+            LOGGER.info("Server Hostname: {}", invocationContext.getEndpoint().getHost());
+            LOGGER.info("Server Port: {}", invocationContext.getEndpoint().getPort());
+            LOGGER.info("Pressure Service: {}", invocationContext.getService());
+            LOGGER.info("Pressure Method: {}", invocationContext.getMethod());
             LOGGER.info("Pressure Type: {}", this.threadNum == null ? Constants.THROUGHPUT : Constants.CONCURRENCY);
             LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput : this.threadNum);
             LOGGER.info("Pressure Duration: {}", this.duration);
-            LOGGER.info("Benchmarking {} {}/{}", this.url.hostAndPort, this.url.service, this.url.method);
+            LOGGER.info("Benchmarking {} {}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
             pressureExecutor.start(1);
         }
     }
 
-    private PressureExecutor getExecutor() throws Exception {
-        //prepare generator
-        Generator generator = this.getGenerator();
+    private PressureExecutor getExecutor(Generator generator) {
         //prepare pressure
         Pressure pressure = this.getPressure();
 
@@ -147,54 +103,5 @@ public class Main {
     private Pressure getPressure() {
         Integer quantity = this.threadNum == null ? this.throughput : this.threadNum;
         return new Pressure(quantity, this.duration);
-    }
-
-    private <T extends TServiceClient> Generator getGenerator() throws Exception {
-        Request request = Request.parseRequest(this.url.service, this.url.method, Files.readLines(this.paramsConfFile, StandardCharsets.UTF_8), new File(this.thriftContext.getJar()));
-        ClientFactory<T> clientFactory = this.thriftContext.getClientFactory(request.getInnerFactory());
-        OneHostAndPort.hostAndPortList = Collections.singletonList(this.url.hostAndPort);
-        return InvariantTaskGenerator.newInstance(clientFactory, request);
-    }
-
-    private static class Url {
-        private final HostAndPort hostAndPort;
-        private final String service;
-        private final String method;
-
-        private Url(HostAndPort hostAndPort, String service, String method) {
-            this.hostAndPort = hostAndPort;
-            this.service = service;
-            this.method = method;
-        }
-
-        static Url parse(String url) {
-            String[] parts = url.split("/");
-            if (validate(parts)) {
-                return new Url(HostAndPort.fromString(parts[0]), parts[1], parts[2]);
-            }
-            throw new IllegalArgumentException("The format of Url is wrong! It should be Host:Port/Service/Method!");
-        }
-
-        private static boolean validate(String[] parts) {
-            return parts.length == Constants.URL_PARTS;
-        }
-    }
-
-    public static class ConverterFactory implements IStringConverterFactory {
-        @Override
-        public Class<? extends IStringConverter<?>> getConverter(Class forType) {
-            if (forType.equals(Url.class)) {
-                return UrlConverter.class;
-            } else {
-                return null;
-            }
-        }
-    }
-
-    private static class UrlConverter implements IStringConverter<Url> {
-        @Override
-        public Url convert(String url) {
-            return Url.parse(url);
-        }
     }
 }

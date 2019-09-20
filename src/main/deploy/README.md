@@ -27,7 +27,7 @@ Note that spaces in directory names can cause problems.
     echo $JAVA_HOME             # should print your Java home dir. If the command fails, you need to install the Java environment. Java Downloads: https://www.oracle.com/technetwork/java/javase/downloads/index.html
     cd benchmark-thrift
     chmod 755 *.sh              # make it executable
-    sh pstr.sh -c 10 -D 100s -p ./demo.yml -d ./demo.txt 127.0.0.1:8090/Test/test # run it
+    sh pstr.sh -c 10 -D 100s -p ./demo.yml -d ./demo.txt 127.0.0.1:8090/Test/test # run it. If the duration and pressure type are not specified, the default one-minute concurrent execution is achieved
 ```
 
 ####Simplest Usage
@@ -58,12 +58,13 @@ Note that spaces in directory names can cause problems.
    * -q throughput
    The number of requests issued in 1 Second
    * -D duration
-   How many seconds will the pressure last. You can specify the duration in the following ways:  
+   How many seconds will the pressure last. It with a default value 60. You can specify the duration in the following ways:  
    -D 10 | -D 10s | -D 10second  
    * -v   
    Print version number
    * -h
    Display usage information
+   
 
 ##Contributing
 Welcome to contribute by creating issues or sending pull requests. See Contributing Guide for guidelines.

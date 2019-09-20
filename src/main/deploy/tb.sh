@@ -24,8 +24,8 @@ function start(){
   BIN_DIR=$(cd $(dirname $0); pwd)
   JAVA_OPTS="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/hs_err_pid%p.log -Xloggc:$BIN_DIR/gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
   PID_FILE="$BIN_DIR/pid"
-  if [ ! -s "$PID_FILE" ] || [ -z "$(ps -eo pid | grep -w $(cat $PID_FILE))" ]; then
-    java $JAVA_OPTS -cp $CLASSPATH com.pressir.Test $* 2>&1 &
+  if [ ! -s "$PID_FILE" ] || [[ "" == $(cat $PID_FILE) ]] || [ -z "$(ps -eo pid | grep -w $(cat $PID_FILE))" ]; then
+    java $JAVA_OPTS -cp $CLASSPATH com.pressir.Main $* 2>&1
     echo $! > $PID_FILE
   else
     echo "error: application can not start duplicate! running pid=$(cat $PID_FILE)"
@@ -38,31 +38,24 @@ function validate(){
   get_versions
 
   # 指定版本是否合规
-  version=$(awk '{if ($1 == "version:") {print $2}}' $protocol)
+  . $protocol >/dev/null 2>&1
   if [[ $versions != *$version* ]]; then
     echo error: thrift版本信息必须为"$versions"中的一个!;
     exit 1
   fi
 
   # 是否指定jar包
-  jar=$(awk '{if ($1 == "jar:") {print $2}}' $protocol)
-  if [[ $jar == "" || $jar != *.jar ]]; then
+  if [[ $classpath == "" || $classpath != *.jar ]]; then
     echo "error: jar file must be prepared!"
     exit 1
   fi
 }
 # 设置默认值
-concurrency=1
-duration=60
 startparam=""
 types=0
 while getopts ":n:c:D:q:p:d:hv" opt
 do
   case "$opt" in
-    n)
-      requests="$OPTARG"
-      startparam="-n $requests $startparam "
-      ;;
     c)
       concurrency="$OPTARG"
       type=$[type+1]
@@ -86,16 +79,13 @@ do
       param="$OPTARG"
       startparam="-d $param $startparam "
       ;;
-    -h)
-      echo "####EXAMPLE \n
-./pstr.sh -p <protocol.conf> -d <data.conf> [ -c concurrency ] [ -n requests ] [options] host:port/service/method \n
-####OPTIONS\n
-
+    h)
+      echo "####EXAMPLE
+./pstr.sh -p <protocol.conf> -d <data.conf> [ -c concurrency ] [ -D duration ] [options] host:port/service/method
+####OPTIONS
    -p thriftfile  File pointed the protocol and the transport and thrift version
 
    -d paramsfile  File containing data to the rpc method
-
-   -n requests    Number of requests to perform
 
    -c concurrency Number of multiple requests to make at a time
 
@@ -106,7 +96,6 @@ do
    -h             Display usage information (this message) and exit
 
    -v             Print version number and exit"
-
       exit 1
       ;;
     v)
@@ -114,15 +103,30 @@ do
       exit 1
       ;;
     *)
-      echo "error: param error!"
+      echo "error: param error! use -h for help!"
       exit 1
       ;;
     esac
 done
-if [ $type == 2 ];  then
+if [ $types == 2 ];  then
   echo "error: pressure type must be -c or -q!"
   exit 1
 fi
+
+if [[ $duration == "" ]]; then
+  startparam="$startparam -D 60s"
+fi
+
+if [ $types == 0 ]; then
+  startparam="$startparam -c 1"
+fi
+
+if [[ $protocol == "" ]]; then
+  echo "error: thrift conf must be pointed! Use -p to pointed the conf!"
+  exit 1
+fi
+
+
 
 shift $(($OPTIND - 1))
 if [[ $1 == "" ]];  then

@@ -1,5 +1,6 @@
-package com.pressir.controller;
+package com.pressir.load;
 
+import com.pressir.load.DurationParser;
 import org.junit.Assert;
 import org.junit.Test;
 

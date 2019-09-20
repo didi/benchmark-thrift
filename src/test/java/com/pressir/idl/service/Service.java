@@ -21,6 +21,10 @@ import java.util.List;
  * @Date 2019-09-09 15:17
  */
 public class Service {
+
+    public static void main(String[] args) throws TTransportException {
+        run();
+    }
     public static void run() throws TTransportException {
         TNonblockingServerSocket tNonblockingServerTransport = new TNonblockingServerSocket(8090);
         Impl impl = new Impl();

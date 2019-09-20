@@ -32,6 +32,7 @@
         </Root>
         <Logger name="com.pressir" level="INFO" additivity="false">
             <AppenderRef ref="Console" />
+            <AppenderRef ref="Info" />
         </Logger>
     </Loggers>
 </Configuration>

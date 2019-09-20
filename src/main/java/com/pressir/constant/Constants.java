@@ -10,11 +10,7 @@ import java.util.regex.Pattern;
  */
 public class Constants {
 
-    public static final String YML = ".yml";
-
-    public static final int URL_PARTS = 3;
-
-    public static final int CONNECT_THRESHOLD = 2000;
+    public static final int URI_PARTS = 3;
 
     public static final String THROUGHPUT = "Throughput";
 

@@ -15,7 +15,7 @@ import java.util.Objects;
 public class MainTest {
 
     private String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath();
-    private String thriftConf = path + "thrift.yml";
+    private String thriftConf = path + "thrift.properties";
     private String paramConf = path + "data.text";
 
     @Before
@@ -27,14 +27,6 @@ public class MainTest {
                 e.printStackTrace();
             }
         }).start();
-        Yaml yaml = new Yaml();
-        try (FileInputStream fileInputStream = new FileInputStream(thriftConf)) {
-            Map<String, Object> map = yaml.load(fileInputStream);
-            map.put("jar", path + "base-1.0-SNAPSHOT.jar");
-            yaml.dump(map, new FileWriter(thriftConf));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 //    @Test(expected = ParameterException.class)

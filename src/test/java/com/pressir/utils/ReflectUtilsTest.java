@@ -1,5 +1,6 @@
 package com.pressir.utils;
 
+
 import com.alibaba.fastjson.JSON;
 import com.pressir.idl.Shop;
 import com.pressir.idl.ShopStatus;
@@ -21,19 +22,17 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class ClassCastUtilsTest {
-
-    private Type paramType;
-    private Object paramValue;
-    private String stringValue;
-
+public class ReflectUtilsTest {
     private static Shop shop = new Shop("shop", ShopStatus.OPEN);
     private static List<Shop> aList = Arrays.asList(shop);
     private static Set<Shop> aSet = new HashSet<>(Arrays.asList(shop));
     private static Map<Integer, Shop> aMap = Collections.singletonMap(7, shop);
+    private final ThreadLocal<Type> paramType = new ThreadLocal<Type>();
+    private Object paramValue;
+    private String stringValue;
 
-    public ClassCastUtilsTest(Type paramType, Object paramValue, String stringValue) {
-        this.paramType = paramType;
+    public ReflectUtilsTest(Type paramType, Object paramValue, String stringValue) {
+        this.paramType.set(paramType);
         this.paramValue = paramValue;
         this.stringValue = stringValue;
     }
@@ -59,18 +58,19 @@ public class ClassCastUtilsTest {
         });
     }
 
-    @Test
-    public void testPrimeNumberChecker() throws NoSuchFieldException {
-        System.out.println("Parameterized value is : " + stringValue);
-        assertEquals(paramValue, ClassCastUtils.cast(stringValue, paramType));
-    }
-
     private static Type getGenericTypeOf(String fieldName) {
         try {
-            Type genericType = ClassCastUtilsTest.class.getDeclaredField(fieldName).getGenericType();
+            Type genericType = ReflectUtilsTest.class.getDeclaredField(fieldName).getGenericType();
             return genericType;
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+
+    @Test
+    public void testPrimeNumberChecker() {
+        System.out.println("Parameterized value is : " + stringValue);
+        assertEquals(paramValue, ReflectUtils.cast(stringValue, paramType.get()));
+    }
+
 }
