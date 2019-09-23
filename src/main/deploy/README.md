@@ -32,22 +32,20 @@ Note that spaces in directory names can cause problems.
 
 ####Simplest Usage
 ```bash
-    ./pstr.sh -p <thriftConf.yml> -d <paramConf.text> [ -c concurrency ] [ -n requests ] [options] url
+    ./pstr.sh -p <thriftConf.properties> -d <data.conf> [ -c concurrency ] [ -n requests ] [options] url
 ```
 ####OPTIONS
    The options are:     
-   * -p xx.yml   
-   The configuration files related to Thrift include Transport, Protocol, Thrift version, and the location of the generated jar package. File format is limited to. YML file
-        * ######Example of .YML File:
-         version: 0.12.0
-         jar: /Users/didi/test.jar      
-         transport:
-            type: TFramedTransport  #required
-         protocol:
-            type: TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol          
+   * -p xx.properties   
+   The configuration files related to Thrift include Transport, Protocol, Thrift version, and the location of the generated jar package. File format is limited to .properties file
+        * ######Example 
+         version=0.12.0
+         classpath=/Users/didi/test.jar      
+         transport=TFramedTransport(transport=TSocket)
+         protocol=TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol          
    * -d data.conf   
    The parameters used in the method. In a file, each line represents a parameter of the method
-        * ######Example of parameter File:  
+        * ######Example 
          #If the method test has 4 parameters, the types are i64, list, struct and string. The data file content should like that:  
          123  
          ["2","3"]  
