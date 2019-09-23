@@ -38,14 +38,14 @@ Note that spaces in directory names can cause problems.
    The options are:     
    * -p xx.properties   
    The configuration files related to Thrift include Transport, Protocol, Thrift version, and the location of the generated jar package. File format is limited to .properties file
-        * ######Example 
+        * ######Example  
          version=0.12.0
          classpath=/Users/didi/test.jar      
          transport=TFramedTransport(transport=TSocket)
          protocol=TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol          
    * -d data.conf   
    The parameters used in the method. In a file, each line represents a parameter of the method
-        * ######Example 
+        * ######Example   
          #If the method test has 4 parameters, the types are i64, list, struct and string. The data file content should like that:  
          123  
          ["2","3"]  
