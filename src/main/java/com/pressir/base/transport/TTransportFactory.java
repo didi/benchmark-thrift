@@ -6,7 +6,7 @@ import org.apache.thrift.transport.TTransport;
 /**
  * @InterfaceName TTransportFactory
  * @Description TODO
- * @Author didi
+ * @Author pressir
  * @Date 2019-09-19 21:14
  */
 public interface TTransportFactory<T extends TTransport> {

@@ -8,12 +8,12 @@ import static com.pressir.constant.Constants.PATTERN;
 
 /**
  * @ClassName DurationParser
- * @Description TODO
- * @Author didi
+ * @Description 时长转换器
+ * @Author pressir
  * @Date 2019-09-16 10:59
  */
-class DurationParser {
-    static int parse(String duration) {
+public class DurationParser {
+    public static int parse(String duration) {
         Matcher m = PATTERN.matcher(duration);
         if (!m.matches() || m.groupCount() < 2) {
             throw new IllegalArgumentException("Duration format error!");

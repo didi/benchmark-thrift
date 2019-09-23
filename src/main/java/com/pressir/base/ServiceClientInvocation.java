@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * @ClassName ServiceClientInvocation
  * @Description TODO
- * @Author didi
+ * @Author pressir
  * @Date 2019-09-19 21:09
  */
 public class ServiceClientInvocation<T extends TServiceClient> {

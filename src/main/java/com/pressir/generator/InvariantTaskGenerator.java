@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @ClassName InvariantTaskGenerator
- * @Description TODO
+ * @Description 固参任务生成器
  * @Author pressir
  * @Date 2019-09-03 09:49
  */

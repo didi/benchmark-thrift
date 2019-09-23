@@ -19,7 +19,7 @@ import java.util.function.IntSupplier;
 
 /**
  * @ClassName ThroughputExecutor
- * @Description TODO
+ * @Description QPS执行器
  * @Author pressir
  * @Date 2019-09-02 14:49
  */

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @ClassName TFramedTransportFactory
  * @Description TODO
- * @Author didi
+ * @Author pressir
  * @Date 2019-09-19 21:15
  */
 public class TFramedTransportFactory implements TTransportFactory<TFramedTransport> {

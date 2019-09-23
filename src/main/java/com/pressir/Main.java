@@ -7,6 +7,7 @@ import com.pressir.constant.Constants;
 import com.pressir.context.InvocationContext;
 import com.pressir.executor.PressureExecutor;
 import com.pressir.generator.Generator;
+import com.pressir.load.DurationParser;
 import com.pressir.load.Pressure;
 import com.pressir.monitor.Monitor;
 import org.slf4j.Logger;
@@ -68,11 +69,7 @@ public class Main {
 
         InvocationContext invocationContext = new InvocationContext(contextFile, paramsFile, url);
         //prepare monitor
-        int interval = 1000;
-        if (this.threadNum == null) {
-            interval = this.throughput > 100 ? 500 : 200;
-        }
-        Monitor.init(invocationContext.getMethod(), interval);
+        Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.duration) / 10);
 
         //prepare executor
         try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
@@ -81,8 +78,7 @@ public class Main {
             LOGGER.info("Server Port: {}", invocationContext.getEndpoint().getPort());
             LOGGER.info("Pressure Service: {}", invocationContext.getService());
             LOGGER.info("Pressure Method: {}", invocationContext.getMethod());
-            LOGGER.info("Pressure Type: {}", this.threadNum == null ? Constants.THROUGHPUT : Constants.CONCURRENCY);
-            LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput : this.threadNum);
+            LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
             LOGGER.info("Pressure Duration: {}", this.duration);
             LOGGER.info("Benchmarking {} {}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
             pressureExecutor.start(1);

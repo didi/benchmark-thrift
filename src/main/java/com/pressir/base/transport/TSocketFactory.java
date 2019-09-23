@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @ClassName TSocketFactory
  * @Description TODO
- * @Author didi
+ * @Author pressir
  * @Date 2019-09-19 21:13
  */
 public class TSocketFactory implements TTransportFactory<TSocket> {
@@ -36,6 +36,7 @@ public class TSocketFactory implements TTransportFactory<TSocket> {
         this.connectTimeout = connectTimeout;
     }
 
+    @Override
     public TSocket getTransport(HostAndPort endpoint) {
         return new TSocket(endpoint.getHost(), endpoint.getPort(), this.socketTimeout, this.connectTimeout);
     }

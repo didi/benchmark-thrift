@@ -10,8 +10,8 @@ import java.math.BigInteger;
 
 /**
  * @ClassName ReflectUtils
- * @Description TODO
- * @Author didi
+ * @Description 工具类
+ * @Author pressir
  * @Date 2019-09-03 11:32
  */
 public class ReflectUtils {

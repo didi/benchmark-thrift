@@ -15,8 +15,8 @@ import java.util.function.IntSupplier;
 
 /**
  * @ClassName ConcurrencyExecutor
- * @Description TODO
- * @Author didi
+ * @Description 并发执行器
+ * @Author pressir
  * @Date 2019-09-02 14:47
  */
 public class ConcurrencyExecutor extends PressureExecutor {

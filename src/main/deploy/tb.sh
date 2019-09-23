@@ -58,7 +58,7 @@ do
   case "$opt" in
     c)
       concurrency="$OPTARG"
-      type=$[type+1]
+      types=$[types+1]
       startparam="-c $concurrency $startparam "
       ;;
     D)
@@ -67,7 +67,7 @@ do
       ;;
     q)
       throughput="$OPTARG"
-      type=$[type+1]
+      types=$[types+1]
       startparam="-q $throughput $startparam "
       ;;
     p)

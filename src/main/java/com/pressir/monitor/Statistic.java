@@ -12,6 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,6 +31,8 @@ class Statistic {
     private static final Map<Integer, String> PROTOCOL_EXCEPTION_TYPE_MAP = new HashMap<>();
 
     private static final Map<Integer, String> APPLICATION_EXCEPTION_TYPE_MAP = new HashMap<>();
+
+    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
     static {
         TRANSPORT_EXCEPTION_TYPE_MAP.put(0, "Unknown");
@@ -58,8 +63,6 @@ class Statistic {
         APPLICATION_EXCEPTION_TYPE_MAP.put(10, "Unsupported client type");
     }
 
-
-    private final int interval;
     private int min = Integer.MAX_VALUE;
     private int max = Integer.MIN_VALUE;
     private int p99 = Integer.MAX_VALUE;
@@ -75,10 +78,12 @@ class Statistic {
     private int responses = 0;
     private int timeTaken = 0;
     private Map<Integer, Integer> timeAndCounts = new ConcurrentHashMap<>();
-    private int errors = 0;
 
     Statistic(int interval) {
-        this.interval = interval;
+        if (interval <= 0) {
+            interval = 1;
+        }
+        EXECUTOR.scheduleAtFixedRate(() -> LOGGER.info("\tSend {} requests, Successful {}!", this.requests.get(), this.responses), 2, interval, TimeUnit.SECONDS);
     }
 
     private int[] bucketSort(int max, int min, int interval, Map<Integer, Integer> timeAndCounts) {
@@ -151,14 +156,9 @@ class Statistic {
             count = 0;
         }
         this.timeAndCounts.put(time, ++count);
-
-        if (this.requests.get() % this.interval == 0) {
-            LOGGER.info("\tSend {} requests, Successful {}, Failed {}!", this.requests.get(), this.responses, this.errors);
-        }
     }
 
-    synchronized void onError(Exception e) {
-        this.errors++;
+    void onError(Exception e) {
         if (e instanceof InvocationTargetException) {
             Throwable throwable = ((InvocationTargetException) e).getTargetException();
             if (throwable instanceof TTransportException) {
@@ -173,18 +173,14 @@ class Statistic {
         } else {
             onError(e, null);
         }
-        if (this.requests.get() % this.interval == 0) {
-            LOGGER.info("\tSend {} requests, Successful {}, Failed {}!", this.requests.get(), this.responses, this.errors);
-        }
     }
 
     private void onError(Exception e, String msg) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.error("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
-        }
+        LOGGER.debug("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
     }
 
     void onStop() {
+        EXECUTOR.shutdown();
         // 计算分位耗时
         this.calculatePercentage();
         // 计算成功率
@@ -208,18 +204,13 @@ class Statistic {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        if (this.requests.get() % this.interval != 0) {
-            stringBuilder.append("\tSend  ")
-                    .append(this.requests.get()).append(" requests,")
-                    .append(" Successful ").append(this.responses)
-                    .append(", Failed ").append(this.errors).append("\n");
-        }
-        stringBuilder.append("\tFinished\n")
+        stringBuilder.append("\tSend  ").append(this.requests.get()).append(" requests,").append(" Successful ").append(this.responses).append("\n")
+                .append("\tFinished\n")
                 .append("Time taken for successful requests: ").append((double) this.timeTaken / Constants.TIME_CONVERT_BASE).append(" seconds\n")
                 .append("On connection stat: ").append(this.connects.get()).append("\n")
                 .append("Send requests: ").append(this.requests.get()).append("\n")
                 .append("Complete requests: ").append(this.responses).append("\n")
-                .append("Failed requests: ").append(this.errors).append("\n")
+                .append("Failed requests: ").append(this.requests.get() - this.responses).append("\n")
                 .append("Success rate without connection stat: ").append(this.sucRateWCS).append("%\n")
                 .append("Success rate contains connection stat: ").append(this.sucRateCCS).append("%\n")
                 .append("Time per request: ").append(this.latency == 0 ? "--" : this.latency).append(" [ms] \n")
