@@ -1,13 +1,13 @@
-#What is it
+#What is it  
 Benchmark-Thrift as a open-source application designed to load test thrift applications and measure performance. It may be used to test performance on thrift applications. It also can be used to simulate a heavy load on a server, group of servers, network or object to test its strength or to analyze overall performance under different load types.  
 It's the first out-of-box thrift protocol pressure tool so far and it's simple usage, you could also be integrated within Pressir platform.
 
-##Features
+##Features  
    * Simple Usage: Using a simple command line, you can press without any code development capabilities   
    * Compatible with various versions of thrift
    * Two types of pressure - not only to meet concurrent requirements, but also to test in the form of fixed throughput
 
-#Requirements
+#Requirements  
 The following requirements exist for running Benchmark-thrift:
    * ##Java Interpreter:
      A fully compliant Java 8 Runtime Environment is required for Benchmark-thrift to execute.
@@ -21,7 +21,7 @@ Note that spaces in directory names can cause problems.
 
     Clone or download source repository to your local machine 
 
-##Running Benchmark-Thrift
+##Running Benchmark-Thrift  
    Make sure you have JAVA_HOME env is properly configured, and then: 
 ```bash
     echo $JAVA_HOME             # should print your Java home dir. If the command fails, you need to install the Java environment. Java Downloads: https://www.oracle.com/technetwork/java/javase/downloads/index.html
@@ -30,7 +30,7 @@ Note that spaces in directory names can cause problems.
     sh pstr.sh -c 10 -D 100s -p ./demo.yml -d ./demo.txt 127.0.0.1:8090/Test/test # run it. If the duration and pressure type are not specified, the default one-minute concurrent execution is achieved
 ```
 
-####Simplest Usage
+####Simplest Usage  
 ```bash
     ./pstr.sh -p <thriftConf.properties> -d <data.conf> [ -c concurrency ] [ -n requests ] [options] url
 ```
