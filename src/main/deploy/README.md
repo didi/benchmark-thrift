@@ -7,7 +7,7 @@ It's the first out-of-box thrift protocol pressure tool so far and it's simple u
    * Compatible with various versions of thrift
    * Two types of pressure - not only to meet concurrent requirements, but also to test in the form of fixed throughput
 
-#Requirements  
+##Requirements  
 The following requirements exist for running Benchmark-thrift:
    * ##Java Interpreter:
      A fully compliant Java 8 Runtime Environment is required for Benchmark-thrift to execute.
