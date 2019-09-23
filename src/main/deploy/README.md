@@ -49,7 +49,7 @@ Note that spaces in directory names can cause problems.
          #If the method test has 4 parameters, the types are i64, list, struct and string. The data file content should like that:  
          123  
          ["2","3"]  
-         {"name":"value","uType":"uValue"}
+         {"name":"value","uType":"uValue"}  
          string   
    * -c concurrency  
    The number of multiple requests to make at a time
