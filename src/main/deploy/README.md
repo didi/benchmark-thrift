@@ -51,16 +51,16 @@ Note that spaces in directory names can cause problems.
          ["2","3"]  
          {"name":"value","uType":"uValue"}  
          string   
-   * -c concurrency  
+   * -c concurrency    
    The number of multiple requests to make at a time
-   * -q throughput
+   * -q throughput  
    The number of requests issued in 1 Second
-   * -D duration
+   * -D duration  
    How many seconds will the pressure last. It with a default value 60. You can specify the duration in the following ways:  
    -D 10 | -D 10s | -D 10second  
-   * -v   
+   * -v     
    Print version number
-   * -h
+   * -h  
    Display usage information
    
 
