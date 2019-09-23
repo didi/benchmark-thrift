@@ -1,4 +1,4 @@
-#What is it  
+##What is it  
 Benchmark-Thrift as a open-source application designed to load test thrift applications and measure performance. It may be used to test performance on thrift applications. It also can be used to simulate a heavy load on a server, group of servers, network or object to test its strength or to analyze overall performance under different load types.  
 It's the first out-of-box thrift protocol pressure tool so far and it's simple usage, you could also be integrated within Pressir platform.
 
