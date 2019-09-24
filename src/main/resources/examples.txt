@@ -1,5 +1,0 @@
-#### Examples:
-    # Benchmark at 10 concurrencies for 60 seconds:
-    ./{} -p protocol.conf -d data.txt -c 10 -D 60s 127.0.0.1:8090/service/method
-    # Benchmark at 10 QPS for 5 minutes:
-    ./{} -p protocol.conf -d data.txt -q 10 -D 5m 127.0.0.1:8090/service/method

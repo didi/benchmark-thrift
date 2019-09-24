@@ -50,6 +50,23 @@ function validate(){
     exit 1
   fi
 }
+
+function print_file(){
+  while IFS= read -r line || [[ -n ${line} ]]; do
+    printf '%s\n' "$line"
+  done < "$1"
+}
+
+function print_tool_version(){
+  file="../resources/thrift-benchmark.properties"
+
+  while IFS='=' read -r key value|| [[ -n ${key} ]]; do
+    key=$(echo $key | tr '.' '_')
+    eval ${key}=\${value}
+  done < "$file"
+  echo "This is ${project_name}, version ${project_version}"
+}
+
 # 设置默认值
 startparam=""
 types=0
@@ -80,26 +97,11 @@ do
       startparam="-d $param $startparam "
       ;;
     h)
-      echo "####EXAMPLE
-./pstr.sh -p <protocol.conf> -d <data.conf> [ -c concurrency ] [ -D duration ] [options] host:port/service/method
-####OPTIONS
-   -p thriftfile  File pointed the protocol and the transport and thrift version
-
-   -d paramsfile  File containing data to the rpc method
-
-   -c concurrency Number of multiple requests to make at a time
-
-   -D duration    Pressure duration
-
-   -q throughput  Number of requests issued in 1 Second
-
-   -h             Display usage information (this message) and exit
-
-   -v             Print version number and exit"
+      print_file "../resources/usage.txt"
       exit 1
       ;;
     v)
-      echo "the tool version is 0.9.0!"
+      print_tool_version
       exit 1
       ;;
     *)

@@ -1,2 +1,0 @@
-#### Usage:
-./BT.sh -p <protocol file> -d <data file> [ -c concurrency ] [ -D duration ] [options] <host>:<port>/<service>/<method>

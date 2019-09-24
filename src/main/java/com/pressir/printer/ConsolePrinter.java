@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class ConsolePrinter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsolePrinter.class);
-    private static String shellName = "BT.sh";
 
     public static void sayHello() {
         LOGGER.info("This is {}, version {}", ThriftBenchmarkProperties.getProjectName(), ThriftBenchmarkProperties.getProjectVersion());
@@ -37,7 +36,7 @@ public class ConsolePrinter {
     }
 
     private static void printUsage() {
-        List<String> usage = ThriftBenchmarkProperties.getUsageSimple();
+        List<String> usage = ThriftBenchmarkProperties.getUsage();
         for (String s : usage) {
             LOGGER.info(s);
         }
