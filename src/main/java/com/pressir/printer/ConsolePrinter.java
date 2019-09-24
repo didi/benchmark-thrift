@@ -10,6 +10,7 @@ public class ConsolePrinter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsolePrinter.class);
     private static String projectName = "benchmark-thrift tool";
     private static String version = "1.0.0";
+    private static String shellName = "BT.sh";
 
     public static void sayHello() {
         LOGGER.info("This is {}, version {}\n", projectName, version);
@@ -24,24 +25,24 @@ public class ConsolePrinter {
         LOGGER.info("\n");
     }
 
-    public static void sayAndWait(String msg, int waitInSeconds) {
-        LOGGER.info(msg);
-        Runnable runnable = () -> {
-            int count = 0;
-            while (count++ < waitInSeconds) {
-                LOGGER.info(".");
-                try {
-                    Thread.sleep(1 * 1000L);
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-        try {
-            thread.join(waitInSeconds * 1000L);
-        } catch (InterruptedException e) {
-        }
-        LOGGER.info("\n");
+    public static void onParamError(String message) {
+        LOGGER.error("Error: {}\n", message);
+        printUsage();
+        printExamples();
+    }
+
+    public static void onError(String message) {
+        LOGGER.error("Error: {}\n", message);
+    }
+
+    private static void printUsage() {
+        LOGGER.info("Usage: \n");
+        LOGGER.info("   ./{} -p <protocol file> -d <data file> [ -c concurrency ] [ -D duration ] [options] <host>:<port>/<service>/<method>\n", shellName);
+    }
+
+    private static void printExamples() {
+        LOGGER.info("Examples: \n");
+        LOGGER.info("   #Benchmark at 10 concurrencies for 60 seconds:\n");
+        LOGGER.info("   ./{} -p protocol.conf -d data.txt -c 10 -D 60s 127.0.0.1:8090/service/method\n", shellName);
     }
 }

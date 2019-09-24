@@ -2,6 +2,7 @@ package com.pressir.monitor;
 
 
 import com.pressir.constant.Constants;
+import com.pressir.printer.ConsolePrinter;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.protocol.TProtocolException;
 import org.apache.thrift.transport.TTransportException;
@@ -83,7 +84,7 @@ class Statistic {
         if (interval <= 0) {
             interval = 1;
         }
-        EXECUTOR.scheduleAtFixedRate(() -> LOGGER.info("\tSend {} requests, Successful {}!", this.requests.get(), this.responses), 2, interval, TimeUnit.SECONDS);
+        EXECUTOR.scheduleAtFixedRate(() -> ConsolePrinter.say("\tSend {} requests, Successful {}!", this.requests.get(), this.responses), 2, interval, TimeUnit.SECONDS);
     }
 
     private int[] bucketSort(int max, int min, int interval, Map<Integer, Integer> timeAndCounts) {
@@ -176,7 +177,7 @@ class Statistic {
     }
 
     private void onError(Exception e, String msg) {
-        LOGGER.debug("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
+        LOGGER.error("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
     }
 
     void onStop() {
@@ -198,7 +199,7 @@ class Statistic {
             this.latency = (double) ((int) (this.latency * 100)) / 100;
         }
         // 输出报告
-        LOGGER.info(this.toString());
+        ConsolePrinter.say(this.toString());
     }
 
     @Override
