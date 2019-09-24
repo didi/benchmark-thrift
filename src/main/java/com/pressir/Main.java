@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -50,16 +49,34 @@ public class Main {
         Main main = new Main();
         JCommander.newBuilder().addObject(main).build().parse(args);
         try {
-            ConsolePrinter.sayHello();
+            beforeRun();
             main.run();
-            TimeUnit.SECONDS.sleep(3);
+            afterRun();
+
+            beforeStop();
             main.stop();
-            ConsolePrinter.sayGoodbye();
+            afterStopped();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         } finally {
             System.exit(1);
         }
+    }
+
+    private static void beforeRun() {
+        ConsolePrinter.sayHello();
+    }
+
+    private static void afterRun() {
+    }
+
+    private static void beforeStop() throws InterruptedException {
+        int waitInSeconds = 5;
+        ConsolePrinter.sayAndWait("Collecting information, please wait", waitInSeconds);
+    }
+
+    private static void afterStopped() {
+        ConsolePrinter.sayGoodbye();
     }
 
 
@@ -77,11 +94,11 @@ public class Main {
         try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
             ConsolePrinter.say("Server Hostname: {}", invocationContext.getEndpoint().getHost());
             ConsolePrinter.say("Server Port: {}", invocationContext.getEndpoint().getPort());
-            ConsolePrinter.say("Pressure Service: {}", invocationContext.getService());
-            ConsolePrinter.say("Pressure Method: {}", invocationContext.getMethod());
-            ConsolePrinter.say("Pressure: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
-            ConsolePrinter.say("Pressure Duration: {}", this.duration);
-            ConsolePrinter.say("Benchmarking {} {}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
+            ConsolePrinter.say("Thrift Service: {}", invocationContext.getService());
+            ConsolePrinter.say("Thrift Method: {}", invocationContext.getMethod());
+            ConsolePrinter.say("Type: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
+            ConsolePrinter.say("Duration {}", this.duration);
+            ConsolePrinter.say("Benchmarking {}/{}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
             pressureExecutor.start(1);
         }
     }
