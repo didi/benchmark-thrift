@@ -8,7 +8,7 @@
         <!-- 定义控制台输出 -->
         <Console name="Console" target="SYSTEM_OUT">
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%m"/>
+            <PatternLayout pattern="%m%n"/>
         </Console>
         <!-- 普通日志输出 -->
         <RollingFile name="Info" fileName="${log.file.info}" filePattern="${log.file.info}.%d{yyyy-MM-dd}">
