@@ -10,6 +10,7 @@ import com.pressir.generator.Generator;
 import com.pressir.load.DurationParser;
 import com.pressir.load.Pressure;
 import com.pressir.monitor.Monitor;
+import com.pressir.printer.ConsolePrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +50,11 @@ public class Main {
         Main main = new Main();
         JCommander.newBuilder().addObject(main).build().parse(args);
         try {
+            ConsolePrinter.sayHello();
             main.run();
             TimeUnit.SECONDS.sleep(3);
             main.stop();
-            LOGGER.info("Thank you for using Benchmark-Thrift! Bye!");
+            ConsolePrinter.sayGoodbye();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         } finally {
@@ -73,14 +75,13 @@ public class Main {
 
         //prepare executor
         try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
-            LOGGER.info("This is Thrift-Pressure-Tool");
-            LOGGER.info("Server Hostname: {}", invocationContext.getEndpoint().getHost());
-            LOGGER.info("Server Port: {}", invocationContext.getEndpoint().getPort());
-            LOGGER.info("Pressure Service: {}", invocationContext.getService());
-            LOGGER.info("Pressure Method: {}", invocationContext.getMethod());
-            LOGGER.info("Pressure: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
-            LOGGER.info("Pressure Duration: {}", this.duration);
-            LOGGER.info("Benchmarking {} {}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
+            ConsolePrinter.say("Server Hostname: {}", invocationContext.getEndpoint().getHost());
+            ConsolePrinter.say("Server Port: {}", invocationContext.getEndpoint().getPort());
+            ConsolePrinter.say("Pressure Service: {}", invocationContext.getService());
+            ConsolePrinter.say("Pressure Method: {}", invocationContext.getMethod());
+            ConsolePrinter.say("Pressure: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
+            ConsolePrinter.say("Pressure Duration: {}", this.duration);
+            ConsolePrinter.say("Benchmarking {} {}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
             pressureExecutor.start(1);
         }
     }
