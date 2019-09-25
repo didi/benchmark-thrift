@@ -52,35 +52,35 @@ function validate(){
 }
 
 function print_usage(){
-  file="../resources/usage.txt";
-  if [[ ! -f ${file} ]]; then
-    file="conf/usage.txt";
-  fi
-  if [[ ! -f ${file} ]]; then
-    echo "hello"
-    return;
-  fi
-
   while IFS= read -r line || [[ -n ${line} ]]; do
-    printf '%s\n' "$line"
+    if [[ ${line} != ${name}* ]]; then
+      printf '%s\n' "$line"
+    fi
   done < "$file"
 }
 
-function print_tool_version(){
-  file="../resources/thrift-benchmark.properties"
-
-  while IFS='=' read -r key value|| [[ -n ${key} ]]; do
-    key=$(echo $key | tr '.' '_')
-    eval ${key}=\${value}
+function print_version(){
+  version=0.0.1
+  while IFS=':' read -r key value || [[ -n ${key} ]]; do
+    if [[ ${key} == ${name} ]]; then
+      version=${value}
+    fi
   done < "$file"
-  echo "This is ${project_name}, version ${project_version}"
+  printf "This is ${name}, version ${version}\n"
 }
 
 # 设置默认值
-name="bt"
+name="BenchmarkThrift"
+shell="bt"
+file=".deploy"
 params=""
 types=0
-while getopts ":n:c:D:q:p:d:hv:" opt
+if [[ ! -f ${file} ]]; then
+  echo "${shell}: tool is broken, please download and deploy it again"
+  return;
+fi
+
+while getopts ":n:c:D:q:p:d:hv" opt
 do
   case "$opt" in
     c)
@@ -111,23 +111,23 @@ do
       exit 1
       ;;
     v)
-      print_tool_version
+      print_version
       exit 1
       ;;
     *)
-      echo "${name}: illegal option ${OPTARG}"
+      echo "${shell}: illegal option ${OPTARG}"
       print_usage
       exit 1
       ;;
     esac
 done
 if [[ ${types} == 2 ]];  then
-  echo "${name}: only one of -c or -q could be specified"
+  echo "${shell}: only one of -c or -q could be specified"
   print_usage
   exit 1
 fi
 if [[ $protocol == "" ]]; then
-  echo "${name}: please use -p to specify thrift conf file"
+  echo "${shell}: please use -p to specify thrift conf file"
   print_usage
   exit 1
 fi
@@ -140,7 +140,7 @@ fi
 
 shift $(($OPTIND - 1))
 if [[ $1 == "" ]];  then
-  echo "${name}: please enter thrift url"
+  echo "${shell}: please enter thrift url"
   print_usage
   exit 1
 fi

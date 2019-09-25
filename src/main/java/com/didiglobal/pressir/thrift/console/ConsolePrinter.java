@@ -1,6 +1,6 @@
-package com.didiglobal.pressir.thrift.printer;
+package com.didiglobal.pressir.thrift.console;
 
-import com.didiglobal.pressir.thrift.ThriftBenchmarkProperties;
+import com.didiglobal.pressir.thrift.DeployInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +13,11 @@ public class ConsolePrinter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsolePrinter.class);
 
     public static void sayHello() {
-        LOGGER.info("This is {}, version {}", ThriftBenchmarkProperties.getProjectName(), ThriftBenchmarkProperties.getProjectVersion());
+        LOGGER.info("This is {}, version {}", DeployInfo.getName(), DeployInfo.getVersion());
     }
 
     public static void sayGoodbye() {
-        LOGGER.info("Thank you for using {}, Bye!", ThriftBenchmarkProperties.getProjectName());
+        LOGGER.info("Thank you for using {}, Bye!", DeployInfo.getName());
     }
 
     public static void say(String msg, Object... vars) {
@@ -25,24 +25,24 @@ public class ConsolePrinter {
     }
 
     public static void onParamError(String message) {
-        LOGGER.error("Error: {}", message);
+        LOGGER.error("{}: {}", DeployInfo.getShell(), message);
         printUsage();
         printExamples();
     }
 
-    public static void onError(String message) {
-        LOGGER.error("Error: {}", message);
+    public static void onError(String message, Object... vars) {
+        LOGGER.error(message, vars);
     }
 
     private static void printUsage() {
-        List<String> usage = ThriftBenchmarkProperties.getUsage();
+        List<String> usage = DeployInfo.getUsage();
         for (String s : usage) {
             LOGGER.info(s);
         }
     }
 
     private static void printExamples() {
-        List<String> examples = ThriftBenchmarkProperties.getExamples();
+        List<String> examples = DeployInfo.getExamples();
         for (String s : examples) {
             LOGGER.info(s);
         }

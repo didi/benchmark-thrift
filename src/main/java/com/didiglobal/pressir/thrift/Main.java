@@ -4,7 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.FileConverter;
-import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
+import com.didiglobal.pressir.thrift.console.ConsolePrinter;
 import com.didiglobal.pressir.thrift.constant.Constants;
 import com.didiglobal.pressir.thrift.context.InvocationContext;
 import com.didiglobal.pressir.thrift.executor.PressureExecutor;

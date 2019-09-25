@@ -1,3 +1,4 @@
+BenchmarkThrift: 0.0.1
 Usage: ./BT.sh -p <protocol file> [options] <host>:<port>/<service>/<method>
 Options:
    -p thriftfile  File pointed the protocol and the transport and thrift version

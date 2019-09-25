@@ -28,7 +28,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.pressir.printer" additivity="true">
+        <Logger name="com.didiglobal.pressir.thrift.console" additivity="true">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="DEBUG">
