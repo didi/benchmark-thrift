@@ -1,10 +1,13 @@
-Usage: ./BT.sh -p <protocol file> -d <data file> [ -c concurrency ] [ -D duration ] [options] <host>:<port>/<service>/<method>
+Usage: ./BT.sh -p <protocol file> [options] <host>:<port>/<service>/<method>
 Options:
    -p thriftfile  File pointed the protocol and the transport and thrift version
-   -d paramsfile  File containing data to the rpc method
+   -d datafile    File containing data to the rpc method
    -c concurrency Number of multiple requests to make at a time
-   -D duration    Pressure duration
+                  If no -c nor -q is specified, default value is 1 concurrency
    -q throughput  Number of requests issued in 1 Second
+                  If no -c nor -q is specified, default value is 1 concurrency
+   -D duration    Load test duration, a value of 10 or 10s means 10 seconds, 2m for 2 minutes
+                  If not specified, default value is 60 seconds
    -h             Display usage information (this message) and exit
    -v             Print version number and exit"
 Examples:

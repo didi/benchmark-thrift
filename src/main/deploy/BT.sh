@@ -51,10 +51,19 @@ function validate(){
   fi
 }
 
-function print_file(){
+function print_usage(){
+  file="../resources/usage.txt";
+  if [[ ! -f ${file} ]]; then
+    file="conf/usage.txt";
+  fi
+  if [[ ! -f ${file} ]]; then
+    echo "hello"
+    return;
+  fi
+
   while IFS= read -r line || [[ -n ${line} ]]; do
     printf '%s\n' "$line"
-  done < "$1"
+  done < "$file"
 }
 
 function print_tool_version(){
@@ -68,36 +77,37 @@ function print_tool_version(){
 }
 
 # 设置默认值
-startparam=""
+name="bt"
+params=""
 types=0
-while getopts ":n:c:D:q:p:d:hv" opt
+while getopts ":n:c:D:q:p:d:hv:" opt
 do
   case "$opt" in
     c)
       concurrency="$OPTARG"
       types=$[types+1]
-      startparam="-c $concurrency $startparam "
+      params="-c $concurrency $params "
       ;;
     D)
       duration="$OPTARG"
-      startparam="-D $duration $startparam "
+      params="-D $duration $params "
       ;;
     q)
       throughput="$OPTARG"
       types=$[types+1]
-      startparam="-q $throughput $startparam "
+      params="-q $throughput $params "
       ;;
     p)
       protocol="$OPTARG"
-      startparam="-p $protocol $startparam "
+      params="-p $protocol $params "
       validate
       ;;
     d)
       param="$OPTARG"
-      startparam="-d $param $startparam "
+      params="-d $param $params "
       ;;
     h)
-      print_file "../resources/usage.txt"
+      print_usage
       exit 1
       ;;
     v)
@@ -105,37 +115,36 @@ do
       exit 1
       ;;
     *)
-      echo "error: param error! use -h for help!"
+      echo "${name}: illegal option ${OPTARG}"
+      print_usage
       exit 1
       ;;
     esac
 done
-if [ $types == 2 ];  then
-  echo "error: pressure type must be -c or -q!"
+if [[ ${types} == 2 ]];  then
+  echo "${name}: only one of -c or -q could be specified"
+  print_usage
   exit 1
 fi
-
-if [[ $duration == "" ]]; then
-  startparam="$startparam -D 60s"
-fi
-
-if [ $types == 0 ]; then
-  startparam="$startparam -c 1"
-fi
-
 if [[ $protocol == "" ]]; then
-  echo "error: thrift conf must be pointed! Use -p to pointed the conf!"
+  echo "${name}: please use -p to specify thrift conf file"
+  print_usage
   exit 1
 fi
-
-
+if [[ ${duration} == "" ]]; then
+  params="$params -D 60s"
+fi
+if [ $types == 0 ]; then
+  params="$params -c 1"
+fi
 
 shift $(($OPTIND - 1))
 if [[ $1 == "" ]];  then
-  echo "error: please enter url!"
+  echo "${name}: please enter thrift url"
+  print_usage
   exit 1
 fi
-startparam="$startparam -u $1"
+params="$params -u $1"
 
-start $startparam
+start $params
 

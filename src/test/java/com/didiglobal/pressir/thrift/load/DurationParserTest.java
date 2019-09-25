@@ -86,13 +86,13 @@ public class DurationParserTest {
      * perf test
      */
     @Test
-    public void perf_should_parse_1m_within_2_seconds() {
+    public void perf_should_parse_1m_within_3_seconds() {
         long start = System.currentTimeMillis();
         int count = 1000000;
         for (int i = 0; i < count; i++) {
             DurationParser.parse(i + "hours");
         }
         long timeSpent = System.currentTimeMillis() - start;
-        assertTrue("expects <2000ms, actual is " + timeSpent + "ms", timeSpent < 2000);
+        assertTrue("expects <3000ms, actual is " + timeSpent + "ms", timeSpent < 3000);
     }
 }

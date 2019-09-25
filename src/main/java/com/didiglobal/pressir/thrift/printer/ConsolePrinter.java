@@ -22,7 +22,6 @@ public class ConsolePrinter {
 
     public static void say(String msg, Object... vars) {
         LOGGER.info(msg, vars);
-        LOGGER.info("\n");
     }
 
     public static void onParamError(String message) {
@@ -32,7 +31,7 @@ public class ConsolePrinter {
     }
 
     public static void onError(String message) {
-        LOGGER.error("Error: {}\n", message);
+        LOGGER.error("Error: {}", message);
     }
 
     private static void printUsage() {

@@ -66,8 +66,6 @@ public class Main {
             afterStopped();
         } catch (Exception e) {
             ConsolePrinter.onError(e.getMessage());
-        } finally {
-            System.exit(1);
         }
     }
 
