@@ -1,6 +1,6 @@
 package com.didiglobal.pressir.thrift;
 
-import com.pressir.printer.ConsolePrinter;
+import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
 
 import java.io.IOException;
 import java.io.InputStream;

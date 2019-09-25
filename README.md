@@ -1,6 +1,7 @@
-##它是什么？
+##BencharkThrift
 
-Benchmark Thrift是一个开源应用程序，旨在Thrift应用程序的性能测试。这是迄今为止的第一个开箱即用的Thrift压测工具，还可以到Pressir压测平台进行体验更多的功能。
+**BenchmarkThrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
+> [README in English](README_EN.md)
 
 ##特点
 
