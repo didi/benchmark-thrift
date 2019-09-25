@@ -1,13 +1,13 @@
 package com.pressir;
 
-import com.pressir.base.transport.TFramedTransportFactoryTest;
-import com.pressir.base.transport.TSocketFactoryTest;
-import com.pressir.context.ContextParserTest;
-import com.pressir.context.CustomClassLoaderTest;
-import com.pressir.context.InvocationContextTest;
-import com.pressir.load.DurationParserTest;
-import com.pressir.load.PressureTest;
-import com.pressir.utils.ReflectUtilsTest;
+import com.didiglobal.pressir.thrift.base.transport.TFramedTransportFactoryTest;
+import com.didiglobal.pressir.thrift.base.transport.TSocketFactoryTest;
+import com.didiglobal.pressir.thrift.context.ContextParserTest;
+import com.didiglobal.pressir.thrift.context.CustomClassLoaderTest;
+import com.didiglobal.pressir.thrift.context.InvocationContextTest;
+import com.didiglobal.pressir.thrift.load.DurationParserTest;
+import com.didiglobal.pressir.thrift.load.PressureTest;
+import com.didiglobal.pressir.thrift.utils.ReflectUtilsTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

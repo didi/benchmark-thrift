@@ -1,14 +1,10 @@
 package com.pressir;
 
+import com.didiglobal.pressir.thrift.Main;
 import com.pressir.idl.service.Service;
 import org.apache.thrift.transport.TTransportException;
 import org.junit.Before;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 
