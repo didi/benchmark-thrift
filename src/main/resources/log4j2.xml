@@ -28,10 +28,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.pressir.printer" additivity="true">
+        <Logger name="com.didiglobal.pressir.thrift.printer" level="INFO" additivity="true">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Root level="DEBUG">
+        <Root level="INFO">
             <AppenderRef ref="Info"/>
             <AppenderRef ref="Error"/>
         </Root>

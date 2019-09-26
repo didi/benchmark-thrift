@@ -17,6 +17,13 @@
         <fileSet>
             <directory>src/main/deploy</directory>
             <outputDirectory/>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/deploy/demo</directory>
+            <outputDirectory>conf</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>src/main/thrift</directory>

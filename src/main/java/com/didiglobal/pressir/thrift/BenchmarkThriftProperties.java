@@ -1,6 +1,6 @@
 package com.didiglobal.pressir.thrift;
 
-import com.pressir.printer.ConsolePrinter;
+import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +12,16 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-public class ThriftBenchmarkProperties {
+public class BenchmarkThriftProperties {
 
     private static Properties properties;
     private static Map<String, List<String>> symbolValues;
 
     static {
         try {
-            properties = readAsProperties("thrift-benchmark.properties");
+            properties = readAsProperties("benchmark-thrift.properties");
         } catch (Exception e) {
-            ConsolePrinter.onError("Cannot find thrift-benchmark.properties");
+            ConsolePrinter.onError("Cannot find benchmark-thrift.properties");
         }
         try {
             symbolValues = readAsStringList("usage.txt");
@@ -55,12 +55,12 @@ public class ThriftBenchmarkProperties {
 
     private static Properties readAsProperties(String name) {
         Properties properties = new Properties();
-        try (InputStream inputStream = ThriftBenchmarkProperties.class.getClassLoader().getResourceAsStream(name)) {
+        try (InputStream inputStream = BenchmarkThriftProperties.class.getClassLoader().getResourceAsStream(name)) {
             if (inputStream != null) {
                 properties.load(inputStream);
             }
         } catch (IOException e) {
-            ConsolePrinter.onError("Cannot find thrift-benchmark.properties");
+            ConsolePrinter.onError("Cannot find benchmark-thrift.properties");
         }
         return properties;
     }

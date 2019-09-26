@@ -1,8 +1,9 @@
 package com.didiglobal.pressir.thrift.monitor;
 
 
-import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
 import com.didiglobal.pressir.thrift.constant.Constants;
+import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.protocol.TProtocolException;
 import org.apache.thrift.transport.TTransportException;
@@ -183,8 +184,7 @@ class Statistic {
             Throwable throwable = ((InvocationTargetException) e).getTargetException();
             if (throwable instanceof TTransportException) {
                 int count = EXCEPTION_COUNT_MAP.get("TRANSPORT_EXCEPTION");
-                count++;
-                EXCEPTION_COUNT_MAP.put("TRANSPORT_EXCEPTION", count);
+                EXCEPTION_COUNT_MAP.put("TRANSPORT_EXCEPTION", ++count);
                 int type = ((TTransportException) throwable).getType();
                 String msg = TRANSPORT_EXCEPTION_TYPE_MAP.get(type);
                 statisticalErrCount("TTransportException[" + type + ", Msg: " + msg + "]");
@@ -192,35 +192,37 @@ class Statistic {
             }
             if (throwable instanceof TProtocolException) {
                 int count = EXCEPTION_COUNT_MAP.get("PROTOCOL_EXCEPTION");
-                count++;
-                EXCEPTION_COUNT_MAP.put("PROTOCOL_EXCEPTION", count);
+                EXCEPTION_COUNT_MAP.put("PROTOCOL_EXCEPTION", ++count);
                 int type = ((TProtocolException) throwable).getType();
                 String msg = PROTOCOL_EXCEPTION_TYPE_MAP.get(type);
                 statisticalErrCount("TProtocolException[" + type + ", Msg: " + msg + "]");
-                onError(throwable, PROTOCOL_EXCEPTION_TYPE_MAP.get(((TProtocolException) throwable).getType()));
+                onError(throwable, msg);
             }
             if (throwable instanceof TApplicationException) {
                 int count = EXCEPTION_COUNT_MAP.get("APPLICATION_EXCEPTION");
-                count++;
-                EXCEPTION_COUNT_MAP.put("APPLICATION_EXCEPTION", count);
+                EXCEPTION_COUNT_MAP.put("APPLICATION_EXCEPTION", ++count);
                 int type = ((TApplicationException) throwable).getType();
                 String msg = APPLICATION_EXCEPTION_TYPE_MAP.get(type);
                 statisticalErrCount("TApplicationException[" + type + ", Msg: " + msg + "]");
-                onError(throwable, APPLICATION_EXCEPTION_TYPE_MAP.get(((TApplicationException) throwable).getType()));
+                onError(throwable, msg);
             }
         } else {
             int count = EXCEPTION_COUNT_MAP.get("OTHERS");
             count++;
             EXCEPTION_COUNT_MAP.put("OTHERS", count);
-            String errorMsg = "null";
-            statisticalErrCount(errorMsg);
+            statisticalErrCount(e.getMessage());
             onError(e, null);
         }
     }
 
-    private void onError(Exception e, String msg) {
-        LOGGER.error("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
+    private synchronized void onError(Throwable e, String msg) {
+        if (Strings.isBlank(msg)) {
+            LOGGER.error("ErrMsg: {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage());
+        } else {
+            LOGGER.error("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
+        }
     }
+
     private void statisticalErrCount(String errorMsg) {
         Integer msgCount = EXCEPTION_MAP.get(errorMsg);
         if (msgCount == null) {
@@ -233,9 +235,6 @@ class Statistic {
         EXCEPTION_MAP.put(errorMsg, ++msgCount);
     }
 
-    private synchronized void onError(Throwable e, String msg) {
-        LOGGER.error("ErrMsg: {} , Maybe caused by {}", e.getMessage() == null ? e.getStackTrace()[0].toString() : e.getMessage(), msg);
-    }
 
     void onStop() {
         EXECUTOR.shutdown();

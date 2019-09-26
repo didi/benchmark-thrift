@@ -55,12 +55,10 @@ public class Main {
             ConsolePrinter.onParamError(e.getMessage());
             return;
         }
-
         try {
             beforeRun();
             main.run();
             afterRun();
-
             beforeStop();
             main.stop();
             afterStopped();

@@ -1,8 +1,8 @@
 package com.didiglobal.pressir.thrift.base;
 
-import com.google.common.net.HostAndPort;
 import com.didiglobal.pressir.thrift.base.transport.TTransportFactory;
 import com.didiglobal.pressir.thrift.monitor.Monitor;
+import com.google.common.net.HostAndPort;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
@@ -10,6 +10,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -21,6 +23,8 @@ import java.util.Objects;
  * @Date 2019-09-19 21:09
  */
 public class ServiceClientInvocation<T extends TServiceClient> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceClientInvocation.class);
 
     private final TServiceClientFactory<T> serviceClientFactory;
 
@@ -45,12 +49,15 @@ public class ServiceClientInvocation<T extends TServiceClient> {
             Monitor.onConnect(keyword);
             this.open(client);
             Monitor.onSend(keyword);
-            method.invoke(client, args);
+            Object o = method.invoke(client, args);
             Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - startAt));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Received: {}", method.getReturnType().cast(o));
+            }
         } catch (Exception e) {
             if (e instanceof TBase) {
-                Monitor.onReceived(keyword , (int) (System.currentTimeMillis() - startAt));
-            }else {
+                Monitor.onReceived(keyword, (int) (System.currentTimeMillis() - startAt));
+            } else {
                 Monitor.onError(keyword, e);
             }
         } finally {
