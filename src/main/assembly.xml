@@ -12,22 +12,19 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/classes</directory>
-            <outputDirectory>conf</outputDirectory>
+            <outputDirectory>lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>src/main/deploy</directory>
-            <outputDirectory/>
-            <includes>
-                <include>*.sh</include>
-            </includes>
+            <directory>src/main/bin</directory>
+            <outputDirectory>bin</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>src/main/deploy/demo</directory>
-            <outputDirectory>conf</outputDirectory>
+            <directory>src/main/demo</directory>
+            <outputDirectory>demo</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>src/main/thrift</directory>
-            <outputDirectory>thrift</outputDirectory>
+            <outputDirectory>lib/thrift</outputDirectory>
         </fileSet>
     </fileSets>
     <dependencySets>
