@@ -1,8 +1,8 @@
 package com.didiglobal.pressir.thrift.monitor;
 
 
+import com.didiglobal.pressir.thrift.console.ConsolePrinter;
 import com.didiglobal.pressir.thrift.constant.Constants;
-import com.didiglobal.pressir.thrift.printer.ConsolePrinter;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.thrift.TApplicationException;
 import org.apache.thrift.protocol.TProtocolException;
