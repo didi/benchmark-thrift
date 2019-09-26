@@ -1,5 +1,5 @@
 BenchmarkThrift: 0.0.1
-Usage: ./BT.sh -p <protocol file> [options] <host>:<port>/<service>/<method>
+Usage: ./bt.sh -p <protocol file> [options] <host>:<port>/<service>/<method>
 Options:
    -p thriftfile  File pointed the protocol and the transport and thrift version
    -d datafile    File containing data to the rpc method
@@ -12,7 +12,7 @@ Options:
    -h             Display usage information (this message) and exit
    -v             Print version number and exit"
 Examples:
-    # Benchmark at 1 concurrency for 60 seconds:
-    ./BT.sh -p protocol.conf -d data.txt 127.0.0.1:8090/service/method
-    # Benchmark at 10 QPS for 5 minutes:
-    ./BT.sh -p protocol.conf -d data.txt -q 10 -D 5m 127.0.0.1:8090/service/method
+    # Benchmark a non-args thrift service at 1 concurrency for 60 seconds:
+    ./bt.sh -p demo/protocol.conf 127.0.0.1:8090/service/method
+    # Benchmark a simple thrift service at 10 QPS for 5 minutes:
+    ./bt.sh -p demo/protocol.conf -d data.txt -q 10 -D 5m 127.0.0.1:8090/service/method
