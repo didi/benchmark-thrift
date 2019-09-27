@@ -39,52 +39,54 @@ function validate(){
 
   # 指定版本是否合规
   . $protocol >/dev/null 2>&1
-  if [[ ${version} == "" ]]; then
-    echo "${name}: 必须在配置文件中指定Thrift的版本信息(Thrift version information must be specified in the configuration file)"
-    exit 1
-  fi
-  if [[ ${versions} != *$version* ]]; then
-    echo "${name}: 当前工具不支持您指定的Thrift版本,工具目前支持的版本有:"$versions"(The tool does not support the Thrift version you specified yet. The supported version of the tool are: "$versions")"
+  if [[ $versions != *$version* ]]; then
+    echo error: thrift版本信息必须为"$versions"中的一个!;
     exit 1
   fi
 
   # 是否指定jar包
   if [[ $classpath == "" || $classpath != *.jar ]]; then
-    echo "${name}: 配置文件中必须指定Jar位置(Jar information must be specified in the configuration file)"
+    echo "error: jar file must be prepared!"
     exit 1
   fi
 }
 
 function print_usage(){
-  file="conf/usage.txt";
-  if [[ ! -f ${file} ]]; then
-    file="conf/usage.txt";
-  fi
-  if [[ ! -f ${file} ]]; then
-    echo "hello"
-    return;
-  fi
+  printf "\
+Usage: ./${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 
-  while IFS= read -r line || [[ -n ${line} ]]; do
-    printf '%s\n' "$line"
-  done < "$file"
-}
+Options:
+   -c <concurrency>       Number of multiple requests to make at a time
+                          If no -c nor -q is specified, default value is 1 concurrency
+   -q <throughput>        Number of requests issued in 1 Second
+                          If no -c nor -q is specified, default value is 1 concurrency
+   -t <timelimit>         how long the benchmark runs, 2 or 2s means 10 seconds, 2m for 2 minutes, 2h for 2 hours
+                          If not specified, default value is 60 seconds
+   -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
+                          If not specified, default value is conf/thrift.conf
+   -h                     Display usage information (this message) and exit
+   -v                     Print version number and exit
 
-function print_tool_version(){
-  file="conf/thrift-benchmark.properties"
+Where:
+   <data_file>            A local file that contains request arguments, prefixed by a "@".
+                          If the thrift method has parameters, <data_file> is mandatory.
 
-  while IFS='=' read -r key value|| [[ -n ${key} ]]; do
-    key=$(echo $key | tr '.' '_')
-    eval ${key}=\${value}
-  done < "$file"
-  echo "This is ${project_name}, version ${project_version}"
+Examples:
+    # Benchmark a non-args thrift method
+    ./bt.sh thrift://127.0.0.1:8090/service/method
+    # Benchmark a non-args thrift method at 10 QPS for 5 minutes
+    ./bt.sh -q 10 -D 5m thrift://127.0.0.1:8090/service/method
+"
 }
 
 # 设置默认值
-name="bt"
+name="BenchmarkThrift"
+shell="benchmark"
+version="0.0.1"
 params=""
 types=0
-while getopts ":n:c:D:q:p:d:hv:" opt
+
+while getopts ":n:c:D:q:p:d:hv" opt
 do
   case "$opt" in
     c)
@@ -115,40 +117,39 @@ do
       exit 1
       ;;
     v)
-      print_tool_version
+      printf "This is ${name}, version ${version}\n"
       exit 1
       ;;
     *)
-      echo "${name}: illegal option ${OPTARG}"
+      echo "${shell}: illegal option ${OPTARG}"
       print_usage
       exit 1
       ;;
     esac
 done
 if [[ ${types} == 2 ]];  then
-  echo "${name}: 发压类型必须是并发(-c)或QPS(-q)发压中的一种(only one of -c or -q could be specified)"
+  echo "${shell}: only one of -c or -q could be specified"
   print_usage
   exit 1
 fi
-if [[ ${protocol} == "" ]]; then
-  echo "${name}: 必须通过-p来指定Thrift 配置文件(please use -p to specify thrift conf file)"
+if [[ $protocol == "" ]]; then
+  echo "${shell}: please use -p to specify thrift conf file"
   print_usage
   exit 1
 fi
 if [[ ${duration} == "" ]]; then
   params="$params -D 60s"
 fi
-if [[ ${types} == 0 ]]; then
+if [ $types == 0 ]; then
   params="$params -c 1"
 fi
 
 shift $(($OPTIND - 1))
 if [[ $1 == "" ]];  then
-  echo "${name}: 需要在启动命令的最后指定Thrift url信息(please enter thrift url)"
+  echo "${shell}: please enter thrift url"
   print_usage
   exit 1
 fi
-
 params="$params -u $1"
 
 start $params
