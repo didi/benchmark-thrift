@@ -32,13 +32,13 @@ public class Main {
     @Parameter(names = {"-c"}, description = "concurrency")
     private Integer threadNum;
 
-    @Parameter(names = {"-D"}, description = "duration", required = true)
-    private String duration;
+    @Parameter(names = {"-t"}, description = "timeLimit", required = true)
+    private String timeLimit;
 
     @Parameter(names = {"-q"}, description = "throughput")
     private Integer throughput;
 
-    @Parameter(names = {"-p"}, description = "thrift conf", required = true, converter = FileConverter.class)
+    @Parameter(names = {"-e"}, description = "thrift conf", required = true, converter = FileConverter.class)
     private File contextFile;
 
     @Parameter(names = {"-d"}, description = "params conf", converter = FileConverter.class)
@@ -70,7 +70,7 @@ public class Main {
 
         InvocationContext invocationContext = new InvocationContext(contextFile, paramsFile, url);
         //prepare monitor
-        Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.duration) / 10);
+        Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 
         //prepare executor
         try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
@@ -79,7 +79,7 @@ public class Main {
             ConsolePrinter.say("Thrift Service: {}", invocationContext.getService());
             ConsolePrinter.say("Thrift Method: {}", invocationContext.getMethod());
             ConsolePrinter.say("Type: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
-            ConsolePrinter.say("Duration: {}", this.duration);
+            ConsolePrinter.say("Duration: {}", this.timeLimit);
             ConsolePrinter.say("Benchmarking {}/{}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
             ConsolePrinter.say("\tSend\tSuccess\tTE\tPE\tAE\tOE");
             pressureExecutor.start(1);
@@ -88,11 +88,11 @@ public class Main {
 
     private PressureExecutor getExecutor(Generator generator) {
         if (this.threadNum != null) {
-            Pressure pressure = new Pressure(threadNum, this.duration);
+            Pressure pressure = new Pressure(threadNum, this.timeLimit);
             return PressureExecutor.concurrency(generator, pressure::getCurrentQuantity);
         }
 
-        Pressure pressure = new Pressure(this.throughput, this.duration);
+        Pressure pressure = new Pressure(this.throughput, this.timeLimit);
         return PressureExecutor.throughput(generator, pressure::getCurrentQuantity);
     }
 }

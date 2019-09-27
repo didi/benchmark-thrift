@@ -39,14 +39,18 @@ function validate(){
 
   # 指定版本是否合规
   . $protocol >/dev/null 2>&1
-  if [[ $versions != *$version* ]]; then
-    echo error: thrift版本信息必须为"$versions"中的一个!;
+  if [[ ${version} == "" ]]; then
+    echo "${shell}: thrift version must be specified in thrift conf file"
+    exit 1
+  fi
+  if [[ ${versions} != *$version* ]]; then
+    echo "${shell}: the tool does not support the thrift version you specified yet. tool support "$versions""
     exit 1
   fi
 
   # 是否指定jar包
   if [[ $classpath == "" || $classpath != *.jar ]]; then
-    echo "error: jar file must be prepared!"
+    echo "${shell}: jar information must be specified in thrift conf file"
     exit 1
   fi
 }
@@ -94,16 +98,16 @@ do
       types=$[types+1]
       params="-c $concurrency $params "
       ;;
-    D)
-      duration="$OPTARG"
-      params="-D $duration $params "
+    t)
+      timelimit="$OPTARG"
+      params="-D $timelimit $params "
       ;;
     q)
       throughput="$OPTARG"
       types=$[types+1]
       params="-q $throughput $params "
       ;;
-    p)
+    e)
       protocol="$OPTARG"
       params="-p $protocol $params "
       validate
@@ -132,14 +136,17 @@ if [[ ${types} == 2 ]];  then
   print_usage
   exit 1
 fi
-if [[ $protocol == "" ]]; then
-  echo "${shell}: please use -p to specify thrift conf file"
+
+if [[ ${protocol} == "" ]]; then
+  echo "${shell}: thrift conf file was not specified by -p, the thrift.conf in the path(conf/) was used"
   print_usage
   exit 1
 fi
-if [[ ${duration} == "" ]]; then
+
+if [[ ${timelimit} == "" ]]; then
   params="$params -D 60s"
 fi
+
 if [ $types == 0 ]; then
   params="$params -c 1"
 fi
