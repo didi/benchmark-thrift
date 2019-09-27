@@ -52,25 +52,20 @@ public class Main {
         try {
             JCommander.newBuilder().addObject(main).build().parse(args);
         } catch (ParameterException e) {
-            ConsolePrinter.onParamError(e.getMessage());
+            ConsolePrinter.onError(e.getMessage());
+            ConsolePrinter.printUsage();
             return;
         }
 
         try {
-            beforeRun();
             main.run();
-            afterRun();
 
-            beforeStop();
-            main.stop();
-            afterStopped();
+            TimeUnit.SECONDS.sleep(5);
+            Monitor.onStop();
+            ConsolePrinter.sayGoodbye();
         } catch (Exception e) {
             ConsolePrinter.onError(e.getMessage());
         }
-    }
-
-    private static void beforeRun() {
-        ConsolePrinter.sayHello();
     }
 
     private void run() {
@@ -91,22 +86,6 @@ public class Main {
             ConsolePrinter.say("\tSend\tSuccess\tTE\tPE\tAE\tOE");
             pressureExecutor.start(1);
         }
-    }
-
-    private static void afterRun() {
-    }
-
-    private static void beforeStop() throws InterruptedException {
-        int waitInSeconds = 5;
-        TimeUnit.SECONDS.sleep(waitInSeconds);
-    }
-
-    private void stop() {
-        Monitor.onStop();
-    }
-
-    private static void afterStopped() {
-        ConsolePrinter.sayGoodbye();
     }
 
     private PressureExecutor getExecutor(Generator generator) {
