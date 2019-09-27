@@ -52,33 +52,39 @@ function validate(){
 }
 
 function print_usage(){
-  while IFS= read -r line || [[ -n ${line} ]]; do
-    if [[ ${line} != ${name}* ]]; then
-      printf '%s\n' "$line"
-    fi
-  done < "$file"
-}
+  printf "\
+Usage: ./${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 
-function print_version(){
-  version=0.0.1
-  while IFS=':' read -r key value || [[ -n ${key} ]]; do
-    if [[ ${key} == ${name} ]]; then
-      version=${value}
-    fi
-  done < "$file"
-  printf "This is ${name}, version ${version}\n"
+Options:
+   -c <concurrency>       Number of multiple requests to make at a time
+                          If no -c nor -q is specified, default value is 1 concurrency
+   -q <throughput>        Number of requests issued in 1 Second
+                          If no -c nor -q is specified, default value is 1 concurrency
+   -t <timelimit>         how long the benchmark runs, 2 or 2s means 10 seconds, 2m for 2 minutes, 2h for 2 hours
+                          If not specified, default value is 60 seconds
+   -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
+                          If not specified, default value is conf/thrift.conf
+   -h                     Display usage information (this message) and exit
+   -v                     Print version number and exit
+
+Where:
+   <data_file>            A local file that contains request arguments, prefixed by a "@".
+                          If the thrift method has parameters, <data_file> is mandatory.
+
+Examples:
+    # Benchmark a non-args thrift method
+    ./bt.sh thrift://127.0.0.1:8090/service/method
+    # Benchmark a non-args thrift method at 10 QPS for 5 minutes
+    ./bt.sh -q 10 -D 5m thrift://127.0.0.1:8090/service/method
+"
 }
 
 # 设置默认值
 name="BenchmarkThrift"
-shell="bt"
-file=".deploy"
+shell="benchmark"
+version="0.0.1"
 params=""
 types=0
-if [[ ! -f ${file} ]]; then
-  echo "${shell}: tool is broken, please download and deploy it again"
-  return;
-fi
 
 while getopts ":n:c:D:q:p:d:hv" opt
 do
@@ -111,7 +117,7 @@ do
       exit 1
       ;;
     v)
-      print_version
+      printf "This is ${name}, version ${version}\n"
       exit 1
       ;;
     *)
