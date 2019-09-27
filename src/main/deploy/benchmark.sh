@@ -60,7 +60,7 @@ Options:
                           If no -c nor -q is specified, default value is 1 concurrency
    -q <throughput>        Number of requests issued in 1 Second
                           If no -c nor -q is specified, default value is 1 concurrency
-   -t <timelimit>         how long the benchmark runs, 2 or 2s means 10 seconds, 2m for 2 minutes, 2h for 2 hours
+   -t <timelimit>         How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
                           If not specified, default value is 60 seconds
    -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
                           If not specified, default value is conf/thrift.conf
@@ -72,10 +72,14 @@ Where:
                           If the thrift method has parameters, <data_file> is mandatory.
 
 Examples:
-    # Benchmark a non-args thrift method
-    ./bt.sh thrift://127.0.0.1:8090/service/method
-    # Benchmark a non-args thrift method at 10 QPS for 5 minutes
-    ./bt.sh -q 10 -D 5m thrift://127.0.0.1:8090/service/method
+    # 1. benchmark a non-args method with default conf
+    ./${shell}.sh thrift://127.0.0.1:8090/service/method
+    # 2. benchmark at 10 concurrencies for 5 minutes
+    ./${shell}.sh -c 10 -t 5m thrift://127.0.0.1:8090/service/method
+    # 3. benchmark at 10 qps for 2 hours
+    ./${shell}.sh -q 10 -t 2h thrift://127.0.0.1:8090/service/method
+    # 4. benchmark by qps for 2 hours
+    ./${shell}.sh -c 10 -t 2h thrift://127.0.0.1:8090/service/method
 "
 }
 
@@ -121,7 +125,7 @@ do
       exit 1
       ;;
     *)
-      echo "${shell}: illegal option ${OPTARG}"
+      printf "${shell}: illegal option ${OPTARG}\n"
       print_usage
       exit 1
       ;;
