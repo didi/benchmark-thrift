@@ -23,7 +23,7 @@
 用户需要跟据idl生成相应的jar包，然后将jar路径在配置文件中配置好
 ```bash
     thrift -r --gen java xxx.thrift #通过命令生成相应的java文件
-    sh jg.sh version java_path jar_path  #version: 指定thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
+    sh jar_generate.sh version java_path jar_path  #version: 指定thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
 ```        
 
 ##如何运行
@@ -34,45 +34,40 @@
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
     cd benchmark-thrift
     chmod 755 *.sh              # 修改权限，确保命令是可执行的
-    sh bt.sh -c 10 -D 100s -p ./demo.properties -d ./demo.txt 127.0.0.1:8090/Test/test # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
+    sh benchmark.sh -c 10 -D 100s -e thrift.conf 127.0.0.1:8090/Test/test?@dataFile # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
 ```
 
 ####具体用法
 ```bash
-    sh bt.sh -p <thriftConf.properties>  [options] url
+    sh bt.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 ```
 
 ####参数选项
 
- * -p xx.properties  
+ * -e   
 
-与thrift相关的配置，包括TTransport、TProtocol、thrift版本和生成的jar包位置。文件格式限制为.properties文件
+与thrift相关的配置，包括TTransport、TProtocol、thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.conf文件
 
 * ######示例  
         version=0.12.0  
         classpath=/users/didi/test.jar  
         transport=TFramedTransport（transport=tSocket）  
         protocol=TCompactProtocol 其他选项：TBinaryProtocol，TJSONProtocol
-
-*-d data.conf文件,RPC服务的方法参数。在文件中，每一行内容表示方法的一个参数
-
-* ######示例
-        #如果方法测试有4个参数，比如类型为i64、list、struct和string。数据文件内容应如下：
-        123  
-        ["2","3"]  
-        {"name":"value","uType":"uValue"}  
-        string  
-
-*-c 并发度 模拟多少个线程同时发送请求
+        
+*-c 并发度 模拟多少个线程同时发送请求,如果并发度和吞吐量都不指定，会默认采用1个并发度
 
 *-q 吞吐量 在1秒内发出的请求数
 
-*-D 持续时间 默认值为60s。您可以通过以下方式指定持续时间:
+*-t 持续时间 默认值为60s。您可以通过以下方式指定持续时间:
 
-        -D 10[s[econd[s]]] 或者 -D 10[m[inute[s]]] 或者 -D 1[h[hour[s]]] 或者 -D 1[d[day[s]]]
+        -t 10[s[econd[s]]] 或者 -t 10[m[inute[s]]] 或者 -t 1[h[hour[s]]] 或者 -t 1[d[day[s]]]
+        
 *-v 打印版本号
 
 *-h 显示使用信息
+
+Where:
+   <data_file> 一个包含方法参数的本地文件，通过使用@识别为文件信息,如果thrift方法有参数，此文件为必需配置
 
 
 ##贡献
