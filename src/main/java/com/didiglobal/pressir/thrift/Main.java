@@ -39,7 +39,7 @@ public class Main {
     private Integer throughput;
 
     @Parameter(names = {"-e"}, description = "thrift conf", required = true, converter = FileConverter.class)
-    private File contextFile;
+    private File thriftConf;
 
     @Parameter(names = {"-u"}, description = "url", required = true)
     private String url;
@@ -66,7 +66,7 @@ public class Main {
 
     private void run() {
 
-        InvocationContext invocationContext = new InvocationContext(contextFile, url);
+        InvocationContext invocationContext = new InvocationContext(this.thriftConf, this.url);
         //prepare monitor
         Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 
@@ -86,7 +86,7 @@ public class Main {
 
     private PressureExecutor getExecutor(Generator generator) {
         if (this.threadNum != null) {
-            Pressure pressure = new Pressure(threadNum, this.timeLimit);
+            Pressure pressure = new Pressure(this.threadNum, this.timeLimit);
             return PressureExecutor.concurrency(generator, pressure::getCurrentQuantity);
         }
 
