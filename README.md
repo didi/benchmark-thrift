@@ -1,5 +1,5 @@
-##BencharkThrift
-**BenchmarkThrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
+##Benchark-thrift
+**Benchmark-thrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
 > [README in English](README_EN.md)
 
 ##特点
@@ -39,7 +39,7 @@
 
 ####具体用法
 ```bash
-    sh bt.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+    sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 ```
 
 ####参数选项
