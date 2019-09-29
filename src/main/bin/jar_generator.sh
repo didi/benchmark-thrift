@@ -13,9 +13,9 @@ if [[ $3 == "" || $3 != *.jar ]]; then
 fi
 
 function gen_classpath(){
-    for element in `ls thrift/$1`
+    for element in `ls ../lib/thrift/$1`
     do
-        jarfile=thrift/$1/$element:$jarfile
+        jarfile=../lib/thrift/$1/$element:$jarfile
     done
     jarfile=${jarfile%:*}
 }

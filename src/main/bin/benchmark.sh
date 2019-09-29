@@ -78,7 +78,7 @@ function validate(){
 
 function print_usage(){
   printf "\
-Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
 
 Options:
    -c <concurrency>       Number of multiple requests to make at a time
@@ -88,7 +88,7 @@ Options:
    -t <timelimit>         How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
                           If not specified, default value is 60 seconds
    -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
-                          If not specified, default value is conf/thrift.conf
+                          If not specified, default value is ../conf/thrift.env
    -h                     Display usage information (this message) and exit
    -v                     Print version number and exit
 
@@ -170,8 +170,8 @@ if [[ ${types} == 2 ]];  then
 fi
 
 if [[ ${thrift_conf} == "" ]]; then
-  echo "${shell}: thrift conf file was not specified by -e, the thrift.conf in the path(../conf/) was used"
-  thrift_conf=../conf/thrift.conf
+  echo "${shell}: thrift env file was not specified by -e, the thrift.env in the path(../conf/) was used"
+  thrift_conf=../conf/thrift.env
   params="$params -e ${thrift_conf}"
 fi
 

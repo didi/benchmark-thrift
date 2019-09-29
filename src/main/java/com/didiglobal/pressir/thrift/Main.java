@@ -66,7 +66,7 @@ public class Main {
 
     private void run() {
 
-        InvocationContext invocationContext = new InvocationContext(contextFile, url);
+        InvocationContext invocationContext = new InvocationContext(this.contextFile, this.url);
         //prepare monitor
         Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 
@@ -86,7 +86,7 @@ public class Main {
 
     private PressureExecutor getExecutor(Generator generator) {
         if (this.threadNum != null) {
-            Pressure pressure = new Pressure(threadNum, this.timeLimit);
+            Pressure pressure = new Pressure(this.threadNum, this.timeLimit);
             return PressureExecutor.concurrency(generator, pressure::getCurrentQuantity);
         }
 

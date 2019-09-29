@@ -33,8 +33,10 @@ import static com.didiglobal.pressir.thrift.constant.Constants.THRIFT;
  */
 public class InvocationContext {
 
-    public static final String MARK_PATH = "?";
-    public static final char MARK_FILE = '@';
+    private static final String MARK_PATH = "?";
+
+    private static final char MARK_FILE = '@';
+
     private HostAndPort endpoint;
 
     private String service;

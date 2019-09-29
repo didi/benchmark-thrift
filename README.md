@@ -23,7 +23,7 @@
 用户需要跟据idl生成相应的jar包，然后将jar路径在配置文件中配置好
 ```bash
     thrift -r --gen java xxx.thrift #通过命令生成相应的java文件
-    sh jar_generate.sh version java_path jar_path  #version: 指定thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
+    sh jar_generator.sh version java_path jar_path  #version: 指定thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
 ```        
 
 ##如何运行
@@ -32,14 +32,14 @@
 
 ```bash
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
-    cd benchmark-thrift
+    cd benchmark-thrift/bin
     chmod 755 *.sh              # 修改权限，确保命令是可执行的
-    sh benchmark.sh -c 10 -D 100s -e thrift.conf 127.0.0.1:8090/Test/test?@dataFile # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
+    sh benchmark.sh -c 10 -t 100s 127.0.0.1:8090/Test/test?@dataFile # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
 ```
 
 ####具体用法
 ```bash
-    sh bt.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+    sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 ```
 
 ####参数选项
