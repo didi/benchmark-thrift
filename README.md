@@ -32,7 +32,7 @@
 
 ```bash
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
-    cd benchmark-thrift
+    cd benchmark-thrift/bin
     chmod 755 *.sh              # 修改权限，确保命令是可执行的
     sh benchmark.sh -c 10 -D 100s -e thrift.conf 127.0.0.1:8090/Test/test?@dataFile # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
 ```
