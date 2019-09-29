@@ -1,5 +1,5 @@
-##BencharkThrift
-**BenchmarkThrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
+##Benchark-thrift
+**Benchmark-thrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
 > [README in English](README_EN.md)
 
 ##特点

@@ -38,8 +38,8 @@ public class Main {
     @Parameter(names = {"-q"}, description = "throughput")
     private Integer throughput;
 
-    @Parameter(names = {"-e"}, description = "thrift conf", required = true, converter = FileConverter.class)
-    private File contextFile;
+    @Parameter(names = {"-e"}, description = "thrift env", required = true, converter = FileConverter.class)
+    private File thriftEnv;
 
     @Parameter(names = {"-u"}, description = "url", required = true)
     private String url;
@@ -66,7 +66,7 @@ public class Main {
 
     private void run() {
 
-        InvocationContext invocationContext = new InvocationContext(this.contextFile, this.url);
+        InvocationContext invocationContext = new InvocationContext(this.thriftEnv, this.url);
         //prepare monitor
         Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 
