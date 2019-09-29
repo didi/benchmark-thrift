@@ -49,11 +49,11 @@ public class MainTest {
 
     @org.junit.Test
     public void should_running_when_given_right_params_on_throughtput() {
-        Main.main("-q", "100", "-D", "20s", "-p", thriftConf, "-d", paramConf, "-u", "127.0.0.1:8090/Soda/getInfos");
+        Main.main("-q", "100", "-t", "20s", "-e", thriftConf, "-u", "127.0.0.1:8090/Soda/getInfos?@"+paramConf);
     }
 
     @org.junit.Test
     public void should_running_when_given_right_params_on_concurrency() {
-        Main.main("-c", "2", "-D", "20s", "-p", thriftConf, "-d", paramConf, "-u", "127.0.0.1:8090/Soda/getInfos");
+        Main.main("-c", "2", "-t", "20s", "-e", thriftConf, "-u", "127.0.0.1:8090/Soda/getInfos?@"+paramConf);
     }
 }
