@@ -40,20 +40,12 @@ The following requirements exist for running Benchmark-thrift:
          classpath=/Users/didi/test.jar        
          transport=TFramedTransport(transport=TSocket)  
          protocol=TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol          
-   * -d data.conf   
-   The parameters used in the method. In a file, each line represents a parameter of the method
-        * ######Example   
-         #If the method test has 4 parameters, the types are i64, list, struct and string. The data file content should like that:  
-         123  
-         ["2","3"]  
-         {"name":"value","uType":"uValue"}  
-         string   
    * -c concurrency    
    The number of multiple requests to make at a time
    * -q throughput  
    The number of requests issued in 1 Second
    * -t timelimit  
-   Duration of the pressure. It with a default value 60s. You can specify the duration in the following ways:
+   TimeLimit of the pressure. It with a default value 60s. You can specify the duration in the following ways:
    
          -D 10[s[econd[s]]] or -D 10[m[inute[s]]] or -D 1[h[hour[s]]] or -D 1[d[day[s]]]
    * -v     
