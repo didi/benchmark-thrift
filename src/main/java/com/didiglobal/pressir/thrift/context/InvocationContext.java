@@ -1,25 +1,29 @@
 package com.didiglobal.pressir.thrift.context;
 
-import com.google.common.io.Files;
-import com.google.common.net.HostAndPort;
 import com.didiglobal.pressir.thrift.base.ServiceClientInvocation;
 import com.didiglobal.pressir.thrift.base.transport.TTransportFactory;
 import com.didiglobal.pressir.thrift.constant.Constants;
 import com.didiglobal.pressir.thrift.generator.Generator;
 import com.didiglobal.pressir.thrift.generator.InvariantTaskGenerator;
 import com.didiglobal.pressir.thrift.utils.ReflectUtils;
+import com.google.common.io.Files;
+import com.google.common.net.HostAndPort;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
 import org.apache.thrift.protocol.TProtocolFactory;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import static com.didiglobal.pressir.thrift.constant.Constants.THRIFT;
 
 /**
  * @ClassName InvocationContext
@@ -29,6 +33,8 @@ import java.util.Properties;
  */
 public class InvocationContext {
 
+    public static final String MARK_PATH = "?";
+    public static final char MARK_FILE = '@';
     private HostAndPort endpoint;
 
     private String service;
@@ -43,23 +49,64 @@ public class InvocationContext {
 
     private TTransportFactory transportFactory;
 
-    public InvocationContext(File thriftContext, File argsData, String uri) {
+    public InvocationContext(File thriftContext, String uri) {
         this.parseURI(uri);
         this.readThriftContext(thriftContext);
-        this.readArgsData(argsData);
+    }
+
+    private static Object[] castArgs(Method method, String[] args) {
+        try {
+            return ReflectUtils.castArgs(method, args);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error args: " + e.getMessage(), e);
+        }
+    }
+
+    private static TServiceClientFactory genServiceClientClass(Class<? extends TServiceClient> serviceClientClass) {
+        try {
+            return (TServiceClientFactory) ReflectUtils.findInnerClass(serviceClientClass, "Factory").newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Invalid serviceClient: " + serviceClientClass.getName(), e);
+        }
     }
 
     private void parseURI(String uri) {
-        String[] shards = uri.split("/");
-        if (shards.length != Constants.URI_PARTS) {
-            throw new IllegalArgumentException("The format of Url is wrong! It should be Host:Port/Service/Method!");
+        if (uri.startsWith(THRIFT)) {
+            uri = uri.substring(THRIFT.length());
         }
+        String[] shards = uri.split("/");
+        if (shards.length < Constants.URI_PARTS) {
+            throw new IllegalArgumentException("The format of Url is wrong! It should be [thrift://]Host:Port/Service/Method[\\?@data.text]");
+        }
+        int index = uri.indexOf("/");
         try {
-            this.endpoint = HostAndPort.fromString(shards[0]);
-            this.service = shards[1];
-            this.method = shards[2];
+            this.endpoint = HostAndPort.fromString(uri.substring(0,index));
+            uri = uri.substring(index + 1);
+            index = uri.indexOf("/");
+            this.service = uri.substring(0,index);
+            getMethodAndArgs(uri.substring(index + 1));
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid uri: " + uri);
+        }
+    }
+
+    private void getMethodAndArgs(String shard) {
+        if (shard.contains(MARK_PATH)) {
+            int index = shard.indexOf(MARK_PATH);
+            this.method = shard.substring(0, index);
+            if (shard.length() > index + 1) {
+                char c = shard.charAt(index + 1);
+                if (c == MARK_FILE) {
+                    readArgsData(new File(shard.substring(index + 2)));
+                } else {
+                    convertArgs(shard.substring(index + 1));
+                }
+            } else {
+                readArgsData(null);
+            }
+        } else {
+            this.method = shard;
+            readArgsData(null);
         }
     }
 
@@ -74,7 +121,6 @@ public class InvocationContext {
         if (Strings.isBlank(classpath)) {
             throw new IllegalStateException("Blank 'classpath' in thrift conf");
         }
-
         File jarFile = (classpath.charAt(0) == File.separatorChar) ? new File(classpath) : new File(thriftContext.getParent(), classpath);
         try {
             this.classLoader = new CustomClassLoader(jarFile);
@@ -109,6 +155,14 @@ public class InvocationContext {
         }
     }
 
+    private void convertArgs(String argsString) {
+        if (Strings.isBlank(argsString)) {
+            this.arguments = null;
+            return;
+        }
+        this.arguments = Arrays.asList(argsString.split("&"));
+    }
+
     private void readArgsData(File argsData) {
         if (argsData == null || !argsData.exists()) {
             this.arguments = null;
@@ -123,7 +177,6 @@ public class InvocationContext {
             throw new IllegalStateException("Invalid args data: " + argsData.getPath(), e);
         }
     }
-
 
     public HostAndPort getEndpoint() {
         return endpoint;
@@ -152,22 +205,6 @@ public class InvocationContext {
         ServiceClientInvocation<T> invocation = new ServiceClientInvocation<>(serviceClientFactory, this.protocolFactory, this.transportFactory, this.endpoint);
         Object[] args = castArgs(method, this.arguments == null ? null : this.arguments.toArray(new String[0]));
         return new InvariantTaskGenerator<>(invocation, method, args);
-    }
-
-    private static Object[] castArgs(Method method, String[] args) {
-        try {
-            return ReflectUtils.castArgs(method, args);
-        } catch (Exception e) {
-            throw new IllegalStateException("Error args: " + e.getMessage(), e);
-        }
-    }
-
-    private static TServiceClientFactory genServiceClientClass(Class<? extends TServiceClient> serviceClientClass) {
-        try {
-            return (TServiceClientFactory) ReflectUtils.findInnerClass(serviceClientClass, "Factory").newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Invalid serviceClient: " + serviceClientClass.getName(), e);
-        }
     }
 
 }

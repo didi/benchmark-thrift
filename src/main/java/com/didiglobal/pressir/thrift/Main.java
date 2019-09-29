@@ -41,9 +41,6 @@ public class Main {
     @Parameter(names = {"-e"}, description = "thrift conf", required = true, converter = FileConverter.class)
     private File contextFile;
 
-    @Parameter(names = {"-d"}, description = "params conf", converter = FileConverter.class)
-    private File paramsFile;
-
     @Parameter(names = {"-u"}, description = "url", required = true)
     private String url;
 
@@ -63,12 +60,13 @@ public class Main {
             ConsolePrinter.sayGoodbye();
         } catch (Exception e) {
             ConsolePrinter.onError(e.getMessage());
+            System.exit(1);
         }
     }
 
     private void run() {
 
-        InvocationContext invocationContext = new InvocationContext(contextFile, paramsFile, url);
+        InvocationContext invocationContext = new InvocationContext(contextFile, url);
         //prepare monitor
         Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 

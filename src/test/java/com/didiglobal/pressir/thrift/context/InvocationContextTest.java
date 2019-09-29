@@ -9,10 +9,9 @@ public class InvocationContextTest {
     @Test
     public void should_return_TaskGenerator() {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        File thriftConf = new File(classLoader.getResource("thrift.properties").getFile());
-        File argsData = new File(classLoader.getResource("data.text").getFile());
-        String uri = "127.0.0.1:8090/Soda/getInfos";
-        InvocationContext conf = new InvocationContext(thriftConf, argsData, uri);
+        File thriftConf = new File(classLoader.getResource("thrift.conf").getFile());
+        String uri = "thrift://127.0.0.1:8090/Soda/getInfos?@data.text";
+        InvocationContext conf = new InvocationContext(thriftConf, uri);
         conf.getTaskGenerator();
     }
 }

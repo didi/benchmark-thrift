@@ -11,7 +11,7 @@ import java.util.Objects;
 public class MainTest {
 
     private String path = Objects.requireNonNull(this.getClass().getClassLoader().getResource("")).getPath();
-    private String thriftConf = path + "thrift.properties";
+    private String thriftConf = path + "thrift.conf";
     private String paramConf = path + "data.text";
 
     @Before

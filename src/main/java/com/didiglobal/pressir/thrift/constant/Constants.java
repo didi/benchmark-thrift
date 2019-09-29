@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  */
 public class Constants {
 
+    public static final String THRIFT = "thrift://";
+
     public static final int URI_PARTS = 3;
 
     public static final String THROUGHPUT = "QPS";
