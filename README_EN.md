@@ -21,7 +21,7 @@ The following requirements exist for running Benchmark-thrift:
    Make sure you have JAVA_HOME env is properly configured, and then: 
 ```bash
     echo $JAVA_HOME             # should print your Java home dir. If the command fails, you need to install the Java environment. Java Downloads: https://www.oracle.com/technetwork/java/javase/downloads/index.html
-    cd benchmark-thrift
+    cd benchmark-thrift/lib
     chmod 755 *.sh              # make it executable
     sh benchmark.sh -c 10 -D 100s -p ./demo.yml -d ./demo.txt 127.0.0.1:8090/Test/test # run it. If the duration and pressure type are not specified, the default one-minute concurrent execution is achieved
 ```
