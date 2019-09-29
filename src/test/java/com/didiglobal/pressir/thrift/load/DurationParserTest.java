@@ -8,77 +8,77 @@ import static org.junit.Assert.assertTrue;
 public class DurationParserTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_throw_exception() {
+    public void shouldThrowException() {
         DurationParser.parse("s");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_throw_exception_when_given_error_format() {
+    public void shouldThrowExceptionWhenGivenErrorFormat() {
         DurationParser.parse("abc10s");
     }
 
     @Test
-    public void should_return_9() {
+    public void shouldReturn9() {
         Assert.assertEquals(9, DurationParser.parse("9"));
     }
 
     @Test
-    public void should_return_10() {
+    public void shouldReturn10() {
         Assert.assertEquals(10, DurationParser.parse("10s"));
     }
 
     @Test
-    public void should_return_11() {
+    public void shouldReturn11() {
         Assert.assertEquals(11, DurationParser.parse("11second"));
     }
 
     @Test
-    public void should_return_12() {
+    public void shouldReturn12() {
         Assert.assertEquals(12, DurationParser.parse("12seconds"));
     }
 
     @Test
-    public void should_return_60() {
+    public void shouldReturn60() {
         Assert.assertEquals(60, DurationParser.parse("1m"));
     }
 
     @Test
-    public void should_return_120() {
+    public void shouldReturn120() {
         Assert.assertEquals(120, DurationParser.parse("2minute"));
     }
 
     @Test
-    public void should_return_180() {
+    public void shouldReturn180() {
         Assert.assertEquals(180, DurationParser.parse("3minutes"));
     }
 
     @Test
-    public void should_return_3600() {
+    public void shouldReturn3600() {
         Assert.assertEquals(3600, DurationParser.parse("1h"));
     }
 
     @Test
-    public void should_return_7200() {
+    public void shouldReturn7200() {
         Assert.assertEquals(7200, DurationParser.parse("2hour"));
     }
 
     @Test
-    public void should_return_10800() {
+    public void shouldReturn10800() {
         Assert.assertEquals(10800, DurationParser.parse("3hours"));
     }
 
     @Test
-    public void should_return_10800_multi_24() {
+    public void shouldReturn10800Multi24() {
         Assert.assertEquals(3600 * 24, DurationParser.parse("1d"));
     }
 
     @Test
-    public void should_return_10800_multi_48() {
+    public void shouldReturn10800Multi48() {
         Assert.assertEquals(3600 * 48, DurationParser.parse("2day"));
     }
 
     @Test
-    public void should_return_10800_multi_72() {
+    public void shouldReturn10800Multi72() {
         Assert.assertEquals(3600 * 72, DurationParser.parse("3days"));
     }
 
@@ -86,7 +86,7 @@ public class DurationParserTest {
      * perf test
      */
     @Test
-    public void perf_should_parse_1m_within_3_seconds() {
+    public void perfShouldParse1mWithin3Seconds() {
         long start = System.currentTimeMillis();
         int count = 1000000;
         for (int i = 0; i < count; i++) {

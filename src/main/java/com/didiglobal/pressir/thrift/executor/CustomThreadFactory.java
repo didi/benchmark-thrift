@@ -25,14 +25,20 @@ public class CustomThreadFactory implements ThreadFactory {
     CustomThreadFactory(String poolName, int threadPriority) {
         SecurityManager securityManager = System.getSecurityManager();
         this.poolName = poolName;
-        this.threadGroup = (securityManager != null) ? securityManager.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        this.threadGroup = (securityManager != null) ?
+                securityManager.getThreadGroup() :
+                Thread.currentThread().getThreadGroup();
         this.threadPriority = threadPriority;
         this.threadNamePrefix = poolName + '-' + POOL_NUMBER.getAndIncrement() + '-';
     }
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(this.threadGroup, r, this.threadNamePrefix + this.threadNumber.getAndIncrement(), 0);
+        Thread t = new Thread(
+                this.threadGroup,
+                r,
+                this.threadNamePrefix + this.threadNumber.getAndIncrement(),
+                0);
         if (t.isDaemon()) {
             t.setDaemon(false);
         }

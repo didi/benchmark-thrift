@@ -34,7 +34,11 @@ public class ServiceClientInvocation<T extends TServiceClient> {
 
     private final HostAndPort endpoint;
 
-    public ServiceClientInvocation(TServiceClientFactory<T> serviceClientFactory, TProtocolFactory protocolFactory, TTransportFactory transportFactory, HostAndPort endpoint) {
+    public ServiceClientInvocation(
+            TServiceClientFactory<T> serviceClientFactory,
+            TProtocolFactory protocolFactory,
+            TTransportFactory transportFactory,
+            HostAndPort endpoint) {
         this.serviceClientFactory = Objects.requireNonNull(serviceClientFactory);
         this.protocolFactory = Objects.requireNonNull(protocolFactory);
         this.transportFactory = Objects.requireNonNull(transportFactory);

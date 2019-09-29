@@ -29,7 +29,9 @@ public class CustomClassLoader implements Closeable {
             throw new FileNotFoundException("Invalid file: " + jarFile.getPath());
         }
         this.jarFile = new JarFile(jarFile);
-        this.classLoader = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, URLClassLoader.getSystemClassLoader());
+        this.classLoader = URLClassLoader.newInstance(
+                new URL[]{jarFile.toURI().toURL()},
+                URLClassLoader.getSystemClassLoader());
     }
 
     Class<?> loadClass(String className) throws ClassNotFoundException {

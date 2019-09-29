@@ -12,7 +12,7 @@ import java.io.IOException;
 public class CustomClassLoaderTest {
 
     @Test
-    public void should_return_TServiceClient() throws IOException, ClassNotFoundException {
+    public void shouldReturnTServiceClient() throws IOException, ClassNotFoundException {
         File jarFile = new File(this.getClass().getClassLoader().getResource("base-1.0-SNAPSHOT.jar").getFile());
         CustomClassLoader classLoader = new CustomClassLoader(jarFile);
         Class<?> clazz = classLoader.loadClass("Soda$Client");
@@ -20,19 +20,19 @@ public class CustomClassLoaderTest {
     }
 
     @Test(expected = ClassNotFoundException.class)
-    public void should_throw_exception_4_invalid_class() throws IOException, ClassNotFoundException {
+    public void shouldThrowExceptionForInvalidClass() throws IOException, ClassNotFoundException {
         File jarFile = new File(this.getClass().getClassLoader().getResource("base-1.0-SNAPSHOT.jar").getFile());
         CustomClassLoader classLoader = new CustomClassLoader(jarFile);
         classLoader.loadClass("ABC");
     }
 
     @Test(expected = NullPointerException.class)
-    public void should_throw_exception_4_null_file() throws IOException {
+    public void shouldThrowExceptionForNullFile() throws IOException {
         new CustomClassLoader(null);
     }
 
     @Test(expected = FileNotFoundException.class)
-    public void should_throw_exception_4_invalid_file() throws IOException {
+    public void shouldThrowExceptionForInvalidFile() throws IOException {
         File jarFile = new File("xxx");
         new CustomClassLoader(jarFile);
     }

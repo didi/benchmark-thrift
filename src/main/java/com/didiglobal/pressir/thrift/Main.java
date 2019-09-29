@@ -76,9 +76,14 @@ public class Main {
             ConsolePrinter.say("Server Port: {}", invocationContext.getEndpoint().getPort());
             ConsolePrinter.say("Thrift Service: {}", invocationContext.getService());
             ConsolePrinter.say("Thrift Method: {}", invocationContext.getMethod());
-            ConsolePrinter.say("Type: {}", this.threadNum == null ? this.throughput + " " + Constants.THROUGHPUT : this.threadNum + " " + Constants.CONCURRENCY);
+            ConsolePrinter.say("Type: {}", this.threadNum == null ?
+                    this.throughput + " " + Constants.THROUGHPUT :
+                    this.threadNum + " " + Constants.CONCURRENCY);
             ConsolePrinter.say("Duration: {}", this.timeLimit);
-            ConsolePrinter.say("Benchmarking {}/{}/{}", invocationContext.getEndpoint(), invocationContext.getService(), invocationContext.getMethod());
+            ConsolePrinter.say("Benchmarking {}/{}/{}",
+                    invocationContext.getEndpoint(),
+                    invocationContext.getService(),
+                    invocationContext.getMethod());
             ConsolePrinter.say("\tSend\tSuccess\tTE\tPE\tAE\tOE");
             pressureExecutor.start(1);
         }

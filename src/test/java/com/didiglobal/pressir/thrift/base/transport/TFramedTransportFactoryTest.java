@@ -7,20 +7,21 @@ import org.junit.Test;
 public class TFramedTransportFactoryTest {
 
     @Test
-    public void should_return_TFramedTransportFactory_default() {
+    public void shouldReturnTFramedTransportFactoryDefault() {
         TTransportFactory factory = ContextParser.parseTransportFactory("TFramedTransport");
         Assert.assertTrue(factory instanceof TFramedTransportFactory);
     }
 
     @Test
-    public void should_return_TSocketFactory_with_transport_set() {
+    public void shouldReturnTSocketFactoryWithTransportSet() {
         TTransportFactory factory = ContextParser.parseTransportFactory("TFramedTransport(transport=TSocket)");
         Assert.assertTrue(factory instanceof TFramedTransportFactory);
     }
 
     @Test
-    public void should_return_TSocketFactory_with_allfileds_set() {
-        TTransportFactory factory = ContextParser.parseTransportFactory("TFramedTransport(transport=TSocket, maxLength=100)");
+    public void shouldReturnTSocketFactoryWithAllFieldsSet() {
+        TTransportFactory factory =
+                ContextParser.parseTransportFactory("TFramedTransport(transport=TSocket, " + "maxLength=100)");
         Assert.assertTrue(factory instanceof TFramedTransportFactory);
     }
 

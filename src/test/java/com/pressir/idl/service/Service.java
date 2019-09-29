@@ -4,7 +4,6 @@ import com.pressir.idl.Info;
 import com.pressir.idl.Shop;
 import com.pressir.idl.ShopStatus;
 import com.pressir.idl.Soda;
-import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.THsHaServer;
@@ -25,6 +24,7 @@ public class Service {
     public static void main(String[] args) throws TTransportException {
         run();
     }
+
     public static void run() throws TTransportException {
         TNonblockingServerSocket tNonblockingServerTransport = new TNonblockingServerSocket(8090);
         Impl impl = new Impl();

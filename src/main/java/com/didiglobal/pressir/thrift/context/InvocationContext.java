@@ -78,7 +78,8 @@ public class InvocationContext {
         }
         String[] shards = uri.split("/");
         if (shards.length < Constants.URI_PARTS) {
-            throw new IllegalArgumentException("The format of Url is wrong! It should be [thrift://]Host:Port/Service/Method[\\?@data.text]");
+            throw new IllegalArgumentException("The format of Url is wrong! " +
+                    "It should be [thrift://]Host:Port/Service/Method[\\?@data.text]");
         }
         int index = uri.indexOf("/");
         try {
@@ -123,7 +124,9 @@ public class InvocationContext {
         if (Strings.isBlank(classpath)) {
             throw new IllegalStateException("Blank 'classpath' in thrift conf");
         }
-        File jarFile = (classpath.charAt(0) == File.separatorChar) ? new File(classpath) : new File(thriftContext.getParent(), classpath);
+        File jarFile = (classpath.charAt(0) == File.separatorChar) ?
+                new File(classpath) :
+                new File(thriftContext.getParent(), classpath);
         try {
             this.classLoader = new CustomClassLoader(jarFile);
         } catch (IOException e) {
@@ -196,7 +199,8 @@ public class InvocationContext {
         Class<? extends TServiceClient> serviceClientClass;
         Method method;
         try {
-            serviceClientClass = (Class<? extends TServiceClient>) this.classLoader.loadClass(this.service.concat("$Client"));
+            serviceClientClass =
+                    (Class<? extends TServiceClient>) this.classLoader.loadClass(this.service.concat("$Client"));
             method = ReflectUtils.findMethod(serviceClientClass, this.method);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Invalid service: " + this.service, e);
@@ -204,7 +208,11 @@ public class InvocationContext {
             throw new IllegalStateException("Invalid method: " + this.method, e);
         }
         TServiceClientFactory<T> serviceClientFactory = genServiceClientClass(serviceClientClass);
-        ServiceClientInvocation<T> invocation = new ServiceClientInvocation<>(serviceClientFactory, this.protocolFactory, this.transportFactory, this.endpoint);
+        ServiceClientInvocation<T> invocation = new ServiceClientInvocation<>(
+                serviceClientFactory,
+                this.protocolFactory,
+                this.transportFactory,
+                this.endpoint);
         Object[] args = castArgs(method, this.arguments == null ? null : this.arguments.toArray(new String[0]));
         return new InvariantTaskGenerator<>(invocation, method, args);
     }

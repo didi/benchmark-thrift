@@ -15,48 +15,49 @@ import org.junit.Test;
 
 public class ContextParserTest {
     @Test
-    public void should_return_TSocketFactory() {
+    public void shouldReturnTSocketFactory() {
         TTransportFactory factory = ContextParser.parseTransportFactory("TSocket(socketTimeout=1, connectTimeout=1)");
         Assert.assertTrue(factory instanceof TSocketFactory);
     }
 
     @Test
-    public void should_return_TFramedTransportFactory() {
-        TTransportFactory factory = ContextParser.parseTransportFactory("TFramedTransport(transport=TSocket(timeout=1), maxLength=100)");
+    public void shouldReturnTFramedTransportFactory() {
+        TTransportFactory factory = ContextParser.parseTransportFactory(
+                "TFramedTransport(transport=TSocket(timeout=1), maxLength=100)");
         Assert.assertTrue(factory instanceof TFramedTransportFactory);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_throw_exception_when_set_error_transport() {
+    public void shouldThrowExceptionWhenSetErrorTTransport() {
         ContextParser.parseTransportFactory("TxxxTransport");
     }
 
     @Test
-    public void should_return_TBinaryProtocolFactory() {
+    public void shouldReturnTBinaryProtocolFactory() {
         TProtocolFactory factory = ContextParser.parseProtocolFactory("TBinaryProtocol");
         Assert.assertTrue(factory instanceof TBinaryProtocol.Factory);
     }
 
     @Test
-    public void should_return_TCompactProtocolFactory() {
+    public void shouldReturnTCompactProtocolFactory() {
         TProtocolFactory factory = ContextParser.parseProtocolFactory("TCompactProtocol");
         Assert.assertTrue(factory instanceof TCompactProtocol.Factory);
     }
 
     @Test
-    public void should_return_TTupleProtocolFactory() {
+    public void shouldReturnTTupleProtocolFactory() {
         TProtocolFactory factory = ContextParser.parseProtocolFactory("TTupleProtocol");
         Assert.assertTrue(factory instanceof TTupleProtocol.Factory);
     }
 
     @Test
-    public void should_return_TJSONProtocolFactory() {
+    public void shouldReturnTJSONProtocolFactory() {
         TProtocolFactory factory = ContextParser.parseProtocolFactory("TJSONProtocol");
         Assert.assertTrue(factory instanceof TJSONProtocol.Factory);
     }
 
     @Test
-    public void should_return_TSimpleJSONProtocolFactory() {
+    public void shouldReturnTSimpleJSONProtocolFactory() {
         TProtocolFactory factory = ContextParser.parseProtocolFactory("TSimpleJSONProtocol");
         Assert.assertTrue(factory instanceof TSimpleJSONProtocol.Factory);
     }
@@ -64,7 +65,7 @@ public class ContextParserTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void should_throw_exception_when_set_error_protocol() {
+    public void shouldThrowExceptionWhenSetErrorTProtocol() {
         ContextParser.parseProtocolFactory("TxxxProtocol");
     }
 

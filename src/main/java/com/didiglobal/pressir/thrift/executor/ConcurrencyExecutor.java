@@ -32,11 +32,19 @@ public class ConcurrencyExecutor extends PressureExecutor {
     }
 
     private static ScheduledThreadPoolExecutor newPreparer() {
-        return new ScheduledThreadPoolExecutor(1, new CustomThreadFactory("preparer", Thread.MAX_PRIORITY));
+        return new ScheduledThreadPoolExecutor(
+                1,
+                new CustomThreadFactory("preparer", Thread.MAX_PRIORITY));
     }
 
     private static ThreadPoolExecutor newInitExecutor() {
-        return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new CustomThreadFactory("com/didi/pressir/executor", Thread.MAX_PRIORITY));
+        return new ThreadPoolExecutor(
+                1,
+                1,
+                0L,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(),
+                new CustomThreadFactory("executor", Thread.MAX_PRIORITY));
     }
 
     @Override
@@ -47,7 +55,11 @@ public class ConcurrencyExecutor extends PressureExecutor {
                     throw new RuntimeException("Executor has been shutdown");
                 }
                 if (this.future == null) {
-                    this.future = this.preparer.scheduleWithFixedDelay(this::prepare, Math.max(delay, 1) * 1000, 1, TimeUnit.MILLISECONDS);
+                    this.future = this.preparer.scheduleWithFixedDelay(
+                            this::prepare,
+                            Math.max(delay, 1) * 1000,
+                            1,
+                            TimeUnit.MILLISECONDS);
                     this.await();
                 }
             }
@@ -72,21 +84,27 @@ public class ConcurrencyExecutor extends PressureExecutor {
     private void prepare() {
         for (; ; ) {
             int timestamp = (int) (System.currentTimeMillis() / Constants.TIME_CONVERT_BASE);
-            int nThreads = this.getLimit();
+            int threadNums = this.getLimit();
             if (timestamp > this.timestamp) {
                 this.timestamp = timestamp;
                 LOGGER.debug("Stat: executor(core={},maximum={},workers={},queue={},active={},completed={}), Limit={}",
-                        this.executor.getCorePoolSize(), this.executor.getMaximumPoolSize(), this.executor.getPoolSize(), this.executor.getQueue().size(), this.executor.getActiveCount(), this.executor.getCompletedTaskCount(), nThreads);
+                        this.executor.getCorePoolSize(),
+                        this.executor.getMaximumPoolSize(),
+                        this.executor.getPoolSize(),
+                        this.executor.getQueue().size(),
+                        this.executor.getActiveCount(),
+                        this.executor.getCompletedTaskCount(),
+                        threadNums);
 
             }
-            if (nThreads <= 0) {
+            if (threadNums <= 0) {
                 this.executor.purge();
                 return;
             }
-            if (nThreads != this.executor.getCorePoolSize()) {
-                this.setPoolSize(nThreads);
+            if (threadNums != this.executor.getCorePoolSize()) {
+                this.setPoolSize(threadNums);
             }
-            int batchSize = Math.max(nThreads, 10);
+            int batchSize = Math.max(threadNums, 10);
             int queueSize = this.executor.getQueue().size();
             if (queueSize > batchSize / 2) {
                 break;
@@ -100,7 +118,11 @@ public class ConcurrencyExecutor extends PressureExecutor {
                 break;
             }
             long endTime = System.nanoTime();
-            LOGGER.debug("submit tasks: {}, latency: {} ns. Current nThreads: {}, queueSize: {}", tasks.size(), (endTime - beginTime), nThreads, queueSize);
+            LOGGER.debug("submit tasks: {}, latency: {} ns. Current nThreads: {}, queueSize: {}",
+                    tasks.size(),
+                    (endTime - beginTime),
+                    threadNums,
+                    queueSize);
             for (Runnable task : tasks) {
                 if (task == null) {
                     continue;
@@ -113,24 +135,27 @@ public class ConcurrencyExecutor extends PressureExecutor {
     /**
      * set concurrent threads
      *
-     * @param nThreads
+     * @param threadNums
      */
-    private void setPoolSize(int nThreads) {
-        if (nThreads <= 0) {
-            throw new IllegalArgumentException("input pool size " + nThreads + " must not be lte 0");
+    private void setPoolSize(int threadNums) {
+        if (threadNums <= 0) {
+            throw new IllegalArgumentException("input pool size " + threadNums + " must not be lte 0");
         }
         synchronized (this) {
             int current = this.executor.getCorePoolSize();
-            if (current == nThreads) {
+            if (current == threadNums) {
                 return;
             }
-            LOGGER.debug("pool size(core={}, max={}) change to {}!", current, this.executor.getMaximumPoolSize(), nThreads);
-            if (current < nThreads) {
-                this.executor.setMaximumPoolSize(nThreads);
-                this.executor.setCorePoolSize(nThreads);
+            LOGGER.debug("pool size(core={}, max={}) change to {}!",
+                    current,
+                    this.executor.getMaximumPoolSize(),
+                    threadNums);
+            if (current < threadNums) {
+                this.executor.setMaximumPoolSize(threadNums);
+                this.executor.setCorePoolSize(threadNums);
             } else {
-                this.executor.setCorePoolSize(nThreads);
-                this.executor.setMaximumPoolSize(nThreads);
+                this.executor.setCorePoolSize(threadNums);
+                this.executor.setMaximumPoolSize(threadNums);
             }
         }
     }

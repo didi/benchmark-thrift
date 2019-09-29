@@ -20,6 +20,7 @@ public class Constants {
 
     public static final int TIME_CONVERT_BASE = 1000;
 
-    public static final Pattern PATTERN = Pattern.compile("(\\d+)(((s|second|seconds)?)|((m|minute|minutes)?)|((h|hour|hours)?)|((d|day|days)?))");
+    public static final Pattern PATTERN =
+            Pattern.compile("(\\d+)(((s|second|seconds)?)|((m|minute|minutes)?)|((h|hour|hours)?)|((d|day|days)?))");
 
 }

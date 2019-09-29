@@ -36,64 +36,19 @@ public class ThroughputExecutor extends PressureExecutor {
     }
 
     private static ScheduledThreadPoolExecutor newPreparer() {
-        return new ScheduledThreadPoolExecutor(2, new CustomThreadFactory("preparer", Thread.MAX_PRIORITY));
+        return new ScheduledThreadPoolExecutor(
+                2,
+                new CustomThreadFactory("preparer", Thread.MAX_PRIORITY));
     }
 
     private static ThreadPoolExecutor newExecutor() {
-        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 15L, TimeUnit.SECONDS, new SynchronousQueue<>(), new CustomThreadFactory("com/didi/pressir/executor", Thread.MAX_PRIORITY));
-    }
-
-    @Override
-    public final void start(long delay) {
-        if (this.futures.isEmpty()) {
-            synchronized (this.futures) {
-                if (this.shutdown) {
-                    throw new RuntimeException("Executor has been shutdown");
-                }
-                if (this.futures.isEmpty()) {
-                    this.futures.add(this.preparer.scheduleAtFixedRate(this::generate, Math.max(delay - 1, 0), 1, TimeUnit.SECONDS));
-                    this.futures.add(this.preparer.scheduleAtFixedRate(() -> ThroughputExecutor.execute(this.queue, this.executor), Math.max(delay, 1) * 1000, 1, TimeUnit.MILLISECONDS));
-                    this.await();
-                }
-            }
-        }
-    }
-
-    @Override
-    protected final void cancel() {
-        if (!this.futures.isEmpty()) {
-            synchronized (this.futures) {
-                if (!this.futures.isEmpty()) {
-                    this.futures.forEach(future -> future.cancel(true));
-                    this.futures.clear();
-                }
-            }
-        }
-    }
-
-    /**
-     * Generate tasks
-     */
-    private void generate() {
-        int num = this.getLimit();
-        LOGGER.debug("ThreadPool Stat: executor(core={},maximum={},workers={},queue={},active={},completed={}), preparer(core={},maximum={},workers={},queue={},active={},completed={}), Limit={}",
-                this.executor.getCorePoolSize(), this.executor.getMaximumPoolSize(), this.executor.getPoolSize(), this.executor.getQueue().size(), this.executor.getActiveCount(), this.executor.getCompletedTaskCount(),
-                this.preparer.getCorePoolSize(), this.preparer.getMaximumPoolSize(), this.executor.getPoolSize(), this.preparer.getQueue().size(), this.preparer.getActiveCount(), this.preparer.getCompletedTaskCount(),
-                num);
-        if (num <= 0) {
-            return;
-        }
-        List<Runnable> tasks;
-        long beginTime = System.nanoTime();
-        try {
-            tasks = this.generator.generate(num);
-        } catch (Exception e) {
-            LOGGER.error("generate tasks error: {}, {}", e.getMessage(), e);
-            return;
-        }
-        long endTime = System.nanoTime();
-        LOGGER.debug("prepared tasks: {}, latency: {} ns. current limit: {}", tasks.size(), (endTime - beginTime), num);
-        ThroughputExecutor.offer(this.queue, tasks);
+        return new ThreadPoolExecutor(
+                0,
+                Integer.MAX_VALUE,
+                15L,
+                TimeUnit.SECONDS,
+                new SynchronousQueue<>(),
+                new CustomThreadFactory("executor", Thread.MAX_PRIORITY));
     }
 
     /**
@@ -102,7 +57,7 @@ public class ThroughputExecutor extends PressureExecutor {
      * @param queue
      * @param executor
      */
-    private static  void execute(LinkedBlockingQueue<List<Runnable>> queue, ExecutorService executor) {
+    private static void execute(LinkedBlockingQueue<List<Runnable>> queue, ExecutorService executor) {
         List<Runnable> tasks = queue.poll();
         if (tasks == null || tasks.isEmpty()) {
             return;
@@ -156,5 +111,80 @@ public class ThroughputExecutor extends PressureExecutor {
             }
         }
         return ints;
+    }
+
+    @Override
+    public final void start(long delay) {
+        if (this.futures.isEmpty()) {
+            synchronized (this.futures) {
+                if (this.shutdown) {
+                    throw new RuntimeException("Executor has been shutdown");
+                }
+                if (this.futures.isEmpty()) {
+                    this.futures.add(this.preparer.scheduleAtFixedRate(
+                            this::generate,
+                            Math.max(delay - 1, 0),
+                            1,
+                            TimeUnit.SECONDS));
+                    this.futures.add(this.preparer.scheduleAtFixedRate(
+                            () -> ThroughputExecutor.execute(this.queue, this.executor),
+                            Math.max(delay, 1) * 1000,
+                            1,
+                            TimeUnit.MILLISECONDS));
+                    this.await();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected final void cancel() {
+        if (!this.futures.isEmpty()) {
+            synchronized (this.futures) {
+                if (!this.futures.isEmpty()) {
+                    this.futures.forEach(future -> future.cancel(true));
+                    this.futures.clear();
+                }
+            }
+        }
+    }
+
+    /**
+     * Generate tasks
+     */
+    private void generate() {
+        int num = this.getLimit();
+        LOGGER.debug("ThreadPool Stat: executor(core={},maximum={},workers={},queue={},active={},completed={})," +
+                        " preparer(core={},maximum={},workers={},queue={},active={},completed={}), Limit={}",
+                this.executor.getCorePoolSize(),
+                this.executor.getMaximumPoolSize(),
+                this.executor.getPoolSize(),
+                this.executor.getQueue().size(),
+                this.executor.getActiveCount(),
+                this.executor.getCompletedTaskCount(),
+                this.preparer.getCorePoolSize(),
+                this.preparer.getMaximumPoolSize(),
+                this.executor.getPoolSize(),
+                this.preparer.getQueue().size(),
+                this.preparer.getActiveCount(),
+                this.preparer.getCompletedTaskCount(),
+                num);
+        if (num <= 0) {
+            return;
+        }
+        List<Runnable> tasks;
+        long beginTime = System.nanoTime();
+        try {
+            tasks = this.generator.generate(num);
+        } catch (Exception e) {
+            LOGGER.error("generate tasks error: {}, {}", e.getMessage(), e);
+            return;
+        }
+        long endTime = System.nanoTime();
+        LOGGER.debug("prepared tasks: {}, latency: {} ns. current limit: {}",
+                tasks.size(),
+                (endTime - beginTime),
+                num);
+        ThroughputExecutor.offer(this.queue, tasks);
     }
 }

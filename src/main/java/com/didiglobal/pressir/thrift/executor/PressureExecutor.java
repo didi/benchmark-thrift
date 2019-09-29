@@ -16,36 +16,45 @@ import java.util.function.IntSupplier;
  */
 public abstract class PressureExecutor implements Closeable {
     /**
-     * Pressure Getter
-     */
-    private final IntSupplier pressureGetter;
-
-    /**
      * Task generator
      */
     final Generator generator;
-
     /**
      * Task preparer
      */
     final ScheduledThreadPoolExecutor preparer;
-
     /**
      * Task executor
      */
     final ThreadPoolExecutor executor;
-
+    /**
+     * Pressure Getter
+     */
+    private final IntSupplier pressureGetter;
     volatile boolean shutdown = false;
 
-    PressureExecutor(IntSupplier pressureGetter, Generator generator, ScheduledThreadPoolExecutor preparer, ThreadPoolExecutor executor) {
+    PressureExecutor(
+            IntSupplier pressureGetter,
+            Generator generator,
+            ScheduledThreadPoolExecutor preparer,
+            ThreadPoolExecutor executor) {
         this.pressureGetter = Objects.requireNonNull(pressureGetter);
         this.generator = Objects.requireNonNull(generator);
         this.preparer = Objects.requireNonNull(preparer);
         this.executor = Objects.requireNonNull(executor);
     }
 
+    public static ConcurrencyExecutor concurrency(Generator generator, IntSupplier concurrency) {
+        return new ConcurrencyExecutor(generator, concurrency);
+    }
+
+    public static ThroughputExecutor throughput(Generator generator, IntSupplier throughput) {
+        return new ThroughputExecutor(generator, throughput);
+    }
+
     /**
      * start the pressure after delay seconds
+     *
      * @param delay
      */
     public abstract void start(long delay);
@@ -86,13 +95,5 @@ public abstract class PressureExecutor implements Closeable {
             }
         } while (this.pressureGetter.getAsInt() >= 0);
         this.cancel();
-    }
-
-    public static  ConcurrencyExecutor concurrency(Generator generator, IntSupplier concurrency) {
-        return new ConcurrencyExecutor(generator, concurrency);
-    }
-
-    public static  ThroughputExecutor throughput(Generator generator, IntSupplier throughput) {
-        return new ThroughputExecutor(generator, throughput);
     }
 }
