@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ -f /etc/profile ]; then
+if [[ -f /etc/profile ]]; then
     . /etc/profile
 fi
 
-if [ -f ~/.bash_profile ]; then
+if [[ -f ~/.bash_profile ]]; then
     . ~/.bash_profile
 fi
 
@@ -46,21 +46,17 @@ function read_conf(){
   while IFS='=' read -r key value
   do
     eval ${key}='${value}' >/dev/null 2>&1
-  done < "$thrift_conf"
+  done < "$environment_file"
 }
 function validate(){
   # 获取工具支持的所有thrift version
   get_versions
-  if [[ ! -f ${thrift_conf} ]]; then
-    echo "${shell}: thrift conf file be can't found"
-    exit 1
-  fi
   # 指定版本是否合规
 
-  # . $thrift_conf >/dev/null 2>&1
+  # . $environment_file >/dev/null 2>&1
   read_conf
   if [[ ${version} == "" ]]; then
-    echo "${shell}: thrift version must be specified in thrift conf file"
+    echo "${shell}: thrift version must be specified in thrift env file"
     exit 1
   fi
   if [[ ${versions} != *$version* ]]; then
@@ -70,7 +66,7 @@ function validate(){
 
   # 是否指定jar包
   if [[ $classpath == "" || $classpath != *.jar ]]; then
-    echo "${shell}: jar information must be specified in thrift conf file"
+    echo "${shell}: jar information must be specified in thrift env file"
     exit 1
   fi
   print_conf
@@ -133,8 +129,7 @@ do
       params="-q $throughput $params "
       ;;
     e)
-      thrift_conf="$OPTARG"
-      params="-e $thrift_conf $params "
+      environment_file="$OPTARG"
       ;;
     d)
       param="$OPTARG"
@@ -169,17 +164,30 @@ if [[ ${types} == 2 ]];  then
   exit 1
 fi
 
-if [[ ${thrift_conf} == "" ]]; then
-  echo "${shell}: thrift env file was not specified by -e, the thrift.env in the path(../conf/) was used"
-  thrift_conf=../conf/thrift.env
-  params="$params -e ${thrift_conf}"
+# check environment file
+if [[ ${environment_file} == "" ]]; then
+  environment_file=../conf/thrift.env
+  if [[ ! -f ${environment_file} ]]; then
+    echo "${shell}: is it your first time to use ${name}? environment file ${environment_file} is missing, you could"
+    echo "  either: choose one sample in conf directory and rename it to thrift.env"
+    echo "  or:     manually specify one by -e <thrift file>"
+    exit 1
+  fi
+  echo "${shell}: use default ${environment_file}, or you could specify one by -e <thrift file>"
+elif [[! -f ${environment_file} ]]; then
+  echo "${shell}: environment file ${environment_file} is missing, please check it"
+  exit 1
 fi
+params="-e $environment_file $params "
 
+# check timelimit
 if [[ ${timelimit} == "" ]]; then
+  echo "${shell}: use default timelimit 60s, or you could specify one by -t <timelimit>"
   params="$params -t 60s"
 fi
 
-if [ $types == 0 ]; then
+if [[ $types == 0 ]]; then
+  echo "${shell}: use default load type 1 concurrency, or you could specify one by -c <concurrency> or -q <throughput>"
   params="$params -c 1"
 fi
 

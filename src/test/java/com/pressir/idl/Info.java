@@ -32,7 +32,8 @@ public class Info implements
     private static final _Fields optionals[] = {_Fields.SHOP_ID};
 
     static {
-        java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        java.util.Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap =
+                new java.util.EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
         tmpMap.put(_Fields.NAME,
                 new org.apache.thrift.meta_data.FieldMetaData("name",
                         org.apache.thrift.TFieldRequirementType.REQUIRED,
