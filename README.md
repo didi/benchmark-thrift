@@ -21,9 +21,12 @@ The following requirements exist for running Benchmark-thrift:
    Make sure you have JAVA_HOME env is properly configured, and then: 
 ```bash
     echo $JAVA_HOME             # should print your Java home dir. If the command fails, you need to install the Java environment. Java Downloads: https://www.oracle.com/technetwork/java/javase/downloads/index.html
-    cd benchmark-thrift/bin
+    cd conf
+    vim tsocket.sample.env       # choose and modify the thrift env file 
+    mv tsocket.sample.env thrift.env #rename to a tool-recognizable name 
+    cd ../bin
     chmod 755 *.sh              # make it executable
-    sh benchmark.sh -c 10 -t 100s 127.0.0.1:8090/Test/test?@dataFile # run it. If the duration and pressure type are not specified, the default one-minute concurrent execution is achieved
+    sh benchmark.sh -c 10 -t 100s 127.0.0.1:8090/Test/test?@data_file # run it. If the duration and pressure type are not specified, the default one-minute concurrent execution is achieved
 ```
 
 ####Simplest Usage  
@@ -39,7 +42,7 @@ The following requirements exist for running Benchmark-thrift:
          version=0.12.0  
          classpath=/Users/didi/test.jar        
          transport=TFramedTransport(transport=TSocket)  
-         protocol=TCompactProtocol  #required, options: TBinaryProtocol, TCompactProtocol          
+         protocol=TCompactProtocol        
    * -c concurrency    
    The number of multiple requests to make at a time
    * -q throughput  

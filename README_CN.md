@@ -32,9 +32,12 @@
 
 ```bash
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
-    cd benchmark-thrift/bin
+    cd conf
+    vim tsocket.sample.env       # 选择一个thrift 环境配置并且修改相应内容
+    mv tsocket.sample.env thrift.env #重命名
+    cd ../bin
     chmod 755 *.sh              # 修改权限，确保命令是可执行的
-    sh benchmark.sh -c 10 -t 100s 127.0.0.1:8090/Test/test?@dataFile # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试
+    sh benchmark.sh 127.0.0.1:8090/Test/test?@data_file # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试。如果环境配置文件没有指定，默认采取conf路径下的thrift.env作为默认配置。如果在此路径下没有thrift.env 工具会有异常提示
 ```
 
 ####具体用法
@@ -46,13 +49,13 @@
 
  * -e   
 
-与thrift相关的配置，包括TTransport、TProtocol、thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.conf文件
+与thrift相关的配置，包括TTransport、TProtocol、thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
 
 * ######示例  
         version=0.12.0  
         classpath=/users/didi/test.jar  
         transport=TFramedTransport（transport=tSocket）  
-        protocol=TCompactProtocol 其他选项：TBinaryProtocol，TJSONProtocol
+        protocol=TCompactProtocol
         
 *-c 并发度 模拟多少个线程同时发送请求,如果并发度和吞吐量都不指定，会默认采用1个并发度
 

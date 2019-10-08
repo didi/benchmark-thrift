@@ -74,7 +74,7 @@ function validate(){
 
 function print_usage(){
   printf "\
-Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<datafile>]]
+Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
 
 Options:
    -c <concurrency>       Number of multiple requests to make at a time
@@ -89,7 +89,7 @@ Options:
    -v                     Print version number and exit
 
 Where:
-   <datafile>             A local file that contains request arguments, prefixed by a "@".
+   <data_file>            A local file that contains request arguments, prefixed by a "@".
                           If the thrift method has parameters, <data_file> is mandatory.
 
 Examples:
@@ -166,11 +166,11 @@ fi
 
 # check environment file
 if [[ ${environment_file} == "" ]]; then
-  environment_file=../conf/thrift.env
+  environment_file=conf/thrift.env
   if [[ ! -f ${environment_file} ]]; then
     echo "${shell}: is it your first time to use ${name}? environment file ${environment_file} is missing, you could"
     echo "  either: choose one sample in conf directory and rename it to thrift.env"
-    echo "  or:     manually specify one by -e <thrift file>"
+    echo "  or:     manually specify one by -e <env file>"
     exit 1
   fi
   echo "${shell}: use default ${environment_file}, or you could specify one by -e <thrift file>"
