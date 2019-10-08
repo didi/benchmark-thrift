@@ -74,7 +74,7 @@ function validate(){
 
 function print_usage(){
   printf "\
-Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
+Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<datafile>]]
 
 Options:
    -c <concurrency>       Number of multiple requests to make at a time
@@ -89,18 +89,18 @@ Options:
    -v                     Print version number and exit
 
 Where:
-   <data_file>            A local file that contains request arguments, prefixed by a "@".
+   <datafile>             A local file that contains request arguments, prefixed by a "@".
                           If the thrift method has parameters, <data_file> is mandatory.
 
 Examples:
     # 1. benchmark a non-args method with default conf
-    sh ${shell}.sh thrift://127.0.0.1:8090/service/method
+    sh ${shell}.sh thrift://127.0.0.1:8090/service/method?@datafile
     # 2. benchmark at 10 concurrencies for 5 minutes
-    sh ${shell}.sh -c 10 -t 5m thrift://127.0.0.1:8090/service/method
+    sh ${shell}.sh -c 10 -t 5m thrift://127.0.0.1:8090/service/method?@datafile
     # 3. benchmark at 10 qps for 2 hours
-    sh ${shell}.sh -q 10 -t 2h thrift://127.0.0.1:8090/service/method
+    sh ${shell}.sh -q 10 -t 2h thrift://127.0.0.1:8090/service/method?@datafile
     # 4. benchmark by qps for 2 hours
-    sh ${shell}.sh -c 10 -t 2h thrift://127.0.0.1:8090/service/method
+    sh ${shell}.sh -c 10 -t 2h thrift://127.0.0.1:8090/service/method?@datafile
 "
 }
 

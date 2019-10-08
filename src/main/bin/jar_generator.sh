@@ -1,9 +1,9 @@
 #!/bin/bash
-if [ -f /etc/profile ]; then
+if [[ -f /etc/profile ]]; then
     . /etc/profile
 fi
 
-if [ -f ~/.bash_profile ]; then
+if [[ -f ~/.bash_profile ]]; then
     . ~/.bash_profile
 fi
 
@@ -20,7 +20,7 @@ function gen_classpath(){
     jarfile=${jarfile%:*}
 }
 
-if [ -d classdir ]; then
+if [[ -d classdir ]]; then
     rm -rf classdir
 fi
 
