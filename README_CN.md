@@ -23,7 +23,7 @@
 用户需要跟据idl生成相应的jar包，然后将jar路径在配置文件中配置好
 ```bash
     thrift -r --gen java xxx.thrift #通过命令生成相应的java文件
-    sh jar_generator.sh version java_path jar_path  #version: 指定thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
+    sh jar_generator.sh version java_path jar_path  #version: 指定Thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
 ```        
 
 ##如何运行
@@ -33,11 +33,11 @@
 ```bash
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
     cd conf
-    vim tsocket.sample.env       # 选择一个thrift 环境配置并且修改相应内容
+    vim tsocket.sample.env       # 选择一个Thrift环境配置文件并且修改相应内容
     mv tsocket.sample.env thrift.env #重命名
     cd ../bin
     chmod 755 *.sh              # 修改权限，确保命令是可执行的
-    sh benchmark.sh 127.0.0.1:8090/Test/test?@data_file # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试。如果环境配置文件没有指定，默认采取conf路径下的thrift.env作为默认配置。如果在此路径下没有thrift.env 工具会有异常提示
+    sh benchmark.sh 127.0.0.1:8090/Test/test?@data_file # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试。如果环境配置文件没有指定，默认采取conf下的thrift.env作为默认配置。如果在此路径下没有thrift.env 工具会有异常提示
 ```
 
 ####具体用法
@@ -49,7 +49,7 @@
 
  * -e   
 
-与thrift相关的配置，包括TTransport、TProtocol、thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
+与Thrift相关的配置，包括TTransport、TProtocol、Thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
 
 * ######示例  
         version=0.12.0  
@@ -70,7 +70,7 @@
 *-h 显示使用信息
 
 Where:
-   <data_file> 一个包含方法参数的本地文件，通过使用@识别为文件信息,如果thrift方法有参数，此文件为必需配置
+   <data_file> 一个包含方法参数的本地文件，通过使用@识别为文件信息,如果Thrift方法有参数，此文件为必需配置
 
 
 ##贡献

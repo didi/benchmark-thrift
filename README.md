@@ -22,7 +22,7 @@ The following requirements exist for running Benchmark-thrift:
 ```bash
     echo $JAVA_HOME             # should print your Java home dir. If the command fails, you need to install the Java environment. Java Downloads: https://www.oracle.com/technetwork/java/javase/downloads/index.html
     cd conf
-    vim tsocket.sample.env       # choose and modify the thrift env file 
+    vim tsocket.sample.env       # choose and modify the Thrift env file 
     mv tsocket.sample.env thrift.env #rename to a tool-recognizable name 
     cd ../bin
     chmod 755 *.sh              # make it executable

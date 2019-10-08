@@ -166,14 +166,14 @@ fi
 
 # check environment file
 if [[ ${environment_file} == "" ]]; then
-  environment_file=conf/thrift.env
+  environment_file=../conf/thrift.env
   if [[ ! -f ${environment_file} ]]; then
     echo "${shell}: is it your first time to use ${name}? environment file ${environment_file} is missing, you could"
-    echo "  either: choose one sample in conf directory and rename it to thrift.env"
+    echo "  either: choose one sample in ../conf directory and rename it to thrift.env"
     echo "  or:     manually specify one by -e <env file>"
     exit 1
   fi
-  echo "${shell}: use default ${environment_file}, or you could specify one by -e <thrift file>"
+  echo "${shell}: use default ${environment_file}, or you could specify one by -e <thrift env>"
 elif [[! -f ${environment_file} ]]; then
   echo "${shell}: environment file ${environment_file} is missing, please check it"
   exit 1
