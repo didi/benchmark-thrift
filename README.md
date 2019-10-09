@@ -44,9 +44,9 @@ The following requirements exist for running Benchmark-thrift:
          transport=TFramedTransport(transport=TSocket)  
          protocol=TCompactProtocol        
    * -c concurrency    
-   The number of multiple requests to make at a time.If no -c nor -q is specified, default value is 1 concurrency
+   The number of multiple requests to make at a time. If no -c nor -q is specified, default value is 1 concurrency
    * -q throughput  
-   The number of requests issued in 1 Second.If no -c nor -q is specified, default value is 1 concurrency
+   The number of requests issued in 1 Second. If no -c nor -q is specified, default value is 1 concurrency
    * -t timelimit  
    TimeLimit of the pressure. It with a default value 60s. You can specify the duration in the following ways:
    
