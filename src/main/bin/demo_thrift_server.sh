@@ -1,8 +1,19 @@
 #!/bin/bash
 
 function start_server(){
-  echo "server started on $1"
+  local port = $1;
+  local classpath=${LIB_DIR}/*:${LIB_DIR}/thrift/0.11.0/*:
+  local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/${SHELL_NAME}_hs_err_pid%p.log -Xloggc:$BIN_DIR/${SHELL_NAME}_gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
+  local pid_file="$BIN_DIR/${SHELL_NAME}_pid"
+  if [[ ! -s "${pid_file}" ]] || [[ "" == $(cat ${pid_file}) ]] || [[ -z "$(ps -eo pid | grep -w $(cat ${pid_file}))" ]]; then
+    java ${java_opts} -cp ${classpath} com.didiglobal.pressir.thrift.demo.DemoServer $* 2>&1
+    echo $! > ${pid_file}
+  else
+    echo "${SHELL_NAME}: ${TOOL_NAME} is ready running, pid=$(cat ${pid_file})"
+    exit 1
+  fi
 }
+
 
 function print_usage(){
   printf "\
@@ -22,10 +33,15 @@ Examples:
 "
 }
 
-# 设置默认值
-shell="demo_thrift_server"
-version="0.0.1"
-port=8972
+### start to execute from here
+# constants
+declare -r SHELL_NAME="demo_thrift_server"
+declare -r TOOL_NAME="demo thrift server"
+declare -r TOOL_VERSION="0.0.1"
+declare -r HOME_DIR=$(cd $(dirname $0); cd ..; pwd)
+declare -r BIN_DIR="${HOME_DIR}/bin"
+declare -r LIB_DIR="${HOME_DIR}/lib"
+declare -i port=8972
 
 while getopts "p:hv" opt
 do
@@ -38,11 +54,11 @@ do
       exit 1
       ;;
     v)
-      printf "This is a demo thrift server, version ${version}\n"
+      printf "This is ${TOOL_NAME}, version ${TOOL_VERSION}\n"
       exit 1
       ;;
     *)
-      printf "${shell}: illegal option ${OPTARG}\n"
+      printf "${SHELL_NAME}: illegal option ${OPTARG}\n"
       print_usage
       exit 1
       ;;
