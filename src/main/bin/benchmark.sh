@@ -84,6 +84,9 @@ function validate_env_file(){
     echo "${SHELL_NAME}: client jar should be ended with .jar in environment file"
     exit 1
   fi
+  if [[ ${client_jar} != "/"* ]]; then
+    client_jar=${HOME_DIR}/${client_jar}
+  fi
   if [[ ! -f ${client_jar} ]]; then
     echo "${SHELL_NAME}: client jar is missing: ${client_jar}"
     exit 1
