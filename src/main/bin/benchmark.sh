@@ -8,80 +8,167 @@ if [[ -f ~/.bash_profile ]]; then
     . ~/.bash_profile
 fi
 
-function get_versions(){
-  for element in `ls ../lib/thrift`
+function validate_tool_dir(){
+    for dir in $@; do
+      if [[ ! -d ${dir} ]]; then
+        printf "${SHELL_NAME}: tool seems to be broken, ${dir} is missing, please download and redeploy.\n"
+        exit 1
+      fi
+    done
+}
+
+function get_supported_thrift_versions(){
+  local dir=$1
+  for element in `ls ${dir}`
   do
-    if [[ -d ../lib/thrift/$element ]]; then
-      versions=$element","$versions
+    if [[ -d ${LIB_THRIFT_DIR}/${element} ]]; then
+      supported_thrift_versions+=(${element})
     fi
   done
-  versions=${versions%,*}
 }
 
-function start(){
-  BASE_DIR=$(cd $(dirname $0); cd ..; pwd)
-  CLASSPATH=$BASE_DIR/lib/thrift/$version/*:$BASE_DIR/lib/*:$BASE_DIR/lib/classes
-  BIN_DIR=$(cd $(dirname $0); pwd)
-  JAVA_OPTS="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/hs_err_pid%p.log -Xloggc:$BIN_DIR/gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
-  PID_FILE="$BIN_DIR/pid"
-  if [ ! -s "$PID_FILE" ] || [[ "" == $(cat $PID_FILE) ]] || [ -z "$(ps -eo pid | grep -w $(cat $PID_FILE))" ]; then
-    java $JAVA_OPTS -cp $CLASSPATH com.didiglobal.pressir.thrift.Main $* 2>&1
-    echo $! > $PID_FILE
-  else
-    echo "${shell}: application can not start duplicate! running pid=$(cat $PID_FILE)"
+function validate_env_file(){
+  local file=$1
+  local client_jar=""
+  local transport=""
+  local protocol=""
+  if [[ ! -f "${file}" ]]; then
+    if [[ ${is_newbie} == true ]]; then
+      printf "${SHELL_NAME}: environment file is missing"
+      print_to_newbie
+    else
+      printf "${SHELL_NAME}: environment file is missing\n"
+    fi
+    print_usage
     exit 1
   fi
-}
 
-function print_conf(){
-  printf "\
-We will start with the thrift env:
-  Thrift version   -> ${version}
-  Classpath        -> ${classpath}
-  TTransport       -> ${transport}
-  TProtocol        -> ${protocol}
-"
-}
-function read_conf(){
   while IFS='=' read -r key value
   do
-    eval ${key}='${value}' >/dev/null 2>&1
-  done < "$environment_file"
+    key="${key// /}"
+    case "${key}" in
+    "thrift_version")
+      eval ${key}='${value}'
+      ;;
+    "client_jar")
+      eval ${key}='${value}'
+      ;;
+    "transport")
+      eval ${key}='${value}'
+      ;;
+    "protocol")
+      eval ${key}='${value}'
+      ;;
+    *)
+      ;;
+    esac
+  done < ${file}
+
+  # validate version
+  if [[ ${thrift_version} == "" ]]; then
+    echo "${SHELL_NAME}: thrift version should be specified in environment file"
+    exit 1
+  fi
+
+  if [[ ! "${supported_thrift_versions[@]}" =~ "${thrift_version}" ]]; then
+    echo "${SHELL_NAME}: unsupported thrift version ${thrift_version}, available $(IFS=, ; echo ${supported_thrift_versions[*]})"
+    exit 1
+  fi
+
+  # validate client_jar
+  if [[ ${client_jar} == "" ]]; then
+    echo "${SHELL_NAME}: client jar should be specified in environment file"
+    exit 1
+  fi
+  if [[ ${client_jar} != *.jar ]]; then
+    echo "${SHELL_NAME}: client jar should be ended with .jar in environment file"
+    exit 1
+  fi
+  if [[ ! -f ${client_jar} ]]; then
+    echo "${SHELL_NAME}: client jar is missing: ${client_jar}"
+    exit 1
+  fi
+
+  printf "${SHELL_NAME}: will benchmark with the following thrift environment:
+  Thrift version  ->  ${thrift_version}
+  Client jar      ->  ${client_jar}
+  TTransport      ->  ${transport}
+  TProtocol       ->  ${protocol}
+"
 }
-function validate(){
-  # 获取工具支持的所有thrift version
-  get_versions
-  # 指定版本是否合规
 
-  # . $environment_file >/dev/null 2>&1
-  read_conf
-  if [[ ${version} == "" ]]; then
-    echo "${shell}: thrift version must be specified in thrift env file"
+function validate_and_parse_url(){
+  local full_url=$1
+  if [[ ${full_url} == "" ]];  then
+    if [[ ${is_newbie} == true ]]; then
+      printf "${SHELL_NAME}: please enter thrift url"
+      print_to_newbie
+    else
+      printf "${SHELL_NAME}: please enter thrift url\n"
+    fi
+    print_usage
     exit 1
   fi
-  if [[ ${versions} != *$version* ]]; then
-    echo "${shell}: the tool does not support the thrift version you specified yet. tool support "$versions""
+  if [[ ${full_url} != "${scheme}://"* ]]; then
+    echo "${SHELL_NAME}: incorrect thrift url, should start with ${scheme}://: ${full_url}"
+    print_usage
     exit 1
   fi
 
-  # 是否指定jar包
-  if [[ $classpath == "" || $classpath != *.jar ]]; then
-    echo "${shell}: jar information must be specified in thrift env file"
+  local sub_url=${url#"$scheme://"}
+  IFS='/ ' read -ra array <<< ${sub_url}
+  if [[ ${#array[@]} < 3 ]]; then
+    echo "${SHELL_NAME}: incorrect thrift url, should specify <host>:<port>/<service>/<method>: ${full_url}"
+    print_usage
     exit 1
   fi
-  print_conf
+  IFS=': ' read -ra hostandport <<< ${array[0]}
+  if [[ ${#hostandport[@]} != 2 ]]; then
+    echo "${SHELL_NAME}: incorrect thrift url, should specify <host>:<port>: ${full_url}"
+    print_usage
+    exit 1
+  fi
+  host=${hostandport[0]}
+  port=${hostandport[1]}
+  service=${array[1]}
+  method=${array[2]}
+}
+
+# check whether specified port is available
+function validate_thrift_server(){
+  local host=$1
+  local port=$2
+  local service=$3
+  nc -zw5 ${host} ${port} &> /dev/null
+  if [[ "$?" -ne 0 ]]; then
+    if [[ ${host} == "127.0.0.1" ]] && [[ ${service} == "DemoService" ]]; then
+      # If user is benchmarking demo-thrift-server
+      printf "${SHELL_NAME}: demo thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
+      printf "  [usage] sh demo_thrift_server.sh -p ${port}\n"
+      exit 1
+    else
+      printf "${SHELL_NAME}: thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
+    fi
+  fi
+}
+
+function print_to_newbie(){
+  printf ", are you new to ${TOOL_NAME}? follow these steps to make it work\n"
+  printf "  1. use -e to specify an environment file, or rename one sample in conf directory to thrift.env\n"
+  printf "  2. double check thrift version, client jar location, transport and protocol in environment file\n"
+  printf "  3. see usages below and re-run this shell\n"
 }
 
 function print_usage(){
   printf "\
-Usage: sh ${shell}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
+Usage: sh ${SHELL_NAME}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
 
 Options:
    -c <concurrency>       Number of multiple requests to make at a time
                           If no -c nor -q is specified, default value is 1 concurrency
    -q <throughput>        Number of requests issued in 1 Second
                           If no -c nor -q is specified, default value is 1 concurrency
-   -t <timelimit>         How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
+   -t <time_limit>         How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
                           If not specified, default value is 60 seconds
    -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
                           If not specified, default value is ../conf/thrift.env
@@ -89,111 +176,143 @@ Options:
    -v                     Print version number and exit
 
 Where:
-   <data_file>            A local file that contains request arguments, prefixed by a "@".
+   <data_file>            A local file that contains request arguments, schemeed by a "@".
                           If the thrift method has parameters, <data_file> is mandatory.
 
 Examples:
     # 1. benchmark a non-args method with default conf
-    sh ${shell}.sh thrift://127.0.0.1:8090/service/method?@datafile
+    sh ${SHELL_NAME}.sh thrift://127.0.0.1:8972/demoService/noArgMethod
     # 2. benchmark at 10 concurrencies for 5 minutes
-    sh ${shell}.sh -c 10 -t 5m thrift://127.0.0.1:8090/service/method?@datafile
+    sh ${SHELL_NAME}.sh -c 10 -t 5m thrift://127.0.0.1:8972/demoService/method
     # 3. benchmark at 10 qps for 2 hours
-    sh ${shell}.sh -q 10 -t 2h thrift://127.0.0.1:8090/service/method?@datafile
+    sh ${SHELL_NAME}.sh -q 10 -t 2h thrift://127.0.0.1:8972/demoService/method
     # 4. benchmark by qps for 2 hours
-    sh ${shell}.sh -c 10 -t 2h thrift://127.0.0.1:8090/service/method?@datafile
+    sh ${SHELL_NAME}.sh -c 10 -t 2h thrift://127.0.0.1:8972/demoService/method
 "
 }
 
-# 设置默认值
-name="BenchmarkThrift"
-shell="benchmark"
-version="0.0.1"
-params=""
-types=0
+function start_to_benchmark(){
+  local classpath=${LIB_THRIFT_DIR}/${thrift_version}/*:${LIB_DIR}/*:${LIB_CLASSES_DIR}
+  local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/hs_err_pid%p.log -Xloggc:$BIN_DIR/gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
+  local pid_file="$BIN_DIR/pid"
+  if [[ ! -s "${pid_file}" ]] || [[ "" == $(cat ${pid_file}) ]] || [[ -z "$(ps -eo pid | grep -w $(cat ${pid_file}))" ]]; then
+    java ${java_opts} -cp ${classpath} com.didiglobal.pressir.thrift.Main $* 2>&1
+    echo $! > ${pid_file}
+  else
+    echo "${SHELL_NAME}: tool is ready running, pid=$(cat ${pid_file})"
+    exit 1
+  fi
+}
 
-while getopts ":q:c:t:e:hv" opt
+### start to execute from here
+# constants
+declare -r SHELL_NAME="benchmark"
+declare -r TOOL_NAME="BenchmarkThrift"
+declare -r TOOL_VERSION="0.0.1"
+declare -r HOME_DIR=$(cd $(dirname $0); cd ..; pwd)
+declare -r BIN_DIR="${HOME_DIR}/bin"
+declare -r CONF_DIR="${HOME_DIR}/conf"
+declare -r LIB_DIR="${HOME_DIR}/lib"
+declare -r LIB_CLASSES_DIR="${LIB_DIR}/classes"
+declare -r LIB_THRIFT_DIR="${LIB_DIR}/thrift"
+declare -r DEFAULT_ENV_FILE="${CONF_DIR}/thrift.env"
+# parameters
+declare -a supported_thrift_versions=()
+declare thrift_version=""
+declare -i concurrency=0
+declare -i throughput=0
+declare -i time_limit=0
+declare env_file=${DEFAULT_ENV_FILE}
+declare params=""
+# thrift url
+declare url=""
+declare -r scheme="thrift"
+declare host=""
+declare -i port=0
+declare service=""
+declare method=""
+# others
+declare is_newbie=false
+
+# step 1
+while getopts ":c:q:t:e:hv" opt
 do
   case "$opt" in
     c)
+      if [[ ${throughput} -gt 0 ]]; then
+          echo "${SHELL_NAME}: only one of -c or -q should be specified"
+          print_usage
+          exit 1
+      fi
       concurrency="$OPTARG"
-      types=$[types+1]
-      params="-c $concurrency $params "
-      ;;
-    t)
-      timelimit="$OPTARG"
-      params="-t $timelimit $params "
       ;;
     q)
+      if [[ ${concurrency} -gt 0 ]]; then
+          echo "${SHELL_NAME}: only one of -c or -q should be specified"
+          print_usage
+          exit 1
+      fi
       throughput="$OPTARG"
-      types=$[types+1]
-      params="-q $throughput $params "
+      ;;
+    t)
+      time_limit="$OPTARG"
       ;;
     e)
-      environment_file="$OPTARG"
-      ;;
-    d)
-      param="$OPTARG"
-      params="-d $param $params "
+      env_file="$OPTARG"
       ;;
     h)
       print_usage
       exit 1
       ;;
     v)
-      printf "This is ${name}, version ${version}\n"
+      printf "This is ${TOOL_NAME}, version ${TOOL_VERSION}\n"
       exit 1
       ;;
     *)
-      printf "${shell}: illegal option ${OPTARG}\n"
+      printf "${SHELL_NAME}: illegal option ${OPTARG}\n"
       print_usage
       exit 1
       ;;
     esac
 done
-
-shift $(($OPTIND - 1))
-if [[ $1 == "" ]];  then
-  echo "${shell}: please enter thrift url"
-  print_usage
-  exit 1
-fi
-
-if [[ ${types} == 2 ]];  then
-  echo "${shell}: only one of -c or -q could be specified"
-  print_usage
-  exit 1
-fi
-
-# check environment file
-if [[ ${environment_file} == "" ]]; then
-  environment_file=../conf/thrift.env
-  if [[ ! -f ${environment_file} ]]; then
-    echo "${shell}: is it your first time to use ${name}? environment file ${environment_file} is missing, you could"
-    echo "  either: choose one sample in ../conf directory and rename it to thrift.env"
-    echo "  or:     manually specify one by -e <env file>"
-    exit 1
+if [[ ${env_file} == ${DEFAULT_ENV_FILE} ]]; then
+  if [[ ! -f ${env_file} ]]; then
+    is_newbie=true
   fi
-  echo "${shell}: use default ${environment_file}, or you could specify one by -e <thrift env>"
-elif [[! -f ${environment_file} ]]; then
-  echo "${shell}: environment file ${environment_file} is missing, please check it"
-  exit 1
-fi
-params="-e $environment_file $params "
-
-# check timelimit
-if [[ ${timelimit} == "" ]]; then
-  echo "${shell}: use default timelimit 60s, or you could specify one by -t <timelimit>"
-  params="$params -t 60s"
 fi
 
-if [[ $types == 0 ]]; then
-  echo "${shell}: use default load type 1 concurrency, or you could specify one by -c <concurrency> or -q <throughput>"
+# step 2
+validate_tool_dir ${BIN_DIR} ${CONF_DIR} ${LIB_DIR} ${LIB_CLASSES_DIR} ${LIB_THRIFT_DIR}
+
+# step 3
+shift $(($OPTIND - 1))
+url=$1
+validate_and_parse_url ${url}
+
+# step 4
+get_supported_thrift_versions ${LIB_THRIFT_DIR}
+
+# step 5
+validate_env_file ${env_file}
+
+# step 6
+validate_thrift_server ${host} ${port} ${service}
+
+# step 7
+if [[ ${concurrency} -gt 0 ]]; then
+  params="$params -c ${concurrency}"
+elif [[ ${throughput} -gt 0 ]]; then
+  params="$params -q ${throughput}"
+else
   params="$params -c 1"
 fi
+if [[ ${timelit} -gt 0 ]]; then
+  params="$params -t $time_limit"
+else
+  params="$params -t 60"
+fi
+params="$params -e ${env_file}"
+params="$params -u ${url}"
 
-validate
-
-params="$params -u $1"
-
-start $params
-
+# step 8
+start_to_benchmark ${params}
