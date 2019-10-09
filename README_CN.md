@@ -47,30 +47,28 @@
 
 ####参数选项
 
- * -e   
-
-与Thrift相关的配置，包括TTransport、TProtocol、Thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
-
+ * -e thrift.env  
+ 与Thrift相关的配置，包括TTransport、TProtocol、Thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
 * ######示例  
         version=0.12.0  
         classpath=/users/didi/test.jar  
         transport=TFramedTransport（transport=tSocket）  
         protocol=TCompactProtocol
         
-*-c 并发度 模拟多少个线程同时发送请求,如果并发度和吞吐量都不指定，会默认采用1个并发度
+* -c 并发度 模拟多少个线程同时发送请求，如果并发度和吞吐量都不指定，会默认采用1个并发度
 
-*-q 吞吐量 在1秒内发出的请求数
+* -q 吞吐量 在1秒内发出的请求数
 
-*-t 持续时间 默认值为60s。您可以通过以下方式指定持续时间:
+* -t 持续时间 默认值为60s。您可以通过以下方式指定持续时间:
 
         -t 10[s[econd[s]]] 或者 -t 10[m[inute[s]]] 或者 -t 1[h[hour[s]]] 或者 -t 1[d[day[s]]]
         
-*-v 打印版本号
+* -v 打印版本号
 
-*-h 显示使用信息
+* -h 显示使用信息
 
-Where:
-   <data_file> 一个包含方法参数的本地文件，通过使用@识别为文件信息,如果Thrift方法有参数，此文件为必需配置
+* Where: <data_file>   
+一个包含方法参数的本地文件，通过使用@识别为文件信息，如果Thrift方法有参数，此文件为必需配置
 
 
 ##贡献

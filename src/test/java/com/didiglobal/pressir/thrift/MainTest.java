@@ -1,6 +1,5 @@
-package com.pressir;
+package com.didiglobal.pressir.thrift;
 
-import com.didiglobal.pressir.thrift.Main;
 import com.pressir.idl.service.Service;
 import org.apache.thrift.transport.TTransportException;
 import org.junit.Before;
