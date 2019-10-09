@@ -1,34 +1,40 @@
 ## Benchark-thrift
-**Benchmark-thrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
+**Benchmark-thrift**是一款测试Thrift应用程序性能的工具，开箱即用，高效简单。
 > [README in English](README.md)
 
 ## 特点
 
- * 简洁的使用方式：用户仅仅需要使用简单的命令，就可以实现发压。不需要用户有任何代码开发能力  
-
- * Thrift版本兼容：工具支持Thrift从0.9.0到0.12.0的所有版本，可以通过修改配置文件完成版本的指定  
- 
- * 两种类型的压力：工具不仅支持以并发度的方式进行发压，还可以以固定吞吐量的形式进行测试  
+ * 简单的使用方式：使用者只需要在命令行输入简单的启动命令，就可以对目标服务进行测试。工具不对使用者有任何代码开发能力要求 
+ * 全量Thrift版本支持：工具支持截止到目前所有的Thrift版本，使用者只需要修改Thrift环境配置文件，就可以完成Thrift版本的切换  
+ * 两种类型的压力：工具不仅支持模拟并发的方式进行性能测试，还支持以固定吞吐量的形式进行对目标服务的性能考量  
 
 ## 环境要求
 
-如果想工具运行起来，您需要满足以下条件：
+如果想使用此工具，以下几点是必须要满足的：
 
- * #### JAVA环境：
+ * #### JAVA环境要求：
 
-需要一个完全兼容的Java 8运行环境来执行工具。
+工具是使用Java语言编写的，如果想工具正常运行，必须确保工具所在的机器上已经安装了Java 8或更高版本的Java运行环境。
+```bash
+    echo $JAVA_HOME             # 正常情况下应该会输出Java安装目录，如果这条指令失败了，使用者应该检查机器上是否安装了Java运行环境
+    java -version               # 如果本地的Java版本低于Java 8，请先升级本地Java版本或者下载更高版本 https://www.oracle.com/technetwork/java/javase/downloads/index.html
+```bash  
 
  * #### idl生成的jar包：
 
-用户需要跟据idl生成相应的jar包，然后将jar路径在配置文件中配置好
+Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过接口描述语言生成的jar包来进行服务调用。
+工具提供了另一个脚本命令方便使用者将idl文件转化成Java服务所需要使用的jar包。
 ```bash
-    thrift -r --gen java xxx.thrift #通过命令生成相应的java文件
-    sh jar_generator.sh version java_path jar_path  #version: 指定Thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
+    #1、通过命令将.thrift文件转化成相应的java文件,执行后会在当前路径下生成gen-java文件夹
+    thrift -r --gen java xxx.thrift 
+    #2、通过工具提供的脚本上条命令生成的java夹进一步打包为.jar文件
+    # 其中三个参数含义分别是: 1、version: 指定Thrift版本；2、java_path:指定执行完上条命令所生成的java文件夹路径；3、jar_path:指定最终的jar包的位置和名称
+    sh jar_generator.sh version java_path jar_path 
 ```        
 
 ## 如何运行
 
-确保已正确配置java运行环境，然后：
+运行前确保阅读[环境要求](## 环境要求)：
 
 ```bash
     echo $JAVA_HOME             # 应该打印您的Java home目录。如果命令失败，则需要安装Java环境。Java下载 https://www.oracle.com/technetwork/java/javase/downloads/index.html
