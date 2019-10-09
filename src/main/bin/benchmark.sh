@@ -110,7 +110,7 @@ function validate_and_parse_url(){
     exit 1
   fi
   if [[ ${full_url} != "${scheme}://"* ]]; then
-    echo "${SHELL_NAME}: incorrect thrift url, should start with ${scheme}://: ${full_url}"
+    echo "${SHELL_NAME}: incorrect thrift url, should start with ${scheme}://"
     print_usage
     exit 1
   fi
@@ -154,7 +154,7 @@ function validate_thrift_server(){
 
 function print_to_newbie(){
   printf ", are you new to ${TOOL_NAME}? follow these steps to make it work\n"
-  printf "  1. use -e to specify an environment file, or rename one sample in conf directory to thrift.env\n"
+  printf "  1. use -e to specify an environment file, or rename one sample in conf directory($CONF_DIR) to thrift.env\n"
   printf "  2. double check thrift version, client jar location, transport and protocol in environment file\n"
   printf "  3. see usages below and re-run this shell\n"
 }

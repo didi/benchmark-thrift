@@ -13,12 +13,15 @@ if [[ $3 == "" || $3 != *.jar ]]; then
 fi
 
 function gen_classpath(){
-    for element in `ls ../lib/thrift/$1`
+    for element in `ls $LIB_DIR`
     do
-        jarfile=../lib/thrift/$1/$element:$jarfile
+        jarfile=$LIB_DIR/$element:$jarfile
     done
     jarfile=${jarfile%:*}
 }
+
+declare -r HOME_DIR=$(cd $(dirname $0); cd ..; pwd)
+declare -r LIB_DIR="${HOME_DIR}/lib/thrift/$1"
 
 if [[ -d classdir ]]; then
     rm -rf classdir
@@ -27,9 +30,9 @@ fi
 mkdir classdir
 gen_classpath $1
 
-echo "version -> $1"
+echo "version   -> $1"
 echo "java path -> $2"
-echo "jar path -> $3"
+echo "jar path  -> $3"
 echo "classpath -> $jarfile"
 
 javac -classpath $jarfile -d classdir $2/*.java > /dev/null
