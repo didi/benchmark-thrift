@@ -284,7 +284,7 @@ class Statistic {
         if (EXCEPTION_MAP.size() > 0) {
             stringBuilder.append("\t");
             for (Map.Entry<String, Integer> entry : EXCEPTION_MAP.entrySet()) {
-                stringBuilder.append(entry.getKey()).append(": ")
+                stringBuilder.append("Exception: ").append(entry.getKey()).append(", Counts: ")
                         .append(entry.getValue())
                         .append("\n");
             }

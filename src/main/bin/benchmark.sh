@@ -168,7 +168,7 @@ Options:
                           If no -c nor -q is specified, default value is 1 concurrency
    -q <throughput>        Number of requests issued in 1 Second
                           If no -c nor -q is specified, default value is 1 concurrency
-   -t <time_limit>         How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
+   -t <time_limit>        How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
                           If not specified, default value is 60 seconds
    -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
                           If not specified, default value is ../conf/thrift.env

@@ -40,7 +40,7 @@ The following requirements exist for running Benchmark-thrift:
    Thrift environment configuration file include Transport, Protocol, Thrift version, and the location of the generated jar package. 
         * ######Example  
          version=0.12.0  
-         classpath=/Users/didi/test.jar        
+         client_jar=/Users/didi/test.jar        
          transport=TFramedTransport(transport=TSocket)  
          protocol=TCompactProtocol        
    * -c concurrency    

@@ -51,7 +51,7 @@
  与Thrift相关的配置，包括TTransport、TProtocol、Thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
 * ######示例  
         version=0.12.0  
-        classpath=/users/didi/test.jar  
+        client_jar=/users/didi/test.jar  
         transport=TFramedTransport（transport=tSocket）  
         protocol=TCompactProtocol
         

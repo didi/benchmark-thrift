@@ -12,7 +12,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
 import org.apache.thrift.protocol.TProtocolFactory;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,9 +50,9 @@ public class InvocationContext {
 
     private TTransportFactory transportFactory;
 
-    public InvocationContext(File envConf, String uri) {
+    public InvocationContext(File thriftEnv, String uri) {
         this.parseURI(uri);
-        this.readEnvConf(envConf);
+        this.readThriftEnv(thriftEnv);
     }
 
     private static Object[] castArgs(Method method, String[] args) {
@@ -113,50 +112,50 @@ public class InvocationContext {
         }
     }
 
-    private void readEnvConf(File envConf) {
+    private void readThriftEnv(File thriftEnv) {
         Properties properties = new Properties();
-        try (FileInputStream fis = new FileInputStream(envConf)) {
+        try (FileInputStream fis = new FileInputStream(thriftEnv)) {
             properties.load(fis);
         } catch (IOException e) {
             throw new IllegalStateException("Load env conf error: " + e.getMessage(), e);
         }
         String clientJar = properties.getProperty("client_jar");
         if (Strings.isBlank(clientJar)) {
-            throw new IllegalStateException("Blank 'client_jar' in env conf");
+            throw new IllegalStateException("Blank 'client_jar' in thrift env");
         }
         File jarFile = (clientJar.charAt(0) == File.separatorChar) ?
                 new File(clientJar) :
-                new File(envConf.getParent(), clientJar);
+                new File(thriftEnv.getParent(), clientJar);
         try {
             this.classLoader = new CustomClassLoader(jarFile);
         } catch (IOException e) {
-            throw new IllegalStateException("Error 'client_jar' in env conf: " + clientJar, e);
+            throw new IllegalStateException("Error 'client_jar' in thrift env: " + clientJar, e);
         }
 
         String protocol = properties.getProperty("protocol");
         if (Strings.isBlank(protocol)) {
-            throw new IllegalStateException("Blank 'protocol' in env conf");
+            throw new IllegalStateException("Blank 'protocol' in thrift env");
         }
         try {
             this.protocolFactory = ContextParser.parseProtocolFactory(protocol);
         } catch (Exception e) {
-            throw new IllegalStateException("Error 'protocol' in env conf: " + protocol, e);
+            throw new IllegalStateException("Error 'protocol' in thrift env: " + protocol, e);
         }
         if (this.protocolFactory == null) {
-            throw new IllegalStateException("Error 'protocol' in env conf: " + protocol);
+            throw new IllegalStateException("Error 'protocol' in thrift env: " + protocol);
         }
 
         String transport = properties.getProperty("transport");
         if (Strings.isBlank(protocol)) {
-            throw new IllegalStateException("Blank 'transport' in env conf");
+            throw new IllegalStateException("Blank 'transport' in thrift env");
         }
         try {
             this.transportFactory = ContextParser.parseTransportFactory(transport);
         } catch (Exception e) {
-            throw new IllegalStateException("Error 'transport' in env conf: " + transport, e);
+            throw new IllegalStateException("Error 'transport' in thrift env: " + transport, e);
         }
         if (this.transportFactory == null) {
-            throw new IllegalStateException("Error 'transport' in env conf: " + transport);
+            throw new IllegalStateException("Error 'transport' in thrift env: " + transport);
         }
     }
 
