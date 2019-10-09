@@ -61,10 +61,10 @@ The following requirements exist for running Benchmark-thrift:
    
 
 ## Contributing
-Welcome to contribute by creating issues or sending pull requests. See Contributing Guide for guidelines.
+Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
 ## License
-Benchmark-thrift is licensed under the Apache License 2.0. See the LICENSE file.
+Benchmark-thrift is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file.
 
 ## Note
 This is not an official Didi product (experimental or otherwise), it is just code that happens to be owned by Didi.
