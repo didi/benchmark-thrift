@@ -73,11 +73,11 @@
 
 ## 贡献
 
-请参阅贡献指南。
+请参阅[贡献指南](CONTRIBUTING.md)。
 
 ## 许可证
 
-Benchmark-thrift是根据ApacheLicense2.0授权的。请参阅许可证文件。
+Benchmark-thrift是根据ApacheLicense2.0授权的。请参阅[许可证文件](LICENSE)。
 
 ## Note
 这不是一个正式的滴滴产品，它只是碰巧代码属于滴滴。
