@@ -1,8 +1,8 @@
-##Benchark-thrift
+## Benchark-thrift
 **Benchmark-thrift**是一款测试Thrift应用程序性能的工具，提供开箱即用的压测功能。
 > [README in English](README.md)
 
-##特点
+## 特点
 
  * 简洁的使用方式：用户仅仅需要使用简单的命令，就可以实现发压。不需要用户有任何代码开发能力  
 
@@ -10,15 +10,15 @@
  
  * 两种类型的压力：工具不仅支持以并发度的方式进行发压，还可以以固定吞吐量的形式进行测试  
 
-##环境要求
+## 环境要求
 
 如果想工具运行起来，您需要满足以下条件：
 
- * ##JAVA环境：
+ * #### JAVA环境：
 
 需要一个完全兼容的Java 8运行环境来执行工具。
 
- * ##idl生成的jar包：
+ * #### idl生成的jar包：
 
 用户需要跟据idl生成相应的jar包，然后将jar路径在配置文件中配置好
 ```bash
@@ -26,7 +26,7 @@
     sh jar_generator.sh version java_path jar_path  #version: 指定Thrift版本，java_path:指定执行完上条命令所生成的java文件夹路径，jar_path:指定最终的jar包的位置和名称
 ```        
 
-##如何运行
+## 如何运行
 
 确保已正确配置java运行环境，然后：
 
@@ -40,16 +40,16 @@
     sh benchmark.sh 127.0.0.1:8090/Test/test?@data_file # 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试。如果环境配置文件没有指定，默认采取conf下的thrift.env作为默认配置。如果在此路径下没有thrift.env 工具会有异常提示
 ```
 
-####具体用法
+#### 具体用法
 ```bash
     sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 ```
 
-####参数选项
+#### 参数选项
 
  * -e thrift.env  
  与Thrift相关的配置，包括TTransport、TProtocol、Thrift版本和生成的jar包位置。如果没有指定该参数，工具会默认扫描conf目录下的thrift.env
-* ######示例  
+* ###### 示例  
         version=0.12.0  
         client_jar=/users/didi/test.jar  
         transport=TFramedTransport（transport=tSocket）  
@@ -71,15 +71,15 @@
 一个包含方法参数的本地文件，通过使用@识别为文件信息，如果Thrift方法有参数，此文件为必需配置
 
 
-##贡献
+## 贡献
 
 请参阅贡献指南。
 
-##许可证
+## 许可证
 
 Benchmark-thrift是根据ApacheLicense2.0授权的。请参阅许可证文件。
 
-##Note
-这不是一个正式的didi产品（实验性的或其他的），它只是碰巧代码属于didi。
+## Note
+这不是一个正式的滴滴产品，它只是碰巧代码属于滴滴。
 
 感谢您使用这款工具!
