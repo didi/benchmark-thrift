@@ -153,13 +153,16 @@ function validate_thrift_server(){
 }
 
 function print_to_newbie(){
-  printf ", are you new to ${TOOL_NAME}? follow these steps to make it work\n"
-  printf "  1. use -e to specify an environment file, or rename one sample in conf directory($CONF_DIR) to thrift.env\n"
+  printf ", is it your first time to use ${TOOL_NAME}? follow these steps to make it work\n"
+  printf "  1. use -e to specify an environment file, or rename one sample to thrift.env in directory conf/\n"
   printf "  2. double check thrift version, client jar location, transport and protocol in environment file\n"
   printf "  3. see usages below and re-run this shell\n"
 }
 
 function print_usage(){
+  local demo_host="127.0.0.1"
+  local demo_port=8972
+  local demo_service="DemoService"
   printf "\
 Usage: sh ${SHELL_NAME}.sh [options] thrift://<host>:<port>/<service>/<method>[?[@<data_file>]]
 
@@ -181,13 +184,15 @@ Where:
 
 Examples:
     # 1. benchmark a non-args method with default conf
-    sh ${SHELL_NAME}.sh thrift://127.0.0.1:8972/demoService/noArgMethod
+    sh ${SHELL_NAME}.sh thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
     # 2. benchmark at 10 concurrencies for 5 minutes
-    sh ${SHELL_NAME}.sh -c 10 -t 5m thrift://127.0.0.1:8972/demoService/method
+    sh ${SHELL_NAME}.sh -c 10 -t 5m thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
     # 3. benchmark at 10 qps for 2 hours
-    sh ${SHELL_NAME}.sh -q 10 -t 2h thrift://127.0.0.1:8972/demoService/method
-    # 4. benchmark by qps for 2 hours
-    sh ${SHELL_NAME}.sh -c 10 -t 2h thrift://127.0.0.1:8972/demoService/method
+    sh ${SHELL_NAME}.sh -q 10 -t 2h thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
+    # 4. specify an environment file
+    sh ${SHELL_NAME}.sh -e conf/tsocket.sample.env thrift://${demo_host}:${demo_port}/${demo_service}/method
+    # 5. specify arguments
+    sh ${SHELL_NAME}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod?@demo/oneArgMethod_args.csv
 "
 }
 
@@ -223,7 +228,6 @@ declare -i concurrency=0
 declare -i throughput=0
 declare -i time_limit=0
 declare env_file=${DEFAULT_ENV_FILE}
-declare params=""
 # thrift url
 declare url=""
 declare -r scheme="thrift"
@@ -299,6 +303,9 @@ validate_env_file ${env_file}
 validate_thrift_server ${host} ${port} ${service}
 
 # step 7
+declare params=""
+params="$params -e ${env_file}"
+params="$params -u ${url}"
 if [[ ${concurrency} -gt 0 ]]; then
   params="$params -c ${concurrency}"
 elif [[ ${throughput} -gt 0 ]]; then
@@ -311,8 +318,4 @@ if [[ ${timelit} -gt 0 ]]; then
 else
   params="$params -t 60"
 fi
-params="$params -e ${env_file}"
-params="$params -u ${url}"
-
-# step 8
 start_to_benchmark ${params}
