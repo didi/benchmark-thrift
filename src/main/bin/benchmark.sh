@@ -321,4 +321,5 @@ if [[ ${timelit} -gt 0 ]]; then
 else
   params="$params -t 60"
 fi
+
 start_to_benchmark ${params}
