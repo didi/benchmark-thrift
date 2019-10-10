@@ -9,17 +9,17 @@
  * 两种类型的压力：工具不仅支持模拟并发的方式进行性能测试，还支持以固定吞吐量的形式进行对目标服务的性能考量  
 
 ## 环境要求
-
-如果想使用此工具，以下几点是必须要满足的：
-
- * #### JAVA环境要求：
-
+ * #### JAVA环境要求
 工具是使用Java语言编写的，如果想工具正常运行，必须确保工具所在的机器上已经安装了Java 8或更高版本的Java运行环境。
 ```bash
     echo $JAVA_HOME             # 正常情况下应该会输出Java安装目录，如果这条指令失败了，您需要检查机器上是否安装了Java运行环境
     java -version               # 如果本地的Java版本低于Java 8，请先升级本地Java版本或者下载更高版本 https://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 ```
+
+## 如何运行
+
+运行前确保已经阅读[环境要求](## 环境要求)的相应内容：
 * #### idl生成的jar包：
 
 Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过接口描述语言生成的jar包来进行服务调用。
@@ -30,12 +30,7 @@ Thrift是一种接口描述语言和二进制通讯协议，用来定义和创�
     #2、通过工具提供的脚本上条命令生成的java夹进一步打包为.jar文件
     # 其中三个参数含义分别是: 1、version: 指定Thrift版本；2、java_path:指定执行完上条命令所生成的java文件夹路径；3、jar_path:指定最终的jar包的位置和名称
     sh jar_generator.sh version java_path jar_path 
-```      
-
-## 如何运行
-
-运行前确保已经阅读[环境要求](## 环境要求)的相应内容：
-
+```   
 ```bash
     # 1、将压缩文件进行解压
     unzip benchmark-thrift-1.0-SNAPSHOT.zip  
