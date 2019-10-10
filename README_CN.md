@@ -1,12 +1,10 @@
 ## Benchark-thrift简介
 **Benchmark-thrift**是一款测试`Thrift`应用程序性能的工具，开箱即用，高效简单。
 > [README in English](README.md)
-
 #### 工具特点
  * 简单的使用方式：使用者只需要在命令行输入简单的启动命令，就可以对目标服务进行测试。工具不需要使用者有代码开发能力 
  * 全量Thrift版本支持：工具支持截止到目前所有的Thrift版本，使用者只需要修改Thrift环境配置文件，就可以完成Thrift版本的切换  
  * 两种类型的压力：工具不仅支持模拟并发的方式进行性能测试，还支持以固定吞吐量的形式进行对目标服务的性能考量  
-
 ## 下载与安装
 > #### 环境要求
 >> ##### 系统环境 
@@ -16,19 +14,16 @@
 >>```bash
 >>java -version  #如果本地的Java版本低于Java 8，请先升级本地Java版本或者下载更高版本 https://www.oracle.com/technetwork/java/javase/downloads/index.html
 >>```
-
 > #### 下载 
 >```bash
 >git clone xxxx
 >```
-
 > #### 安装
 >```bash
 >unzip benchmark-thrift-1.0-SNAPSHOT.zip
 >```
 ## 如何运行
 请确保已阅读[环境要求](## 环境要求)的相应内容：
-
 > #### 1.准备jar
 >Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过idl生成的jar包。工具提供了一个脚本，方便使用者将idl转化为工具所需要的jar包
 >> ##### a.通过命令将idl转化为java文件,执行后会在当前路径下生成gen-java文件夹
@@ -70,27 +65,24 @@
 >> * ###### -t 持续时间 如果没有通过参数指定，系统默认按照60秒的时长进行测试。2或2s等同于2秒, 2m等同于2分钟, 2h等价于2小时
 >> * ###### -v 打印版本号
 >> * ###### -h 打印帮助信息
->> * ###### Where: <data_file> 一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的远程方法含有参数，必须指定参数文件地址。`文件内容应该为一行表示方法的一个参数`。如果是参数类型为struct，需要使用json形式
-
-## 快速上手(示例)
+>> * ###### Where: data_file表示为一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的方法含有参数，那么必须指定参数文件。`文件内容应该为一行表示方法的一个参数`。如果是参数类型为struct，需要使用json形式
+>>>     示例:假设方法有四个参数，类型分别为i32、string、list<i32>、以及struct，那么文件内容为
+>>>     2019
+>>>     happy new year
+>>>     [2,0,1,9]
+>>>     {"key":"value"}
+## 快速上手(启动示例)
 ```bash
-   
-    cd conf
-    # 2.1 选择一个Thrift环境配置文件并且修改相应内容
-    vim tsocket.sample.env      
-    # 2.2 重命名为thrift.env方便工具进行默认扫描
-    mv tsocket.sample.env thrift.env 
-    cd ..
-    # 3、进入到bin目录下
-    cd bin
-    # 3.1 修改权限，确保命令是可执行的
-    chmod 755 *.sh 
-    # 3.2 如果持续时间和压力类型没有指定，会默认按照1个并发的强度进行1分钟测试。如果环境配置文件没有指定(-e filePath)，默认使用conf目录下的thrift.env作为环境配置。
-    sh benchmark.sh thrift://127.0.0.1:8972/demoService/noArgMethod 
+cd conf
+# 复制样例并修改名称。因为样例内容是我们按照Demo设计的，所以不需要改变内容。如果想对您指定的服务进行测试，需要根据实际情况来改变内容
+cp thrift_tsocket_sample.env thrift_env
+cd ../bin
+# 通过脚本启动Demo服务
+sh demo_thrift_server.sh 8972 &
+# 1.我们没有指定环境配置文件，工具默认使用我们上一步修改的conf/thrift.env作为环境配置文件。如果我们不想使用默认的形式，可以通过-e的方式指定配置文件地址
+# 2.DemoService的noArgMethod没有参数，所以不需要我们指定参数文件地址。如果目标服务的方法有参数，需要通过?@指定参数文件地址
+sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
-
-
-
 
 ## 贡献
 
