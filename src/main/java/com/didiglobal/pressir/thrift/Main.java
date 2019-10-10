@@ -60,18 +60,17 @@ public class Main {
             ConsolePrinter.sayGoodbye();
         } catch (Exception e) {
             ConsolePrinter.onError(e.getMessage());
-            System.exit(1);
         }
     }
 
     private void run() {
 
         InvocationContext invocationContext = new InvocationContext(this.thriftEnv, this.url);
-        //prepare monitor
-        Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
 
         //prepare executor
         try (PressureExecutor pressureExecutor = this.getExecutor(invocationContext.getTaskGenerator())) {
+            //prepare monitor
+            Monitor.init(invocationContext.getMethod(), DurationParser.parse(this.timeLimit) / 10);
             ConsolePrinter.say("Server Hostname: {}", invocationContext.getEndpoint().getHost());
             ConsolePrinter.say("Server Port: {}", invocationContext.getEndpoint().getPort());
             ConsolePrinter.say("Thrift Service: {}", invocationContext.getService());
@@ -84,7 +83,14 @@ public class Main {
                     invocationContext.getEndpoint(),
                     invocationContext.getService(),
                     invocationContext.getMethod());
-            ConsolePrinter.say("\tSend\tSuccess\tTE\tPE\tAE\tOE");
+            ConsolePrinter.say("Total means the number of requests prepare to be sent\n");
+            ConsolePrinter.say("Send means the request has been sent\n");
+            ConsolePrinter.say("Success means the response has been received normally\n");
+            ConsolePrinter.say("TE means TTransportException\n");
+            ConsolePrinter.say("PE means TProtocolException\n");
+            ConsolePrinter.say("AE means ApplicationException\n");
+            ConsolePrinter.say("OE means Others Exception\n");
+            ConsolePrinter.say("\tTotal\tSend\tSuccess\tTE\tPE\tAE\tOE");
             pressureExecutor.start(1);
         }
     }

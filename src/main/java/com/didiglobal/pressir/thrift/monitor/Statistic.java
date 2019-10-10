@@ -95,7 +95,8 @@ class Statistic {
             interval = 1;
         }
         EXECUTOR.scheduleAtFixedRate(() ->
-                        ConsolePrinter.say("\t{}\t{}\t{}\t{}\t{}\t{}",
+                        ConsolePrinter.say("\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+                                this.requests.get() + this.connects.get(),
                                 this.requests.get(),
                                 this.responses,
                                 EXCEPTION_COUNT_MAP.get("TRANSPORT_EXCEPTION"),
