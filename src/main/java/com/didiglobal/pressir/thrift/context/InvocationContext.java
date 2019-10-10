@@ -129,7 +129,7 @@ public class InvocationContext {
         try {
             this.classLoader = new CustomClassLoader(jarFile);
         } catch (IOException e) {
-            throw new IllegalStateException("Error 'client_jar' in thrift env: " + clientJar, e);
+            throw new IllegalStateException("Error 'client_jar' in thrift env: " + jarFile, e);
         }
 
         String protocol = properties.getProperty("protocol");

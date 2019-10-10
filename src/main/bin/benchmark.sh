@@ -85,7 +85,7 @@ function validate_env_file(){
     exit 1
   fi
   if [[ ${client_jar} != "/"* ]]; then
-    client_jar=${HOME_DIR}/${client_jar}
+    client_jar=$(dirname ${file})/${client_jar}
   fi
   if [[ ! -f ${client_jar} ]]; then
     echo "${SHELL_NAME}: client jar is missing: ${client_jar}"
@@ -321,4 +321,5 @@ if [[ ${timelit} -gt 0 ]]; then
 else
   params="$params -t 60"
 fi
+echo ${params}
 start_to_benchmark ${params}
