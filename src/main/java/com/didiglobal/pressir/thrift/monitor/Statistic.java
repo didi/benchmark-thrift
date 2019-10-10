@@ -278,13 +278,15 @@ class Statistic {
                 .append("Complete requests: ")
                 .append(this.responses)
                 .append("\n")
-                .append("Failed requests: ")
+                .append("Failed[ Both connect failed(")
+                .append(this.connects.get())
+                .append(") and request failed(")
                 .append(this.requests.get() - this.responses)
+                .append(")]: ")
                 .append("\n");
         if (EXCEPTION_MAP.size() > 0) {
-            stringBuilder.append("\t");
             for (Map.Entry<String, Integer> entry : EXCEPTION_MAP.entrySet()) {
-                stringBuilder.append("Exception: ").append(entry.getKey()).append(", Counts: ")
+                stringBuilder.append("\t").append("Exception: ").append(entry.getKey()).append(", Counts: ")
                         .append(entry.getValue())
                         .append("\n");
             }

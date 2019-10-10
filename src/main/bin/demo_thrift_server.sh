@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function start_server(){
-  local port = $1;
+  local port=$1;
   local classpath=${LIB_DIR}/*:${LIB_DIR}/thrift/0.11.0/*:
   local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/${SHELL_NAME}_hs_err_pid%p.log -Xloggc:$BIN_DIR/${SHELL_NAME}_gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
   local pid_file="$BIN_DIR/${SHELL_NAME}_pid"
