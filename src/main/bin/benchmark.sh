@@ -29,7 +29,6 @@ function get_supported_thrift_versions(){
 
 function validate_env_file(){
   local file=$1
-  local CURRENT_PATH=`cd $(dirname $0);pwd -P`
   local client_jar=""
   local transport=""
   local protocol=""
@@ -86,7 +85,7 @@ function validate_env_file(){
     exit 1
   fi
   if [[ ${client_jar} != "/"* ]]; then
-    client_jar=${CURRENT_PATH}/${client_jar}
+    client_jar=$(dirname ${file})/${client_jar}
   fi
   if [[ ! -f ${client_jar} ]]; then
     echo "${SHELL_NAME}: client jar is missing: ${client_jar}"
@@ -322,5 +321,10 @@ if [[ ${timelit} -gt 0 ]]; then
 else
   params="$params -t 60"
 fi
+<<<<<<< HEAD
 
 start_to_benchmark ${params}
+=======
+echo ${params}
+start_to_benchmark ${params}
+>>>>>>> pressir/master

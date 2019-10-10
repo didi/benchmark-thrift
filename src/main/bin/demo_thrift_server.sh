@@ -27,9 +27,9 @@ Options:
 
 Examples:
     # 1. start a demo thrift server on default port 8972
-    sh ${shell}.sh
+    sh ${SHELL_NAME}.sh
     # 2. start a demo thrift server on port 8900
-    sh ${shell}.sh -p 8900
+    sh ${SHELL_NAME}.sh -p 8900
 "
 }
 
