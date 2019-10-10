@@ -321,10 +321,4 @@ if [[ ${timelit} -gt 0 ]]; then
 else
   params="$params -t 60"
 fi
-<<<<<<< HEAD
-
 start_to_benchmark ${params}
-=======
-echo ${params}
-start_to_benchmark ${params}
->>>>>>> pressir/master
