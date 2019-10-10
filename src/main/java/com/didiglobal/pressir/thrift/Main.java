@@ -60,6 +60,7 @@ public class Main {
             ConsolePrinter.sayGoodbye();
         } catch (Exception e) {
             ConsolePrinter.onError(e.getMessage());
+            System.exit(1);
         }
     }
 
