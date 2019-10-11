@@ -42,7 +42,7 @@
 >>cd conf
 >>cp thrift_tsocket_sample.env thrift.env
 >>```
->> ##### b.并根据实际情况修改相应内容。主要检查`transport`、`protocol`、以及[client_jar](> #### 2. 准备jar)是否配置正确。
+>> ##### b.并根据实际情况修改相应内容。主要检查`transport`、`protocol`、以及[client_jar](#### 1. 准备jar)是否配置正确。
 >>```bash
 >>vim thrift.env
 >>cd ..
