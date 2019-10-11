@@ -1,5 +1,7 @@
 ## What is it  
-Benchmark-thrift is an open-source application designed to load test thrift applications and measure performance.  
+> [中文版](README_CN.md)  
+
+**Benchmark-thrift** is an open-source application designed to load test thrift applications and measure performance.  
 It's the first out-of-box thrift protocol pressure tool so far and it's simple usage, you could also be integrated within Pressir platform.
 
 ## Features  
