@@ -64,17 +64,6 @@
             <version>0.11.0</version>
             <!--<scope>provided</scope>-->
         </dependency>
-        <dependency>
-            <groupId>com.didiglobal.pressir</groupId>
-            <artifactId>demo-thrift-server</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.thrift</groupId>
-                    <artifactId>libthrift</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 
     <build>

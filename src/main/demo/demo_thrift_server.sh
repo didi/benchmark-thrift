@@ -2,9 +2,9 @@
 
 function start_server(){
   local port=$1;
-  local classpath=${LIB_DIR}/*:${LIB_DIR}/thrift/0.11.0/*:
-  local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$BIN_DIR/${SHELL_NAME}_hs_err_pid%p.log -Xloggc:$BIN_DIR/${SHELL_NAME}_gc.log -XX:HeapDumpPath=$BIN_DIR -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
-  local pid_file="$BIN_DIR/${SHELL_NAME}_pid"
+  local classpath=${DEMO_DIR}/*:${LIB_DIR}/thrift/0.11.0/*:
+  local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled"
+  local pid_file="DEMO_DIR/${SHELL_NAME}_pid"
   if [[ ! -s "${pid_file}" ]] || [[ "" == $(cat ${pid_file}) ]] || [[ -z "$(ps -eo pid | grep -w $(cat ${pid_file}))" ]]; then
     java ${java_opts} -cp ${classpath} com.didiglobal.pressir.thrift.demo.DemoServer $* 2>&1
     echo $! > ${pid_file}
@@ -39,8 +39,8 @@ declare -r SHELL_NAME="demo_thrift_server"
 declare -r TOOL_NAME="demo thrift server"
 declare -r TOOL_VERSION="0.0.1"
 declare -r HOME_DIR=$(cd $(dirname $0); cd ..; pwd)
-declare -r BIN_DIR="${HOME_DIR}/bin"
 declare -r LIB_DIR="${HOME_DIR}/lib"
+declare -r DEMO_DIR="${HOME_DIR}/demo"
 declare -i port=8972
 
 while getopts "p:hv" opt
