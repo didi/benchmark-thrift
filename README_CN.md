@@ -37,7 +37,6 @@
 >>cd ${TOOL_HOME}/bin
 >># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
 >>sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
->>cd ..
 >>```
 > #### 2.如果`第一次`使用工具，推荐根据需要来修改工具`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
 >> ##### a.复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
@@ -48,7 +47,6 @@
 >> ##### b.并根据实际情况修改相应内容。主要检查`transport`、`protocol`、以及[client_jar](#### 1. 准备jar)是否配置正确。
 >>```bash
 >>vim thrift.env
->>cd ..
 >>```
 > #### 3.启动工具
 >```bash
@@ -76,7 +74,7 @@
 >>>     {"key":"value"}
 ## 快速上手(启动示例)
 ```bash
-cd conf
+cd ${TOOL_HOME}/conf
 # 复制样例并修改名称。因为样例内容是我们按照Demo设计的，所以不需要改变内容。如果想对您指定的服务进行测试，需要根据实际情况来改变内容
 cp thrift_tsocket_sample.env thrift_env
 cd ../bin
