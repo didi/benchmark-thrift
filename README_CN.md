@@ -25,37 +25,37 @@
 ## 如何运行
 请确保已阅读[环境要求](#环境要求)的相应内容：
 **`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
-> #### 1.准备jar
+> #### 准备jar
 >Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过idl生成的jar包。工具提供了一个脚本，方便使用者将idl转化为工具所需要的jar包
->> ##### a.通过命令将idl转化为java文件,执行后会在当前路径下生成gen-java文件夹
+>> ##### 1.通过命令将idl转化为java文件,执行后会在当前路径下生成gen-java文件夹
 >>```bash
 >>thrift -r --gen java /xxx/xxx.thrift 
 >>```
->> ##### b.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件
+>> ##### 2.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件
 >>```bash
 >># 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
 >>cd <TOOL_HOME>/bin
 >># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
 >>sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
 >>```
-> #### 2.如果`第一次`使用工具，推荐根据需要来修改工具`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
->> ##### a.复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
+> #### 如果`第一次`使用工具，推荐根据需要来修改工具`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
+>> ##### 1.复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
 >>```bash
 >>cd <TOOL_HOME>/conf
 >>cp thrift_tsocket_sample.env thrift.env
 >>```
->> ##### b.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#1.准备jar)是否配置正确。
+>> ##### 2.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#准备jar)是否配置正确。
 >>```bash
 >>vim thrift.env
 >>```
-> #### 3.启动工具
+> #### 启动工具
 >```bash
 >cd <TOOL_HOME>/bin
 >#示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 >sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 >```
 >##### 启动参数选项
->> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、[Client_jar](#1.准备jar)的配置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
+>> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、[Client_jar](#准备jar)的配置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
 >>>     配置文件内容示例:     
 >>>     version=0.12.0  
 >>>     client_jar=/users/didi/test.jar  
