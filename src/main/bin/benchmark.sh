@@ -170,7 +170,7 @@ function validate_thrift_server(){
     if [[ "${host}" == "127.0.0.1" ]] && [[ "${service}" == "DemoService" ]]; then
       # If user is benchmarking demo-thrift-server
       printf "${__base}: demo thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
-      printf "  [usage] sh ${__demo_dir}/demo_thrift_server.sh -p ${port}\n"
+      printf "  [usage] sh ${_demo_dir}/demo_thrift_server.sh -p ${port}\n"
     else
       printf "${__base}: thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
     fi

@@ -97,14 +97,8 @@ class Statistic {
             interval = 1;
         }
         EXECUTOR.scheduleAtFixedRate(() ->
-                        ConsolePrinter.say("\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
-                                this.requests.get() + this.connects.get(),
-                                this.requests.get(),
-                                this.responses,
-                                EXCEPTION_COUNT_MAP.get("TRANSPORT_EXCEPTION"),
-                                EXCEPTION_COUNT_MAP.get("PROTOCOL_EXCEPTION"),
-                                EXCEPTION_COUNT_MAP.get("APPLICATION_EXCEPTION"),
-                                EXCEPTION_COUNT_MAP.get("OTHERS")),
+                        ConsolePrinter.say("\tCompleted {} (Connect: {}, Send: {}) requests",
+                                this.requests.get() + this.connects.get(), this.connects.get(), this.requests.get()),
                 interval + 1,
                 interval,
                 TimeUnit.SECONDS);
@@ -293,16 +287,18 @@ class Statistic {
                 .append(formatStr("Time taken for successful requests: "))
                 .append((double) this.timeTaken / Constants.TIME_CONVERT_BASE)
                 .append(" [seconds]\n")
+                .append(formatStr("Completed: "))
+                .append(this.connects.get() + this.requests.get())
                 .append(formatStr("On connection stat: "))
                 .append(this.connects.get())
                 .append("\n")
-                .append(formatStr("Send requests: "))
+                .append(formatStr("Send: "))
                 .append(this.requests.get())
                 .append("\n")
-                .append(formatStr("Complete requests: "))
+                .append(formatStr("Receive: "))
                 .append(this.responses)
                 .append("\n")
-                .append(formatStr("Failed (Both connect failed and request failed): "))
+                .append(formatStr("Failed: "))
                 .append(this.requests.get() - this.responses + this.connects.get())
                 .append("\n");
         if (EXCEPTION_MAP.size() > 0) {
