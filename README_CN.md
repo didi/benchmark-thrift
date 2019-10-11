@@ -38,7 +38,8 @@
 >># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
 >>sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
 >>```
-> #### 如果`第一次`使用工具，推荐根据需要来修改工具`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
+> #### 准备配置文件
+>如果`第一次`使用工具，推荐您修改使用`<TOOL_HOME>/conf`下的样例，方式如下。如果`已经知悉`工具使用方式，您可以`跳过此阶段并通过-e`的方式来指定使用的环境配置文件
 >> ##### 1.复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
 >>```bash
 >>cd <TOOL_HOME>/conf
