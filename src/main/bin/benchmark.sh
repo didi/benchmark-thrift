@@ -290,7 +290,7 @@ function main(){
 				printf "This is ${_tool_name}, version ${_tool_version}\n"
 				exit 1
 				;;
-			*)
+			?)
 				printf "${__base}: illegal option ${OPTARG}\n"
 				print_usage
 				exit 1

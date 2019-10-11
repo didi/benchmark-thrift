@@ -83,13 +83,13 @@ public class Main {
                     invocationContext.getEndpoint(),
                     invocationContext.getService(),
                     invocationContext.getMethod());
-            ConsolePrinter.say("Total means the number of requests prepare to be sent\n");
-            ConsolePrinter.say("Send means the request has been sent\n");
-            ConsolePrinter.say("Success means the response has been received normally\n");
-            ConsolePrinter.say("TE means TTransportException\n");
-            ConsolePrinter.say("PE means TProtocolException\n");
-            ConsolePrinter.say("AE means ApplicationException\n");
-            ConsolePrinter.say("OE means Others Exception\n");
+            ConsolePrinter.say("\nTotal means the number of request prepared to be sent");
+            ConsolePrinter.say("Send means the number of request had been sent");
+            ConsolePrinter.say("Success means the number of request had been responded");
+            ConsolePrinter.say("TE means TTransportException");
+            ConsolePrinter.say("PE means TProtocolException");
+            ConsolePrinter.say("AE means ApplicationException");
+            ConsolePrinter.say("OE means Other Exceptions\n");
             ConsolePrinter.say("\tTotal\tSend\tSuccess\tTE\tPE\tAE\tOE");
             pressureExecutor.start(1);
         }

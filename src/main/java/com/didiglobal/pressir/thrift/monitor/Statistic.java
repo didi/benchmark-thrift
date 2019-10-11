@@ -40,6 +40,8 @@ class Statistic {
 
     private static final Map<String, Integer> EXCEPTION_MAP = new HashMap<>();
 
+    private static final int TAB_WIDTH = 50;
+
     static {
         TRANSPORT_EXCEPTION_TYPE_MAP.put(0, "Unknown");
         TRANSPORT_EXCEPTION_TYPE_MAP.put(1, "Socket not open");
@@ -106,6 +108,28 @@ class Statistic {
                 interval + 1,
                 interval,
                 TimeUnit.SECONDS);
+    }
+
+    private static String formatStr(String str) {
+        int strLen;
+        if (str == null) {
+            strLen = 0;
+        } else {
+            strLen = str.length();
+        }
+
+        if (strLen == TAB_WIDTH) {
+            return str;
+        } else if (strLen < TAB_WIDTH) {
+            int temp = TAB_WIDTH - strLen;
+            String tem = "";
+            for (int i = 0; i < temp; i++) {
+                tem = tem + " ";
+            }
+            return str + tem;
+        } else {
+            return str.substring(0, TAB_WIDTH);
+        }
     }
 
     private int[] bucketSort(int max, int min, int interval, Map<Integer, Integer> timeAndCounts) {
@@ -240,7 +264,6 @@ class Statistic {
         EXCEPTION_MAP.put(errorMsg, ++msgCount);
     }
 
-
     void onStop() {
         EXECUTOR.shutdown();
         // 计算分位耗时
@@ -267,23 +290,20 @@ class Statistic {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\tFinished\n")
-                .append("Time taken for successful requests: ")
+                .append(formatStr("Time taken for successful requests: "))
                 .append((double) this.timeTaken / Constants.TIME_CONVERT_BASE)
-                .append(" seconds\n")
-                .append("On connection stat: ")
+                .append(" [seconds]\n")
+                .append(formatStr("On connection stat: "))
                 .append(this.connects.get())
                 .append("\n")
-                .append("Send requests: ")
+                .append(formatStr("Send requests: "))
                 .append(this.requests.get())
                 .append("\n")
-                .append("Complete requests: ")
+                .append(formatStr("Complete requests: "))
                 .append(this.responses)
                 .append("\n")
-                .append("Failed[ Both connect failed(")
-                .append(this.connects.get())
-                .append(") and request failed(")
-                .append(this.requests.get() - this.responses)
-                .append(")]: ")
+                .append(formatStr("Failed (Both connect failed and request failed): "))
+                .append(this.requests.get() - this.responses + this.connects.get())
                 .append("\n");
         if (EXCEPTION_MAP.size() > 0) {
             for (Map.Entry<String, Integer> entry : EXCEPTION_MAP.entrySet()) {
@@ -292,19 +312,19 @@ class Statistic {
                         .append("\n");
             }
         }
-        stringBuilder.append("Success rate without connection stat: ")
+        stringBuilder.append(formatStr("Success rate without connection stat: "))
                 .append(this.sucRateWCS)
-                .append("%\n")
-                .append("Success rate contains connection stat: ")
+                .append(" [%]\n")
+                .append(formatStr("Success rate contains connection stat: "))
                 .append(this.sucRateCCS)
-                .append("%\n")
-                .append("Time per request: ")
+                .append(" [%]\n")
+                .append(formatStr("Time per request: "))
                 .append(this.latency == 0 ? "--" : this.latency)
                 .append(" [ms] \n")
-                .append("Minimum time taken ")
+                .append(formatStr("Minimum time taken "))
                 .append(this.min == Integer.MAX_VALUE ? "--" : this.min)
                 .append(" [ms]\n")
-                .append("Maximum time taken ")
+                .append(formatStr("Maximum time taken "))
                 .append(this.max == Integer.MIN_VALUE ? "--" : this.max)
                 .append(" [ms]\n")
                 .append("Percentage of the requests served within a certain time (ms)\n ")
