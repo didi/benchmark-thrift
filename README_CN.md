@@ -10,11 +10,12 @@
 在Mac、Centos等环境上测试较多，但Ubuntu等环境上测试尚不充分，暂不支持Windows。
 需要JDK 8或更高版本的Java运行环境。
 #### 下载地址 
-点击这里手工下载最新版本，解压缩即可。
-> #### 安装
+[点击这里](http://XXX "Download")下载最新版本，或者通过命令行：
 >```bash
->unzip benchmark-thrift-1.0-SNAPSHOT.zip
+> curl -O http://XXX
 >```
+下载完成后，解压缩即可。
+
 ## 如何运行
 请确保已阅读[环境要求](#环境要求)的相应内容：
 **`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
