@@ -25,12 +25,12 @@
 >>```bash
 >>thrift -r --gen java /xxx/xxx.thrift 
 >>```
->> ##### 2.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件,后续配到配置文件中
+>> ##### 2.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件，后续配到配置文件中
 >>```bash
->># 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
 >>cd <TOOL_HOME>/bin
->># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
+>># 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
 >>sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
+>># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
 >>```
 > #### 准备配置文件
 >如果`第一次`使用工具，推荐您修改使用`<TOOL_HOME>/conf`下的样例，方式如下。如果`已经知悉`工具使用方式，您可以`跳过此阶段并通过-e`的方式来指定使用的环境配置文件
@@ -39,15 +39,21 @@
 >>cd <TOOL_HOME>/conf
 >>cp thrift_tsocket_sample.env thrift.env
 >>```
->> ##### 2.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#准备jar)是否配置正确。
+>> ##### 2.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#准备jar)是否配置正确。其中`client_jar为准备jar阶段生成的jar包`
 >>```bash
 >>vim thrift.env
 >>```
+>> ###### 内容示例
+>>     version=0.11.0  
+>>     #client_jar准备jar阶段生成的jar包  
+>>     client_jar=/xxx/xxx/xxx.jar  
+>>     transport=TSocket  
+>>     protocol=TBinaryProtocol  
 > #### 启动工具
 >```bash
 >cd <TOOL_HOME>/bin
->#示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 >sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+>#示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 >```
 >>##### 启动参数选项
 >> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、[Client_jar](#准备jar)的配置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
@@ -62,7 +68,7 @@
 >> * ###### -v 打印版本号
 >> * ###### -h 打印帮助信息
 >> * ###### Where: data_file表示为一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的方法含有参数，那么必须指定参数文件。`文件内容应该为一行表示方法的一个参数`。如果是参数类型为struct，需要使用json形式
->>>     示例:假设方法有四个参数，类型分别为i32、string、list<i32>、以及struct，那么文件内容为
+>>>     示例:假设方法有四个参数，类型分别为i32、string、list<i32>以及struct，那么文件内容为
 >>>     2019
 >>>     happy new year
 >>>     [2,0,1,9]
@@ -77,10 +83,10 @@ cd ../demo
 sh demo_thrift_server.sh 8972 
 cd ../bin
 # 1.如果不指定配置文件，工具默认使用上步修改的<TOOL_HOME>/conf/thrift.env作为配置文件。如果不想使用该文件，可以通过-e的方式自己指定配置文件
-# 指定配置文件示例: sh benchmark.sh -e <TOOL_HOME>/conf/thrift_tsocket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 # 2.由于DemoService的noArgMethod方法没有参数，所以不需要指定参数文件地址。但如果目标服务的方法有参数，需要通过?@指定参数文件地址
-# 带参方法示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@<TOOL_HOME>/demo/data_file_demo/oneArgMethod.text
 sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+# 指定配置文件示例: sh benchmark.sh -e <TOOL_HOME>/conf/thrift_tsocket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+# 带参方法示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@<TOOL_HOME>/demo/data_file_demo/oneArgMethod.text
 ```
 
 ## 贡献
