@@ -31,7 +31,7 @@
 >>```bash
 >>thrift -r --gen java /xxx/xxx.thrift 
 >>```
->> ##### 2.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件
+>> ##### 2.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件,后续配到配置文件中
 >>```bash
 >># 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
 >>cd <TOOL_HOME>/bin
