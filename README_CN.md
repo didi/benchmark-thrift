@@ -30,13 +30,13 @@
 >>```bash
 >>thrift -r --gen java /xxx/xxx.thrift 
 >>```
->> ##### b.通过脚本(`bin`目录下)将java文件进一步打包为jar文件
+>> ##### b.通过脚本(工具`bin`目录下)将java文件进一步打包为jar文件
 >>```bash
 >># 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
 >># 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
 >>sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
 >>```
-> #### 2.如果`第一次`使用工具，推荐根据需要来修改`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
+> #### 2.如果`第一次`使用工具，推荐根据需要来修改工具`conf`目录下的环境配置文件样例。但如果您`已经使用过这款压测工具并知悉其使用方式`，您可以`跳过此步骤并通过-e`的方式来指定想使用的环境配置文件
 >> ##### a.复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
 >>```bash
 >>cd conf
@@ -54,7 +54,7 @@
 >sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 >```
 >##### 启动参数选项
->> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、以及由idl所生成jar的位置。如果`没有指定该参数，工具会以conf目录下的thrift.env为默认配置文件`
+>> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、以及由idl所生成jar的位置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
 >>>     配置文件内容示例:     
 >>>     version=0.12.0  
 >>>     client_jar=/users/didi/test.jar  
