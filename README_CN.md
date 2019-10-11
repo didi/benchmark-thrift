@@ -77,9 +77,10 @@
 cd <TOOL_HOME>/conf
 # 复制样例并修改名称。因为样例内容是我们按照Demo设计的，所以不需要改变内容。如果想对您指定的服务进行测试，需要根据实际情况来改变内容
 cp thrift_tsocket_sample.env thrift_env
-cd ../bin
+cd ../demo
 # 通过脚本启动Demo服务
-sh demo_thrift_server.sh 8972 &
+sh demo_thrift_server.sh 8972 
+cd ../bin
 # 1.如果不指定配置文件，工具默认使用上步修改的<TOOL_HOME>/conf/thrift.env作为配置文件。如果不想使用该文件，可以通过-e的方式自己指定配置文件
 # 指定配置文件示例: sh benchmark.sh -e <TOOL_HOME>/conf/thrift_tsocket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 # 2.由于DemoService的noArgMethod方法没有参数，所以不需要指定参数文件地址。但如果目标服务的方法有参数，需要通过?@指定参数文件地址
