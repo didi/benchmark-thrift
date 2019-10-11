@@ -23,7 +23,7 @@
 >unzip benchmark-thrift-1.0-SNAPSHOT.zip
 >```
 ## 如何运行
-请确保已阅读[环境要求](#4环境要求)的相应内容：
+请确保已阅读[环境要求](#环境要求)的相应内容：
 **`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
 > #### 1.准备jar
 >Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过idl生成的jar包。工具提供了一个脚本，方便使用者将idl转化为工具所需要的jar包
@@ -44,7 +44,7 @@
 >>cd <TOOL_HOME>/conf
 >>cp thrift_tsocket_sample.env thrift.env
 >>```
->> ##### b.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#### 1. 准备jar)是否配置正确。
+>> ##### b.根据实际情况修改内容。主要检查`transport`、`protocol`、以及[client_jar](#1.准备jar)是否配置正确。
 >>```bash
 >>vim thrift.env
 >>```
@@ -55,7 +55,7 @@
 >sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 >```
 >##### 启动参数选项
->> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、[Client_jar(#### 1.准备jar)的配置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
+>> * ###### -e Thrift环境配置文件，主要包括TTransport、TProtocol、[Client_jar](#1.准备jar)的配置。如果`没有指定该参数，会以工具conf目录下的thrift.env为默认配置文件`
 >>>     配置文件内容示例:     
 >>>     version=0.12.0  
 >>>     client_jar=/users/didi/test.jar  
