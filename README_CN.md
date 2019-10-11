@@ -1,23 +1,16 @@
 ## Benchark-thrift简介
 **Benchmark-thrift**是一款测试`Thrift`应用程序性能的工具，开箱即用，高效简单。
 > [README in English](README.md)
->#### 工具特点
-> * 简单的使用方式：使用者只需要在命令行输入简单的启动命令，就可以对目标服务进行测试。工具不需要使用者有代码开发能力 
-> * 全量Thrift版本支持：工具支持截止到目前所有的Thrift版本，使用者只需要修改Thrift环境配置文件，就可以完成Thrift版本的切换  
-> * 两种类型的压力：工具不仅支持模拟并发的方式进行性能测试，还支持以固定吞吐量的形式进行对目标服务的性能考量  
+#### 主要特点
+ * 使用简单：下载后，通过命令行即可使用 
+ * 功能丰富：支持多个版本的Thrift协议，支持多种TProtocol及TTransport
+ * 压力模型：支持并发数、吞吐量等多种压力模型  
 ## 下载与安装
-> #### 环境要求
->> ##### 1.系统环境 
->> 支持Mac、Ubuntu和Centos，其他环境未完整测试，如果问题请联系xxx
->> ##### 2.JAVA环境
->> 工具是使用Java语言编写的，如果想工具正常运行，必须确保工具所在的机器上已经安装了Java 8或更高版本的Java运行环境。可以通过命令查看是否安装Java以及Java的版本信息
->>```bash
->>java -version  #如果本地的Java版本低于Java 8，请先升级本地Java版本或者下载更高版本 https://www.oracle.com/technetwork/java/javase/downloads/index.html
->>```
-> #### 下载 
->```bash
->git clone xxxx
->```
+#### 环境说明
+在Mac、Centos等环境上测试较多，但Ubuntu等环境上测试尚不充分，暂不支持Windows。
+需要JDK 8或更高版本的Java运行环境。
+#### 下载地址 
+点击这里手工下载最新版本，解压缩即可。
 > #### 安装
 >```bash
 >unzip benchmark-thrift-1.0-SNAPSHOT.zip
