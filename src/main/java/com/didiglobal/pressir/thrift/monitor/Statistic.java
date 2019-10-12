@@ -289,6 +289,7 @@ class Statistic {
                 .append(" [seconds]\n")
                 .append(formatStr("Completed: "))
                 .append(this.connects.get() + this.requests.get())
+                .append("\n")
                 .append(formatStr("On connection stat: "))
                 .append(this.connects.get())
                 .append("\n")

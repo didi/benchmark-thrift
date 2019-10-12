@@ -24,6 +24,7 @@ declare thrift_version=""
 declare host=""
 declare port=""
 declare service=""
+declare use_e="false"
 
 function validate_tool_dir(){
   for dir in $@; do
@@ -36,13 +37,15 @@ function validate_tool_dir(){
 
 function validate_env_file(){
   local env_file=$1
-  local client_jar=""
-  local transport=""
-  local protocol=""
+  client_jar=""
+  transport=""
+  protocol=""
 
   if [[ ! -f "${env_file}" ]]; then
-    printf "${__base}: environment file is missing\n"
-    print_usage
+    printf "${__base}: environment file is missing, can't find ${env_file}\n"
+    if [[ ${use_e} == "false" ]];then
+      print_usage_to_newbie
+    fi
     exit 1
   fi
 
@@ -71,7 +74,9 @@ function validate_env_file(){
   validate_env_client_jar ${client_jar}
   validate_env_transport ${transport}
   validate_env_protocol ${protocol}
+}
 
+function print_env_conf_content(){
   printf "${__base}: will benchmark with the following thrift environment:
   Thrift version  ->  ${thrift_version}
   Client jar      ->  ${client_jar}
@@ -153,6 +158,12 @@ function validate_and_parse_url(){
   full_url="${full_url/://}"
 
   IFS='/ ' read -ra array <<< ${full_url}
+  local length=${#array[@]}
+  if [[ ${length} -lt 5 ]]; then
+    echo "${__base}: incorrect thrift url, thrift url should be like thrift://<host>:<port>/<service>/<method>[?@data_file]"
+    echo "Examples: thrift://127.0.0.1:8972/DemoService/noArgMethod"
+    exit 1
+  fi
   host=${array[1]}
   port=${array[2]}
   service=${array[3]}
@@ -166,7 +177,6 @@ function validate_thrift_server(){
   local service=$3
   nc -zw5 ${host} ${port} && is_server_started=$? || is_server_started=$?
   if [[ ${is_server_started} -ne 0 ]]; then
-    echo "  not started"
     if [[ "${host}" == "127.0.0.1" ]] && [[ "${service}" == "DemoService" ]]; then
       # If user is benchmarking demo-thrift-server
       printf "${__base}: demo thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
@@ -175,8 +185,6 @@ function validate_thrift_server(){
       printf "${__base}: thrift server ${host}:${port} seems to be down, make sure to start it before benchmarking\n"
     fi
     exit 1
-  else
-    echo "  started"
   fi
 }
 
@@ -200,10 +208,12 @@ function print_usage_to_newbie(){
         read option
         if [[ ${option} == 1 ]]; then
           print_usage_normally
+          exit 1
         elif [[ ${option} == 2 ]]; then
           print_usage_to_run_demo
+          exit 1
         elif [[ ${option} == 3 ]]; then
-          break
+          exit 1
         else
           echo error option! option should be give 1 or 2 or 3!
         fi
@@ -263,19 +273,6 @@ Examples:
 "
 }
 
-function print_usage(){
-  local is_newbie=false
-  if [[ ! -f ${_default_env_file} ]]; then
-    is_newbie=true
-  fi
-
-  if [[ ${is_newbie} == true ]]; then
-    print_usage_to_newbie
-    else
-        print_usage_normally
-  fi
-}
-
 function start_to_benchmark(){
   local classpath=${_lib_thrift_dir}/${thrift_version}/*:${_lib_dir}/*:${_lib_classes_dir}
   local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled -XX:ErrorFile=$_bin_dir/hs_err_pid%p.log -Xloggc:$_bin_dir/gc.log -XX:HeapDumpPath=$_bin_dir -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+HeapDumpOnOutOfMemoryError"
@@ -318,6 +315,7 @@ function main(){
         ;;
       e)
         env_file="$OPTARG"
+        use_e="true"
         ;;
       h)
         print_usage_normally
@@ -329,7 +327,7 @@ function main(){
         ;;
       ?)
         printf "${__base}: illegal option ${OPTARG}\n"
-        print_usage
+        print_usage_normally
         exit 1
         ;;
       esac
@@ -350,6 +348,9 @@ function main(){
   validate_thrift_server ${host} ${port} ${service}
 
   # step 7
+  print_env_conf_content
+
+  # step 7
   declare params="-e ${env_file} -u ${url}"
   if [[ ${concurrency} -gt 0 ]]; then
     params="$params -c ${concurrency}"
@@ -358,10 +359,10 @@ function main(){
   else
     params="$params -c 1"
   fi
-  if [[ ${timelit} -gt 0 ]]; then
-    params="$params -t $time_limit"
-  else
+  if [[ ${time_limit} -eq 0 ]] 2>/dev/null ; then
     params="$params -t 60s"
+  else
+    params="$params -t $time_limit"
   fi
   start_to_benchmark ${params}
 }

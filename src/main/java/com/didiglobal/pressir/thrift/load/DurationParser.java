@@ -15,7 +15,11 @@ public class DurationParser {
     public static int parse(String duration) {
         Matcher m = PATTERN.matcher(duration);
         if (!m.matches() || m.groupCount() < 2) {
-            throw new IllegalArgumentException("Duration format error!");
+            throw new IllegalArgumentException("TimeUnit error! " +
+                    "s means second, " +
+                    "m means minute, " +
+                    "h means hour, " +
+                    "d means day!");
         }
 
         int time = Integer.parseInt(m.group(1));
@@ -39,7 +43,7 @@ public class DurationParser {
             case "days":
                 return (int) TimeUnit.DAYS.toSeconds(time);
             default:
-                throw new IllegalArgumentException("Duration format error!");
+                throw new IllegalArgumentException("Duration Format Error");
         }
     }
 }

@@ -4,7 +4,7 @@ function start_server(){
   local port=$1;
   local classpath=${DEMO_DIR}/*:${LIB_DIR}/thrift/0.11.0/*:
   local java_opts="-server -Xmx16G -Xms16G -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ParallelRefProcEnabled"
-  local pid_file="DEMO_DIR/${SHELL_NAME}_pid"
+  local pid_file="${DEMO_DIR}/${SHELL_NAME}_pid"
   if [[ ! -s "${pid_file}" ]] || [[ "" == $(cat ${pid_file}) ]] || [[ -z "$(ps -eo pid | grep -w $(cat ${pid_file}))" ]]; then
     java ${java_opts} -cp ${classpath} com.didiglobal.pressir.thrift.demo.DemoServer $* 2>&1
     echo $! > ${pid_file}

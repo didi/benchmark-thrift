@@ -81,15 +81,11 @@ public class InvocationContext {
                     "It should be [thrift://]Host:Port/Service/Method[\\?@data.text]");
         }
         int index = uri.indexOf("/");
-        try {
-            this.endpoint = HostAndPort.fromString(uri.substring(0,index));
-            uri = uri.substring(index + 1);
-            index = uri.indexOf("/");
-            this.service = uri.substring(0,index);
-            getMethodAndArgs(uri.substring(index + 1));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid uri: " + uri);
-        }
+        this.endpoint = HostAndPort.fromString(uri.substring(0, index));
+        uri = uri.substring(index + 1);
+        index = uri.indexOf("/");
+        this.service = uri.substring(0, index);
+        getMethodAndArgs(uri.substring(index + 1));
     }
 
     private void getMethodAndArgs(String shard) {
@@ -168,9 +164,12 @@ public class InvocationContext {
     }
 
     private void readArgsData(File argsData) {
-        if (argsData == null || !argsData.exists()) {
+        if (argsData == null) {
             this.arguments = null;
             return;
+        }
+        if (!argsData.exists()) {
+            throw new IllegalStateException("Args data file is missing: " + argsData.getPath());
         }
         if (!argsData.isFile()) {
             throw new IllegalStateException("Invalid args data: " + argsData.getPath());
