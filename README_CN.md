@@ -20,7 +20,7 @@
 请确保对[Thrift协议](https://thrift.apache.org/tutorial/)有一定的了解。
 **`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
 #### 准备jar
-Thrift是一种接口描述语言和二进制通讯协议，用来定义和创建跨语言的远程服务。在Java中，一般需要提供通过idl生成的jar包。工具提供了一个脚本，方便使用者将idl转化为工具所需要的jar包
+Thrift应用在Java中，需要idl生成的jar包，因此工具提供了方便将idl转化为jar包的脚本
 1. 通过命令将idl转化为java文件,执行后会在当前路径下生成gen-java文件夹
 	```bash
 	thrift -r --gen java /xxx/xxx.thrift 
@@ -35,7 +35,7 @@ Thrift是一种接口描述语言和二进制通讯协议，用来定义和创�
 	```
 
 #### 准备配置文件
-如果`第一次`使用工具，推荐您修改使用`<TOOL_HOME>/conf`下的样例，方式如下。如果`已经知悉`工具使用方式，您可以`跳过此阶段并通过-e`的方式来指定使用的环境配置文件
+如果`第一次`使用工具，推荐使用`<TOOL_HOME>/conf`下的样例，如下操作。如果`已经知悉`使用方式，您可以`跳过此阶段以-e`的方式来指定配置文件
 1. 复制一个样例，并将其命名为`thrift.env`。我们以thrift_tsocket_sample.env为例
 	```bash
 	cd <TOOL_HOME>/conf
@@ -53,7 +53,8 @@ Thrift是一种接口描述语言和二进制通讯协议，用来定义和创�
 	transport=TSocket  
 	protocol=TBinaryProtocol  
 	```
-#### 启动工具
+#### 启动工具 
+
 	```bash
 	cd <TOOL_HOME>/bin
 	sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
