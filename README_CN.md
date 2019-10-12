@@ -95,7 +95,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
  * ###### -h 打印帮助信息
  * ###### Where: data_file表示为一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的方法含有参数，那么必须指定参数文件。`文件内容应该为一行表示方法的一个参数`
     ```bash
-    #示例: 假设方法有四个参数，类型分别为i32、string、list<i32>以及struct，那么文件内容为
+    #示例: 假设方法有四个参数，类型分别为i32、string、list<i32>以及struct，文件内容形式应为
     2019
     happy new year
     [2,0,1,9]
