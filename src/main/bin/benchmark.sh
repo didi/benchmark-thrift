@@ -161,7 +161,7 @@ function validate_and_parse_url(){
   local length=${#array[@]}
   if [[ ${length} -lt 5 ]]; then
     echo "${__base}: incorrect thrift url, thrift url should be like thrift://<host>:<port>/<service>/<method>[?@data_file]"
-    echo "Examples: thrift://127.0.0.1:8972/DemoService/noArgMethod"
+    echo "  [Example] thrift://127.0.0.1:8972/DemoService/noArgMethod"
     exit 1
   fi
   host=${array[1]}
@@ -200,7 +200,7 @@ function print_usage_to_newbie(){
     echo "2. Check if the environment configuration file is configured. You can use -e to specify the environment
     configuration file you want to use, or if you don't, the tool defaults to using ${_conf_dir}/thrift.env as the environment configuration file."
     echo "3. Check if the format of thrift url is correct. It should be like thrift://<Host>:<Port>/<Service>/<Method>[\?@data_file]"
-    echo "4. Use the shell like \"sh ${_bin_dir}/benchmark.sh thrift://${host}:${port}/${service}/${method}\?@${_demo_dir}/data_file_demo/oneArgMethod.text\" to run it"
+    echo "4. Use the shell like \"sh ${_bin_dir}/benchmark.sh thrift://${host}:${port}/${service}/${method}\?@${_demo_dir}/data/oneArgMethod.text\" to run it"
   elif [[ ${answer} == n* ]]; then
     #statements
     while [[ true ]]; do
@@ -251,7 +251,7 @@ Options:
    -t <time_limit>        How long the benchmark runs, 2 or 2s means 2 seconds, 2m for 2 minutes, 2h for 2 hours
                           If not specified, default value is 60 seconds
    -e <environment file>  Thrift environment configuration file, containing thrift version, protocol and transport etc.
-                          If not specified, default value is ../conf/thrift.env
+                          If not specified, default value is ${_conf_dir}/thrift.env
    -h                     Display usage information (this message) and exit
    -v                     Print version number and exit
 
@@ -269,7 +269,7 @@ Examples:
     # 4. specify an environment file
     sh ${__base}.sh -e conf/tsocket.sample.env thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
     # 5. specify arguments
-    sh ${__base}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod\?@${_demo_dir}/data_file_demo/oneArgMethod.text
+    sh ${__base}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod\?@${_demo_dir}/data/oneArgMethod.text
 "
 }
 
