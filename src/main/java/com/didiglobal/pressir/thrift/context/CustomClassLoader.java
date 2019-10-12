@@ -23,10 +23,10 @@ public class CustomClassLoader implements Closeable {
 
     CustomClassLoader(File jarFile) throws IOException {
         if (jarFile == null) {
-            throw new NullPointerException("Null file");
+            throw new NullPointerException("null file");
         }
         if (!jarFile.exists() || !jarFile.isFile()) {
-            throw new FileNotFoundException("Invalid file: " + jarFile.getPath());
+            throw new FileNotFoundException("invalid file: " + jarFile.getPath());
         }
         this.jarFile = new JarFile(jarFile);
         this.classLoader = URLClassLoader.newInstance(
@@ -61,7 +61,7 @@ public class CustomClassLoader implements Closeable {
             String name = jarEntryName.substring(0, jarEntryName.length() - 6).replace(File.separatorChar, '.');
             return this.classLoader.loadClass(name);
         }
-        throw new ClassNotFoundException("Invalid class: " + className);
+        throw new ClassNotFoundException("invalid class: " + className);
     }
 
     @Override

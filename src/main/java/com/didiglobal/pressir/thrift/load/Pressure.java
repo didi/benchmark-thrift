@@ -22,12 +22,12 @@ public class Pressure {
 
     private Pressure(int quantity, String duration, long beginTime) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("The pressure should be greater than 0");
+            throw new IllegalArgumentException("the pressure should be greater than 0");
         }
         this.quantity = quantity;
         this.duration = DurationParser.parse(duration);
         if (this.duration <= 0) {
-            throw new IllegalArgumentException("The duration should be greater than 0");
+            throw new IllegalArgumentException("the duration should be greater than 0");
         }
         this.beginTime = beginTime;
     }

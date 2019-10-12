@@ -97,7 +97,7 @@ class Statistic {
             interval = 1;
         }
         EXECUTOR.scheduleAtFixedRate(() ->
-                        ConsolePrinter.say("\tCompleted {} (Connect: {}, Send: {}) requests",
+                        ConsolePrinter.say("\tTotal {} (Connect: {}, Send: {}) requests",
                                 this.requests.get() + this.connects.get(), this.connects.get(), this.requests.get()),
                 interval + 1,
                 interval,
@@ -287,7 +287,7 @@ class Statistic {
                 .append(formatStr("Time taken for successful requests: "))
                 .append((double) this.timeTaken / Constants.TIME_CONVERT_BASE)
                 .append(" [seconds]\n")
-                .append(formatStr("Completed: "))
+                .append(formatStr("Total: "))
                 .append(this.connects.get() + this.requests.get())
                 .append("\n")
                 .append(formatStr("On connection stat: "))

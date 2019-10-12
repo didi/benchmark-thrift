@@ -42,10 +42,11 @@ function validate_env_file(){
   protocol=""
 
   if [[ ! -f "${env_file}" ]]; then
-    printf "${__base}: environment file is missing, can't find ${env_file}\n"
     if [[ ${use_e} == "false" ]];then
+      printf "${__base}: environment file is missing\n"
       print_usage_to_newbie
     fi
+    printf "${__base}: environment file(${env_file}) is missing\n"
     exit 1
   fi
 
@@ -161,7 +162,8 @@ function validate_and_parse_url(){
   local length=${#array[@]}
   if [[ ${length} -lt 5 ]]; then
     echo "${__base}: incorrect thrift url, thrift url should be like thrift://<host>:<port>/<service>/<method>[?@data_file]"
-    echo "  [Example] thrift://127.0.0.1:8972/DemoService/noArgMethod"
+    echo "Example thrift://127.0.0.1:8972/DemoService/noArgMethod"
+    echo "(use\033[31m sh ${__base}.sh -h\033[0m too see more) "
     exit 1
   fi
   host=${array[1]}
@@ -175,7 +177,7 @@ function validate_thrift_server(){
   local host=$1
   local port=$2
   local service=$3
-  nc -zw5 ${host} ${port} && is_server_started=$? || is_server_started=$?
+  nc -zw5 ${host} ${port} >/dev/null 2>&1 && is_server_started=$? || is_server_started=$?
   if [[ ${is_server_started} -ne 0 ]]; then
     if [[ "${host}" == "127.0.0.1" ]] && [[ "${service}" == "DemoService" ]]; then
       # If user is benchmarking demo-thrift-server
@@ -189,51 +191,14 @@ function validate_thrift_server(){
 }
 
 function print_usage_to_newbie(){
-  local host=127.0.0.1
-  local port=8972
-  local service=DemoService
-  local method=oneArgMethod
-  echo "Is it your first time to use ${_tool_name}?\033[31m [y/n] \033[0m"
-  read answer
-  if [[ ${answer} == y* ]]; then
-    echo "1. Make sure you've read the \033[31mREADME.md\033[0m"
-    echo "2. Check if the environment configuration file is configured. You can use -e to specify the environment
-    configuration file you want to use, or if you don't, the tool defaults to using ${_conf_dir}/thrift.env as the environment configuration file."
-    echo "3. Check if the format of thrift url is correct. It should be like thrift://<Host>:<Port>/<Service>/<Method>[\?@data_file]"
-    echo "4. Use the shell like \"sh ${_bin_dir}/benchmark.sh thrift://${host}:${port}/${service}/${method}\?@${_demo_dir}/data/oneArgMethod.text\" to run it"
-  elif [[ ${answer} == n* ]]; then
-    #statements
-    while [[ true ]]; do
-        echo "What you want to do?  1、See Usage 2、See how to run a Demo 3、exit \033[31m[1/2/3]\033[0m"
-        read option
-        if [[ ${option} == 1 ]]; then
-          print_usage_normally
-          exit 1
-        elif [[ ${option} == 2 ]]; then
-          print_usage_to_run_demo
-          exit 1
-        elif [[ ${option} == 3 ]]; then
-          exit 1
-        else
-          echo error option! option should be give 1 or 2 or 3!
-        fi
-     done
-  fi
+  echo "${__base}: please read the \033[31mREADME.md\033[0m first! the address is\033[31m https://github.com/didichuxing/benchmark-thrift\033[0m"
   exit 1
 }
 
-function print_usage_to_run_demo(){
-  local demo_port=8972
-  printf "\
-  Run a demo in 3 steps:
-  1. Rename tsocket.sample.env to thrift.env in ${_conf_dir} directory
-  2. Run demo thrift server: sh ${_demo_dir}/demo_thrift_server.sh -p ${demo_port}
-  3. Start to benchmark: sh ${_bin_dir}/${__base}.sh thrift://127.0.0.1:${demo_port}/DemoService/noArgMethod\n"
-}
 
 function print_usage_simple(){
  echo "Usage: sh ${__base}.sh [options] thrift://<host>:<port>/<service>/<method>[\?@<data_file>]"
- echo "Use\033[31m sh ${__base}.sh -h\033[0m too see more"
+ echo "(use\033[31m sh ${__base}.sh -h\033[0m too see more)"
 }
 
 function print_usage_normally(){
@@ -270,6 +235,11 @@ Examples:
     sh ${__base}.sh -e conf/tsocket.sample.env thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
     # 5. specify arguments
     sh ${__base}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod\?@${_demo_dir}/data/oneArgMethod.text
+
+Run a demo quickly:
+  1. Rename tsocket.sample.env to thrift.env in ${_conf_dir} directory
+  2. Run demo thrift server: sh ${_demo_dir}/demo_thrift_server.sh -p ${demo_port}
+  3. Start to benchmark: sh ${_bin_dir}/${__base}.sh thrift://127.0.0.1:${demo_port}/DemoService/noArgMethod
 "
 }
 
@@ -295,17 +265,35 @@ function main(){
   do
     case "$opt" in
       c)
+        if [[ ${OPTARG} =~ ^-?[0-9]+$ ]]; then
+            if [[ ${OPTARG} -lt 0 ]]; then
+                echo "${__base}: concurrency should be greater than 0"
+                exit 1
+            fi
+        else
+            echo "${__base}: concurrency should be a positive number"
+            exit 1
+        fi
         if [[ ${throughput} -gt 0 ]]; then
             echo "${__base}: only one of -c or -q should be specified"
-            print_usage_normally
+            print_usage_simple
             exit 1
         fi
         concurrency="$OPTARG"
         ;;
       q)
+        if [[ ${OPTARG} =~ ^-?[0-9]+$ ]]; then
+            if [[ ${OPTARG} -lt 0 ]]; then
+                echo "${__base}: throughput should be greater than 0"
+                exit 1
+            fi
+        else
+            echo "${__base}: throughput should be a positive number"
+            exit 1
+        fi
         if [[ ${concurrency} -gt 0 ]]; then
             echo "${__base}: only one of -c or -q should be specified"
-            print_usage_normally
+            print_usage_simple
             exit 1
         fi
         throughput="$OPTARG"

@@ -29,16 +29,10 @@ import java.util.function.BiFunction;
 public class ContextParser {
 
     public static TTransportFactory parseTransportFactory(String define) {
-        if (Strings.isBlank(define)) {
-            throw new IllegalArgumentException("Transport define is blank!");
-        }
         return parse(define, ContextParser::newTransportFactory);
     }
 
     static TProtocolFactory parseProtocolFactory(String define) {
-        if (Strings.isBlank(define)) {
-            throw new IllegalArgumentException("Protocol define is blank!");
-        }
         return parse(define, ContextParser::newProtocolFactory);
     }
 

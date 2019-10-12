@@ -2,7 +2,6 @@ package com.didiglobal.pressir.thrift.context;
 
 import com.didiglobal.pressir.thrift.base.ServiceClientInvocation;
 import com.didiglobal.pressir.thrift.base.transport.TTransportFactory;
-import com.didiglobal.pressir.thrift.constant.Constants;
 import com.didiglobal.pressir.thrift.generator.Generator;
 import com.didiglobal.pressir.thrift.generator.InvariantTaskGenerator;
 import com.didiglobal.pressir.thrift.utils.ReflectUtils;
@@ -59,7 +58,7 @@ public class InvocationContext {
         try {
             return ReflectUtils.castArgs(method, args);
         } catch (Exception e) {
-            throw new IllegalStateException("Error args: " + e.getMessage(), e);
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
@@ -67,19 +66,12 @@ public class InvocationContext {
         try {
             return (TServiceClientFactory) ReflectUtils.findInnerClass(serviceClientClass, "Factory").newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Invalid serviceClient: " + serviceClientClass.getName(), e);
+            throw new IllegalStateException("serviceClient(" + serviceClientClass.getName() + ") is invalid", e);
         }
     }
 
     private void parseURI(String uri) {
-        if (uri.startsWith(THRIFT)) {
-            uri = uri.substring(THRIFT.length());
-        }
-        String[] shards = uri.split("/");
-        if (shards.length < Constants.URI_PARTS) {
-            throw new IllegalArgumentException("The format of Url is wrong! " +
-                    "It should be [thrift://]Host:Port/Service/Method[\\?@data.text]");
-        }
+        uri = uri.substring(THRIFT.length());
         int index = uri.indexOf("/");
         this.endpoint = HostAndPort.fromString(uri.substring(0, index));
         uri = uri.substring(index + 1);
@@ -113,45 +105,36 @@ public class InvocationContext {
         try (FileInputStream fis = new FileInputStream(thriftEnv)) {
             properties.load(fis);
         } catch (IOException e) {
-            throw new IllegalStateException("Load env conf error: " + e.getMessage(), e);
+            throw new IllegalStateException("load thrift environment file error cause by " + e.getMessage(), e);
         }
         String clientJar = properties.getProperty("client_jar");
-        if (Strings.isBlank(clientJar)) {
-            throw new IllegalStateException("Blank 'client_jar' in thrift env");
-        }
         File jarFile = (clientJar.charAt(0) == File.separatorChar) ?
                 new File(clientJar) :
                 new File(thriftEnv.getParent(), clientJar);
         try {
             this.classLoader = new CustomClassLoader(jarFile);
         } catch (IOException e) {
-            throw new IllegalStateException("Error 'client_jar' in thrift env: " + jarFile, e);
+            throw new IllegalStateException("client_jar(" + jarFile + ") in thrift environment file is invalid", e);
         }
 
         String protocol = properties.getProperty("protocol");
-        if (Strings.isBlank(protocol)) {
-            throw new IllegalStateException("Blank 'protocol' in thrift env");
-        }
         try {
             this.protocolFactory = ContextParser.parseProtocolFactory(protocol);
         } catch (Exception e) {
-            throw new IllegalStateException("Error 'protocol' in thrift env: " + protocol, e);
+            throw new IllegalStateException("protocol(" + protocol + ") in thrift environment file is invalid", e);
         }
         if (this.protocolFactory == null) {
-            throw new IllegalStateException("Error 'protocol' in thrift env: " + protocol);
+            throw new IllegalStateException("protocol(" + protocol + ") in thrift environment file is invalid" + protocol);
         }
 
         String transport = properties.getProperty("transport");
-        if (Strings.isBlank(protocol)) {
-            throw new IllegalStateException("Blank 'transport' in thrift env");
-        }
         try {
             this.transportFactory = ContextParser.parseTransportFactory(transport);
         } catch (Exception e) {
-            throw new IllegalStateException("Error 'transport' in thrift env: " + transport, e);
+            throw new IllegalStateException("transport(" + transport + ") in thrift environment file is invalid", e);
         }
         if (this.transportFactory == null) {
-            throw new IllegalStateException("Error 'transport' in thrift env: " + transport);
+            throw new IllegalStateException("transport(" + transport + ") in thrift environment file is invalid");
         }
     }
 
@@ -169,15 +152,15 @@ public class InvocationContext {
             return;
         }
         if (!argsData.exists()) {
-            throw new IllegalStateException("Args data file is missing: " + argsData.getPath());
+            throw new IllegalStateException("data file(" + argsData.getPath() + ") is missing");
         }
         if (!argsData.isFile()) {
-            throw new IllegalStateException("Invalid args data: " + argsData.getPath());
+            throw new IllegalStateException(argsData.getPath() + " isn't a file");
         }
         try {
             this.arguments = Files.readLines(argsData, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new IllegalStateException("Invalid args data: " + argsData.getPath(), e);
+            throw new IllegalStateException("args(" + argsData.getPath() + ") is invalid", e);
         }
     }
 
@@ -201,9 +184,9 @@ public class InvocationContext {
                     (Class<? extends TServiceClient>) this.classLoader.loadClass(this.service.concat("$Client"));
             method = ReflectUtils.findMethod(serviceClientClass, this.method);
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Invalid service: " + this.service, e);
+            throw new IllegalStateException("specified service(" + this.service + ") is invalid", e);
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Invalid method: " + this.method, e);
+            throw new IllegalStateException("specified method(" + this.method + ") is invalid", e);
         }
         TServiceClientFactory<T> serviceClientFactory = genServiceClientClass(serviceClientClass);
         ServiceClientInvocation<T> invocation = new ServiceClientInvocation<>(

@@ -24,7 +24,7 @@ public class ReflectUtils {
                 return innerClass;
             }
         }
-        throw new ClassNotFoundException("Invalid inner class: " + clazz.getName() + '$' + name);
+        throw new ClassNotFoundException("inner class(" + clazz.getName() + '$' + name + ") is invalid");
     }
 
     public static Method findMethod(Class<?> clazz, String name) throws NoSuchMethodException {
@@ -34,7 +34,7 @@ public class ReflectUtils {
                 return method;
             }
         }
-        throw new NoSuchMethodException("Invalid method: " + clazz.getName() + '.' + name);
+        throw new NoSuchMethodException("method(" + clazz.getName() + '.' + name + ") is invalid");
     }
 
     public static Object[] castArgs(Method method, String... args) {
@@ -43,21 +43,22 @@ public class ReflectUtils {
             if (args == null || args.length == 0) {
                 return new Object[0];
             }
-            throw new IllegalArgumentException("Invalid args. expect parameter count: 0, " +
-                    "actual args size: " + args.length);
+            throw new IllegalArgumentException("invalid args. expect 0 parameters, " +
+                    "actual got " + args.length);
         }
         if (args == null) {
-            throw new IllegalArgumentException("Null args. expect parameter count: " + parameterCount);
+            throw new IllegalArgumentException("invalid args. expect " + parameterCount + " parameters, " +
+                    "actual got 0");
         }
         if (args.length < parameterCount) {
-            throw new IllegalArgumentException("Invalid args. expect parameter count: " + parameterCount +
-                    ", actual args size: " + args.length);
+            throw new IllegalArgumentException("invalid args. expect " + parameterCount + " parameters, " +
+                    "actual got " + args.length);
         }
         if (args.length > parameterCount) {
-            for (int i = parameterCount; i < args.length ; i++) {
+            for (int i = parameterCount; i < args.length; i++) {
                 if (Strings.isNotBlank(args[i])) {
-                    throw new IllegalArgumentException("Invalid args. expect parameter count: " + parameterCount +
-                            ", actual args size: " + args.length);
+                    throw new IllegalArgumentException("invalid args. expect " + parameterCount + " parameters, " +
+                            "actual got " + args.length);
                 }
             }
         }
