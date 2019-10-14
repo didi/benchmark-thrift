@@ -123,7 +123,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 	# 一个最简单的Thrift方法，不含任何参数
 	sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 	# 或者一个带参数的Thrift方法，需要指定数据文件
-	# sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data_file_demo/oneArgMethod.text
+	# sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
 	# 或者手工指定配置文件
 	# sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 	```
