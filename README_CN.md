@@ -1,6 +1,6 @@
 # Benchark-thrift简介
 **Benchmark-thrift**是一款测试`Thrift`应用程序性能的工具，开箱即用，高效简单。
-> [README in English](README1.md)
+> [README in English](README_CN1.md)
 #### 主要特点
  * 使用简单：下载后，通过命令行即可使用 
  * 功能丰富：支持多个版本的Thrift协议，支持多种TProtocol及TTransport
