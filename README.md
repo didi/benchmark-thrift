@@ -28,7 +28,6 @@ Please make sure you have some knowledge of [thrift](https://thrift.apache.org/t
 To send the Thrift request in Java, We need to generate the jar using the idl.
 
 1. Convert the idl to .java files. It will generate gen-java folder under current path after run the command
-
     ```bash
     thrift -r --gen java /xxx/xxx.thrift
     ```    
