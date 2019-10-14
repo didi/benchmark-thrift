@@ -31,7 +31,7 @@ To send the Thrift request in Java, We need to generate the jar using the idl.
     ```bash
     thrift -r --gen java /xxx/xxx.thrift
     ```    
-2. Package the result generated in the previous step through the script provided by the tool (under the bin directory), and attach the package result to the configuration file as shown [in the next step](#Prepare configuration file)    
+2. Package the result generated in the previous step through the script provided by the tool (under the bin directory), and attach the package result to the configuration file as shown in **`[Prepare configuration file]`**  
     ```bash
     cd <TOOL_HOME>/bin
     # The meanings of the three parameters are: 1. thrift_version: Thrift version 2. java_path: specify the path of Java folder (absolute path); 3. jar_path: specify the location and name of the output jar package
@@ -45,9 +45,9 @@ If you are using the tool for `the first time`, the following steps are recommen
     cd <TOOL_HOME>/conf
     cp xxx_sample.env thrift.env
     ```
-2. Modify file contents. Check the `transport`, `protocol`, and [client_jar](#Prepare jar). Where `client_jar is the jar file obtained in Prepare jar phase`
+2. Modify file contents. Check the `transport`, `protocol`, and `client_jar`. Where `client_jar is the jar file obtained in Prepare jar phase`
     ```bash
-    vim thrift.Env
+    vim thrift.env
     ```
     ```bash
     # Example of configuration file content. 
@@ -59,13 +59,11 @@ If you are using the tool for `the first time`, the following steps are recommen
     ```
 #### Start the tool
 **Note: If there is an error which like 'no matches found: thrift://xxx/xxx/xxx/xx?@xxx' in executing the startup command. May be caused by the ? unable to identify, you can use `\?` to replace ?**
-
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 # Example: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
-
 ##### Options
   * ###### -e configuration file
     Mainly including TTransport, TProtocol, client_jar. If not specified, take thrift.env in the conf directory as the default configuration file   
