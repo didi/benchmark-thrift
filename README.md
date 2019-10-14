@@ -64,44 +64,93 @@ transport=TSocket
 protocol=TBinaryProtocol
 ```
 
-#### Simplest Usage  
+#### Start
+Note: If there is an error which like '`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`' in executing the startup command. May be caused by the ? unable to identify, you can use `\?` to replace ?
+
 ```bash
-    sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+cd <TOOL_HOME>/bin
+sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+# Example: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 
-#### OPTIONS
+###### Options
    The options are:     
-   * -e thrift.env   
-   Thrift environment configuration file include Transport, Protocol, Thrift version, and the location of the generated jar package. 
-        * ###### Example  
-         version=0.12.0  
-         client_jar=/Users/didi/test.jar        
-         transport=TFramedTransport(transport=TSocket)  
-         protocol=TCompactProtocol        
-   * -c concurrency    
-   The number of multiple requests to make at a time. If no -c nor -q is specified, default value is 1 concurrency
-   * -q throughput  
-   The number of requests issued in 1 Second. If no -c nor -q is specified, default value is 1 concurrency
-   * -t timelimit  
-   TimeLimit of the pressure. It with a default value 60s. You can specify the duration in the following ways:
-   
-         -t 10[s[econd[s]]] or -t 10[m[inute[s]]] or -t 1[h[hour[s]]] or -t 1[d[day[s]]]
-   * -v     
-   Print version number
-   * -h  
-   Display usage information  
-   * Where: <data_file>      
-         A local file that contains request arguments, prefixed by a "@".  
-         If the thrift method has parameters, <data_file> is mandatory.
-   
+   * -e configuration file. Mainly including TTransport, TProtocol, client_jar. If not specified, take thrift.env in the conf directory as the default configuration file   
+```bash   
+Example of content:
+version=0.12.0
+client_jar=/Users/didi/test.jar
+transport=TFramedTransport(transport=TSocket)
+protocol=TCompactProtocol 
+```
+   * -q throughput. The number of requests issued per second.
+```bash
+Example: send 100 requests per second
+-q 100
+```
 
-## Contributing
+
+   * -c concurrency. The number of multiple requests to make at a time. If neither -q nor -c is specified, the default value is 1 concurrency.
+```bash
+Example: 10 concurrency
+-c 10
+```
+   The number of requests issued in 1 Second. If no -c nor -q is specified, default value is 1 concurrency
+   * -t -t timelimit. If this parameter is not specified, it will be tested in 60 seconds by default.
+```bash
+# Example: 3 seconds
+-t 3s or -t 3
+# Example: 3 minutes
+-t 3m
+# Example: 3 hours
+-t 3h
+# Example: 1 day
+-t 1d
+```
+   * -v print version number
+   * -h display usage information  
+   * Where: <data_file> A local file that contains request arguments, prefixed by a "@". If the thrift method has parameters, <data_file> is mandatory.
+```bash
+# Example: suppose the method has four arguments of type i32, string, list, and struct. so the file content should be in the form of
+2019
+Happy New Year
+[2,0,1,9]
+{"key":"value"}
+```
+# Start quickly
+In just three steps, you can run the first Thrift pressure test.
+
+
+
+#### Create the configuration file, which you can copy directly from an existing sample in the conf directory:
+
+```bash
+cd <TOOL_HOME>/conf
+cp thrift_tsocket_sample.env thrift.env
+```
+#### Start Thrift Server, and the tool provides a sample Thrift Server for a quick trial:
+```bash
+cd <TOOL_HOME>/demo
+sh demo_thrift_server.sh -p 8972 
+```
+#### Start the pressure measuring tool to conduct the pressure test
+```bash
+cd <TOOL_HOME>/bin
+# the simplest Thrift method, no arguments
+sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+# a Thrift method with arguments, you need to specify the data file
+# sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+# specify the configuration file 
+# sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+```
+
+# Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
-## License
+# License
 Benchmark-thrift is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file.
 
-## Note
+# Note
 This is not an official Didi product (experimental or otherwise), it is just code that happens to be owned by Didi.
 
 Thank you for using Benchmark-thrift.
