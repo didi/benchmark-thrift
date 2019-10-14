@@ -31,7 +31,7 @@ To send the Thrift request in Java, We need to generate the jar using the idl.
     ```bash
     thrift -r --gen java /xxx/xxx.thrift
     ```    
-2. Package the result generated in the previous step through the script provided by the tool (under the bin directory), and attach the package result to the configuration file as shown in **`[Prepare configuration file]`**  
+2. Package the result generated in the previous step through the script provided by the tool (under the bin directory), and attach the package result to the configuration file as shown in **`Prepare configuration file`**  
     ```bash
     cd <TOOL_HOME>/bin
     # The meanings of the three parameters are: 1. thrift_version: Thrift version 2. java_path: specify the path of Java folder (absolute path); 3. jar_path: specify the location and name of the output jar package
@@ -40,12 +40,12 @@ To send the Thrift request in Java, We need to generate the jar using the idl.
     ```        
 #### Prepare configuration file
 If you are using the tool for `the first time`, the following steps are recommended to prepare the configuration file. If you know how to prepare the configuration file, you can `skip this stage and specify the configuration file via -e`
-1. Sample configuration files are provided under the conf directory, and you can use either and rename it `thrift.env`
+1. Sample configuration files are provided under the conf directory, and you can use either and rename it to `thrift.env`
     ```bash
     cd <TOOL_HOME>/conf
     cp xxx_sample.env thrift.env
     ```
-2. Modify file contents. Check the `transport`, `protocol`, and `client_jar`. Where `client_jar is the jar file obtained in Prepare jar phase`
+2. Modify file contents. Check the `transport`, `protocol`, and `client_jar`. Where client_jar is the jar file obtained in **`Prepare jar`**
     ```bash
     vim thrift.env
     ```
@@ -58,7 +58,7 @@ If you are using the tool for `the first time`, the following steps are recommen
     protocol=TBinaryProtocol
     ```
 #### Start the tool
-**Note: If there is an error which like 'no matches found: thrift://xxx/xxx/xxx/xx?@xxx' in executing the startup command. May be caused by the ? unable to identify, you can use `\?` to replace ?**
+**Note:** If there is an error which like **no matches found: thrift://xxx/xxx/xxx/xx?@xxx** in executing the startup command. May be caused by the ? unable to identify, you can use `\?` to replace ?
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
