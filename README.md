@@ -18,60 +18,52 @@ curl -O http://XXX
 下载完成后，解压缩即可。
 
 # 如何运行
-请确保对[Thrift协议](https://thrift.apache.org/tutorial/)有一定的了解。
+运行之前，请确保对[Thrift协议](https://thrift.apache.org/tutorial/)有一定的了解。Thrift远程调用需要匹配版本、TTranport、TProtocol类型，调用方还要拿到SDK（Jar、go module、或者IDL文件），相比HTTP协议，更为复杂。
+
+为简化操作，抽取了"环境文件"的概念，包含不常变化的Thrift版本、TTransport及TProtocol类型等配置项。
+
 **`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
-#### 准备jar
-在Java中发送Thrift请求需要用idl生成jar包。
-1. 将idl转化为java文件，执行后会在当前路径下生成`gen-java`文件夹
-	```bash
-	thrift -r --gen java /xxx/xxx.thrift 
-	```
-	
-2. 通过工具提供的脚本(`bin`目录下)将上步生成的`gen-java`打包，将打包结果配到配置文件中。[配置方式](#准备配置文件)
-	```bash
-	cd <TOOL_HOME>/bin
-	# 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
-	sh jar_generator.sh <thrift_version> <java_path> <jar_path> 
-	# 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java /xxx/xxx/xxx.jar
-	```
 
-#### 准备配置文件
-如果是`第一次`使用工具，推荐按下述步骤准备配置文件。如果`知悉`配置方式，可以`跳过此阶段通过-e`指定配置文件
-1. 工具`conf`下提供了配置文件样例，您可以使用任意一个，并重命名为`thrift.env`。
-	```bash
-	cd <TOOL_HOME>/conf
-	cp xxx_sample.env thrift.env
-	```
-2. 修改文件内容。检查`transport`、`protocol`、以及`client_jar`是否正确，其中`client_jar为准备jar阶段得到的jar包`。 [client_jar生成步骤](#准备jar)
-	```bash
-	vim thrift.env
-	```
-	```bash   
-	# 文件内容示例
-	version=0.11.0
-	# client_jar为准备jar阶段得到的jar包
-	client_jar=/xxx/xxx/xxx.jar  
-	transport=TSocket  
-	protocol=TBinaryProtocol  
-	```
+#### 准备SDK
+Thrift调用需要待测服务的SDK，本工具使用Java开发，因此需要准备Jar包。如果您已有可忽略本小节，否则可自行生成，或参考本工具提供的Jar生成器，具体操作如下：
+
+```bash
+# 第一步：生成Java源码，执行后会在当前路径下生成`gen-java`文件夹
+$ thrift -r --gen java /xxx/xxx.thrift 
+# 第二步：通过Jar生成器生成Jar包，三个参数分别是: 1. Thrift版本；2. java源码路径(绝对路径)；3. jar包的位置和名称
+$ sh <TOOL_HOME>/bin/jar_generator.sh <thrift_version> <java_path> <jar_path> 
+# 示例: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx.jar
+```
+**`注：以后工具会提供只需IDL文件、免SDK的功能。`**
+
+#### 准备环境文件
+工具默认会读取conf/thrift.env环境文件，您也可以通过`-e <environment file>`手工指定。conf目录下提供了几个样例环境文件，推荐在样例的基础上进行适当修改：
+```bash
+$ cd <TOOL_HOME>/conf
+# 第一步：从样例文件拷贝为thrift.env
+$ cp xxx_sample.env thrift.env
+# 第二步：检查并修改文件内容
+$ vim thrift.env
+```
+
 #### 启动工具 
+一旦jar包、环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：
 
-**Note**:如果执行启动命令出现**no matches found: thrift://xxx/xxx/xxx/xxx?@xxxx**, 可能是由于?无法识别，需要将`?替换为\?`
-    
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 #示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 
-##### 启动参数选项
- * ###### -e 配置文件，主要包括TTransport、TProtocol、client_jar。如果没有指定，以工具`conf`目录下的`thrift.env`为默认配置文件
+# 启动参数选项
+下面是命令行启动参数及用法说明，也可以通过`sh jar_generator.sh -h`进行了解。 
+ * ###### -e 环境文件，包括TTransport、TProtocol、[client_jar](#准备jar)等。若未指定，则默认读取`conf`目录下的`thrift.env`
     ```bash
-    #配置文件内容示例:     
-    version=0.12.0  
-    client_jar=/users/didi/test.jar  
-    transport=TFramedTransport(transport=tSocket)  
-    protocol=TCompactProtocol
+    #环境文件内容示例:     
+    version=0.11.0  
+		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+    transport=TSocket  
+    protocol=TBinaryProtocol 
     ```    
  * ###### -q 吞吐量 QPS 
    ```bash
@@ -83,7 +75,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
     示例: 10个并发度
     -c 10
     ``` 
- * ###### -t 持续时间 如果不指定该参数，默认按照60秒时长进行测试。
+ * ###### -t 持续时间 如果不指定，默认压测持续60秒。
     ```bash
     #示例: 3秒
     -t 3s 或者 -t 3
@@ -127,6 +119,13 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 	# 或者手工指定配置文件
 	# sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 	```
+
+# FAQ
+1. `-e <environment file>`指定环境文件时，是相对目录还是绝对目录?
+	答：二者均可，如果是相对目录，是相对于benchmark.sh文件
+2. 环境文件中指定client_jar包时，是相对目录还是绝对目录?
+	答：二者均可，如果是相对目录，是相对于该环境文件
+
 # 贡献
 
 请参阅[贡献指南](CONTRIBUTING.md)。
