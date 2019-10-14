@@ -1,7 +1,7 @@
 # Introduction  
 **Benchmark-thrift** is an open-source application designed to load test thrift applications. It's an out-of-box, efficient and simple usage tool.
 
-> [中文版](README_CN.md)  
+> [中文版](README.md)  
 
 #### Features  
   * Simple Usage: you can use it through the command line after download
