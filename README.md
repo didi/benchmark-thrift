@@ -42,13 +42,13 @@ $ sh <TOOL_HOME>/bin/jar_generator.sh <thrift_version> <java_path> <jar_path>
 $ cd <TOOL_HOME>/conf
 # 第一步：样例文件拷贝为thrift.env
 $ cp xxx_sample.env thrift.env
-# 第二步：检查并修改文件内容
+# 第二步：检查并修改文件内容，其中client_jar为准备SDK阶段得到的Jar包
 $ vim thrift.env
 ```
 
 #### 启动工具 
 环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：
-
+**注意:** 如果再执行启动命令是出现**no matches found: thrift://xxx/xxx/xxx/xx?@xxx**，是因为?需要转义，请用`\?`替换掉?
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
