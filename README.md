@@ -47,8 +47,8 @@ $ vim thrift.env
 ```
 
 #### 启动工具 
-环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：
-**注意:** 如果再执行启动命令是出现**no matches found: thrift://xxx/xxx/xxx/xx?@xxx**，是因为?需要转义，请用`\?`替换掉?
+环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：  
+**`注意:`**如果在执行启动命令时出现**`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`**，是因为?需要转义，请用`\?`替换掉?
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
