@@ -56,8 +56,8 @@ curl -O http://XXX
 	```
 #### 启动工具 
 
-**Note:如果执行启动命令出现no matches found: thrift://xxx/xxx/xxx/xxx?@xxxx错误, 可能是由于?无法识别，需要将`?替换为\?`**
-
+**Note**:如果执行启动命令出现**no matches found: thrift://xxx/xxx/xxx/xxx?@xxxx**, 可能是由于?无法识别，需要将`?替换为\?`
+    
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
