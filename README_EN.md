@@ -38,11 +38,10 @@ sh jar_generator.sh version java_path jar_path
 #### Prepare environment 
 Tool reads the conf/thrift.env as default environment file. Also you can manually specify by `-e environment file`. Several sample environment files are provided in the conf directory, and it is recommended to make appropriate modifications based on the sample:
 ```bash
-# 1.  Copy a sample file and name it to `thrift.env`
 cd <TOOL_HOME>/conf
+# 1.  Copy a sample file and name it to `thrift.env`
 cp xxx_sample.env thrift.env
 # 2. Check and Modify the contents. Where client_jar is the jar generate in Prepare SDK
-```bash
 vim thrift.env
 ```
 #### Start the tool
@@ -121,11 +120,11 @@ Using the demo which comes from the tool, you can run the first Thrift pressure 
     # sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
     ```
 # FAQ
-1.  Q: When use `-e environment file` to specify environment file, the file path is relative path or absolute path?
+1.  Q: When use `-e environment file` to specify environment file, the file path is relative path or absolute path?  
     A: Both are OK. If use relative path, the path should be relatived to the benchmark.sh.
-2.  Q: When specify the client_jar in the environment file, the path is relative path or absolute path?
+2.  Q: When specify the client_jar in the environment file, the path is relative path or absolute path?  
     A: Both are OK. If use relative path, the path should be relatived to environment file. 
-3.  Q: When start the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured? 
+3.  Q: When start the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured?   
     A: May be caused by the ? unable to identify in thrift url, you can use `\?` to replace ? .
 # Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
