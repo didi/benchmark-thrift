@@ -11,8 +11,7 @@
 # Download and Install
 
 #### Environment
-It has been tested more on Mac, Centos. But test on other environments is not enough. Windows is not supported yet.  
-A Java runtime environment of JDK 8 or higher is required.
+It has been tested more on Mac, Centos. But test on other environments is not enough. Windows is not supported yet. A Java runtime environment of JDK 8 or higher is required.
 
 #### Download
 [Click here](www.baidu.com) to download the latest version, or from the command line:
@@ -22,50 +21,39 @@ curl -0 http://xxxx
 Once the download is complete, unzip it.
 
 # How to run it
-Please make sure you have some knowledge of [thrift](https://thrift.apache.org/tutorial/). **`Note: In this document, without special explanation, <TOOL_HOME> means the installation directory of the tool`**
+Please make sure you have some knowledge of [thrift](https://thrift.apache.org/tutorial/). The Thrift remote call needs to match the version, TTranport, TProtocol type and the caller needs to get the SDK (Jar, go module, or IDL file), which make it more complex than the HTTP protocol.  
+To simplify the operation, the concept of "environment file" is extracted, including configure items such as  Thrift version, TTransport, and TProtocol type that change infrequently.  
+**`Note: In this document, without special explanation, <TOOL_HOME> means the installation directory of the tool`**
 
-#### Prepare jar
-To send the Thrift request in Java, We need to generate the jar using the idl.
-
-1. Convert the idl to .java files. It will generate gen-java folder under current path after run the command
-    ```bash
-    thrift -r --gen java /xxx/xxx.thrift
-    ```    
-2. Package the result generated in the previous step through the script provided by the tool (under the bin directory), and attach the package result to the configuration file as shown in **`Prepare configuration file`**  
-    ```bash
-    cd <TOOL_HOME>/bin
-    # The meanings of the three parameters are: 1. thrift_version: Thrift version 2. java_path: specify the path of Java folder (absolute path); 3. jar_path: specify the location and name of the output jar package
-    sh jar_generator.sh version java_path jar_path  
-    # Example: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx/xxx/xxx.jar
-    ```        
-#### Prepare configuration file
-If you are using the tool for `the first time`, the following steps are recommended to prepare the configuration file. If you know how to prepare the configuration file, you can `skip this stage and specify the configuration file via -e`
-1. Sample configuration files are provided under the conf directory, and you can use either and rename it to `thrift.env`
-    ```bash
-    cd <TOOL_HOME>/conf
-    cp xxx_sample.env thrift.env
-    ```
-2. Modify file contents. Check the `transport`, `protocol`, and `client_jar`. Where client_jar is the jar file obtained in **`Prepare jar`**
-    ```bash
-    vim thrift.env
-    ```
-    ```bash
-    # Example of configuration file content. 
-    version=0.11.0
-    # client_jar is the jar file obtained in Prepare jar phase
-    client_jar=/xxx/xxx/xxx.jar
-    transport=TSocket
-    protocol=TBinaryProtocol
-    ```
+#### Prepare SDK
+the SDK is required when thrift call occured. Because tool was developed using Java, so you need to prepare the Jar package. If you have it, ignored this section. If not, you can generate the Jar yourself, or refer to the Jar generator provided by this tool, as follows:
+```bash
+# 1. Generate the Java source code. After execution, generate the `gen-java` folder under the current path
+thrift -r --gen java /xxx/xxx.thrift    
+# 2. Generate the Jar package through the Jar generator which has three parameters: 1. Thrift version; 2. Java source code path (absolute path); 3. Location and name of the jar package
+cd <TOOL_HOME>/bin
+sh jar_generator.sh version java_path jar_path  
+# Example: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx/xxx/xxx.jar
+```        
+#### Prepare environment 
+Tool reads the conf/thrift.env as default environment file. Also you can manually specify by `-e environment file`. Several sample environment files are provided in the conf directory, and it is recommended to make appropriate modifications based on the sample:
+```bash
+# 1.  Copy a sample file and name it to `thrift.env`
+cd <TOOL_HOME>/conf
+cp xxx_sample.env thrift.env
+# 2. Check and Modify the contents. Where client_jar is the jar generate in Prepare SDK
+```bash
+vim thrift.env
+```
 #### Start the tool
-**Note:** If there is an error which like **no matches found: thrift://xxx/xxx/xxx/xx?@xxx** in executing the startup command. May be caused by the ? unable to identify, you can use `\?` to replace ?
 ```bash
 cd <TOOL_HOME>/bin
 sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 # Example: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
-##### Options
-  * ###### -e configuration file
+##### Startup parameter options
+The following is a description of the command-line startup parameters and their usage, which can also be understood by `sh jar_generator.sh -h`
+  * ###### -e environment file
     Mainly including TTransport, TProtocol, client_jar. If not specified, take thrift.env in the conf directory as the default configuration file   
     ```bash   
     # Example of content:
@@ -111,7 +99,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
         {"key":"value"}
         ```
 # Start quickly
-In just three steps, you can run the first Thrift pressure test.
+Using the demo which comes from the tool, you can run the first Thrift pressure test in just three steps.
 1. Create the configuration file, which you can copy directly from an existing sample in the conf directory:
     ```bash
     cd <TOOL_HOME>/conf
@@ -132,6 +120,13 @@ In just three steps, you can run the first Thrift pressure test.
     # specify the configuration file 
     # sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
     ```
+# FAQ
+1.  Q: When use `-e environment file` to specify environment file, the file path is relative path or absolute path?
+    A: Both are OK. If use relative path, the path should be relatived to the benchmark.sh.
+2.  Q: When specify the client_jar in the environment file, the path is relative path or absolute path?
+    A: Both are OK. If use relative path, the path should be relatived to environment file. 
+3.  Q: When start the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured? 
+    A: May be caused by the ? unable to identify in thrift url, you can use `\?` to replace ? .
 # Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
