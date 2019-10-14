@@ -40,14 +40,14 @@ $ sh <TOOL_HOME>/bin/jar_generator.sh <thrift_version> <java_path> <jar_path>
 工具默认会读取conf/thrift.env环境文件，您也可以通过`-e <environment file>`手工指定。conf目录下提供了几个样例环境文件，推荐在样例的基础上进行适当修改：
 ```bash
 $ cd <TOOL_HOME>/conf
-# 第一步：从样例文件拷贝为thrift.env
+# 第一步：样例文件拷贝为thrift.env
 $ cp xxx_sample.env thrift.env
 # 第二步：检查并修改文件内容
 $ vim thrift.env
 ```
 
 #### 启动工具 
-一旦jar包、环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：
+环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：
 
 ```bash
 cd <TOOL_HOME>/bin
@@ -56,12 +56,12 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 ```
 
 # 启动参数选项
-下面是命令行启动参数及用法说明，也可以通过`sh jar_generator.sh -h`进行了解。 
- * ###### -e 环境文件，包括TTransport、TProtocol、[client_jar](#准备jar)等。若未指定，则默认读取`conf`目录下的`thrift.env`
+下面是命令行启动参数及用法说明，也可以通过`sh benchmark.sh -h`进行了解。 
+ * ###### -e 环境文件，包括TTransport、TProtocol、[client_jar](#准备SDK)等。若未指定，则默认读取`conf`目录下的`thrift.env`
     ```bash
     #环境文件内容示例:     
     version=0.11.0  
-		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+	client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
     transport=TSocket  
     protocol=TBinaryProtocol 
     ```    
