@@ -7,9 +7,9 @@
  * 压力模型：支持并发数、吞吐量等多种压力模型  
 # 下载与安装
 #### 环境说明
-在Mac、Centos等环境上测试较多，但Ubuntu等环境上测试尚不充分，暂不支持Windows。
+已在Mac、Centos等环境上多次测试，但其他环境上测试尚不充分，暂不支持Windows。
 需要JDK 8或更高版本的Java运行环境。
-#### 下载地址 
+#### 下载方法
 [点击这里](http://XXX "Download")下载最新版本，或者通过命令行：
      
 ```bash
@@ -103,13 +103,13 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
     ```
 
 # 快速上手(运行第一个thrift压测)
-只需三步，就可以运行第一个Thrift压测。
-1. 创建Thrift环境文件，您可以在conf目录下，从已有模板直接拷贝：
+使用工具自带的例子，您只需三步，就可以运行第一个Thrift压测。
+1. 创建环境文件：去conf目录，从已有模板拷贝：
 	```bash
 	cd <TOOL_HOME>/conf
 	cp thrift_tsocket_sample.env thrift_env
 	```
-2. 启动Thrift Server，工具提供了一个样例Thrift Server，可以快速试用： 
+2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
 	```bash
 	cd <TOOL_HOME>/demo
 	sh demo_thrift_server.sh -p 8972 
@@ -121,7 +121,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 	sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 	# 或者一个带参数的Thrift方法，需要指定数据文件
 	# sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data_file_demo/oneArgMethod.text
-	# 自己指定配置文件
+	# 或者手工指定配置文件
 	# sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 	```
 # 贡献
@@ -131,8 +131,3 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 # 许可证
 
 Benchmark-thrift是根据ApacheLicense2.0授权的。请参阅[许可证文件](LICENSE)。
-
-## Note
-这不是一个正式的滴滴产品，它只是碰巧代码属于滴滴。
-
-感谢您使用这款工具!
