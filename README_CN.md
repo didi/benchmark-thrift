@@ -27,7 +27,7 @@ curl -O http://XXX
 	thrift -r --gen java /xxx/xxx.thrift 
 	```
 	
-2. 通过工具提供的脚本(`bin`目录下)将上步生成的`gen-java`打包，打包结果需要配到配置文件中 [详见下一步](#准备配置文件)
+2. 通过工具提供的脚本(`bin`目录下)将上步生成的`gen-java`打包，将打包结果配到配置文件中 [详见下一步](#准备配置文件)
 	```bash
 	cd <TOOL_HOME>/bin
 	# 三个参数含义分别是: 1、thrift_version: 指定Thrift版本；2、java_path:指定java文件夹路径(绝对路径)；3、jar_path:指定输出jar包的位置和名称
@@ -36,13 +36,13 @@ curl -O http://XXX
 	```
 
 #### 准备配置文件
-如果是`第一次`使用工具，推荐按下述步骤准备配置文件。如果`知悉`配置方式，可以`跳过此阶段以-e`的方式来指定已经配置好的配置文件
+如果是`第一次`使用工具，推荐按下述步骤准备配置文件。如果`知悉`配置方式，可以`跳过此阶段通过-e`指定配置文件
 1. 工具`conf`下提供了配置文件样例，您可以使用任意一个，并重命名为`thrift.env`。
 	```bash
 	cd <TOOL_HOME>/conf
 	cp xxx_sample.env thrift.env
 	```
-2. 修改文件内容。按修改`transport`、`protocol`、以及[client_jar](#准备jar)是否配置正确。其中`client_jar为准备jar阶段得到的jar包`
+2. 修改文件内容。检查`transport`、`protocol`、以及[client_jar](#准备jar)是否正确。其中`client_jar为准备jar阶段得到的jar包`
 	```bash
 	vim thrift.env
 	```
@@ -62,7 +62,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 #示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 ##### 启动参数选项
- * ###### -e 配置文件，主要包括TTransport、TProtocol、[client_jar](#准备jar)。如果没有指定该参数，会以工具`conf`目录下的`thrift.env`为默认配置文件
+ * ###### -e 配置文件，主要包括TTransport、TProtocol、[client_jar](#准备jar)。如果没有指定，以工具`conf`目录下的`thrift.env`为默认配置文件
     ```bash
     #配置文件内容示例:     
     version=0.12.0  
