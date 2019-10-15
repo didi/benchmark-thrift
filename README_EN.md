@@ -14,7 +14,7 @@
 It has been adequately tested on Mac and Centos. But tests on other environments are inadequate. Windows is not supported yet. A Java runtime environment of JDK 8 or higher version is required.
 
 #### Download
-[Click here](www.baidu.com) to download the latest version, or from the command line:
+[Click here](www.baidu.com) to download the latest version, or via the command line:
 ```bash
 $ curl -0 http://xxxx
 ```
