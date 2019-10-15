@@ -11,7 +11,7 @@
 # Download and Install
 
 #### Environment
-It has been tested more on Mac, Centos. But test on other environments is not enough. Windows is not supported yet. A Java runtime environment of JDK 8 or higher is required.
+It has been adequately tested on Mac and Centos. But tests on other environments are inadequate. Windows is not supported yet. A Java runtime environment of JDK 8 or higher version is required.
 
 #### Download
 [Click here](www.baidu.com) to download the latest version, or from the command line:
