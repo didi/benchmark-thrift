@@ -1,5 +1,5 @@
-# Benchark-thrift简介
-**Benchmark-thrift**是一款测试`Thrift`应用程序性能的工具，开箱即用，高效简单。
+# benchark-thrift
+**benchmark-thrift**是一款测试`Thrift`应用程序性能的工具，开箱即用，高效简单。
 > [README in English](README_EN.md)
 #### 主要特点
  * 使用简单：下载后，支持命令行发压 
@@ -10,19 +10,18 @@
 已在Mac、Centos等环境上多次测试，但其他环境上测试尚不充分，暂不支持Windows。
 需要JDK 8或更高版本的Java运行环境。
 #### 下载方法
-[点击这里](http://XXX "Download")下载最新版本，或者通过命令行：
+[点击这里](http://XXX "Download")下载最新版本，或者通过`wget`、`curl`命令：
      
 ```bash
 $ curl -O http://XXX
 ```
-下载完成后，解压缩即可。
+下载完成后，在合适的目录解压缩即可。
+**`本文档后见的<TOOL_HOME>，表示该工具的安装目录`**
 
 # 如何运行
 运行之前，请确保对[Thrift协议](https://thrift.apache.org/tutorial/)有一定的了解。Thrift远程调用需要匹配版本、TTranport、TProtocol类型，调用方还要拿到SDK（Jar、go module、或者IDL文件），相比HTTP协议，更为复杂。
 
 为简化操作，抽取了"环境文件"的概念，包含不常变化的Thrift版本、TTransport及TProtocol类型等配置项。
-
-**`本文档中的<TOOL_HOME>不作特殊解释的话，均表示为工具的安装目录`**
 
 #### 准备SDK
 Thrift调用需要待测服务的SDK，本工具使用Java开发，因此需要准备Jar包。如果您已有可忽略本小节，否则可自行生成，或参考本工具提供的Jar生成器，具体操作如下：

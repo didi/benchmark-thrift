@@ -1,67 +1,68 @@
-# Introduction  
-**Benchmark-Thrift** is an open source application designed to load test Thrift applications. 
+# benchark-thrift
+**benchmark-Thrift** is an open source application designed to load test Thrift applications. 
 > [中文版](README.md)  
 
 #### Features  
   * **Out of the box**, just download a latest version and start to benchmark in command line
-  * **Multiple Thrift versions** are supported, as well as different TProtocol and TTransport types
-  * Both **concurrency** and **throughput** modes are available
+  * **Multiple Thrift versions** are supported, as well as various TProtocol and TTransport types
+  * Both **concurrency** and **throughput** pressure modes are available
 
 # Download and Install
 
 #### Environment
-It has been tested a lot on Mac and Centos, but not on other operating systems. Windows is not supported yet. JDK 8 or higher version is required.
+It has been tested a lot on Mac and Centos, but not so much on other operating systems. Windows is not supported so far. JDK 8 or a higher version is required.
 
 #### Download
-[Click here](www.baidu.com) to download the latest version, or use `wget` or `curl` command:
+[Click here](www.baidu.com) to download the latest version. `wget` or `curl` command should also work:
 ```bash
 $ curl -0 http://xxxx
 ```
-Once the download is complete, unzip it.
+Once the download is complete, unzip it to any directory you like.
+
+**`Note: In this document, <TOOL_HOME> means the installation directory of the tool.`**
 
 # How to run it
-Please visit [this tutorial](https://Thrift.apache.org/tutorial/) if you are new to Thrift protocol. A Thrift RPC needs a lot to configure(version, TTranport type, TProtocol type and even a SDK), which makes it more complicated than other protocols such as HTTP.  
-To simplify, "environment file" is introduced, which contains configurations that don't changed often, such as Thrift version, TTransport type and TProtocol type.  
-**`Note: In this document, without special explanation, <TOOL_HOME> means the installation directory of the tool`**
+Please visit [this tutorial](https://Thrift.apache.org/tutorial/) if you are new to Thrift protocol. Comparing with HTTP queries, A Thrift RPC needs to configure a lot(version, TTranport type, TProtocol type and even a SDK, for example), which makes it a bit more complicated.  
+To make things easy, "environment file" is introduced, which contains configurations that don't change often, such as Thrift version, TTransport type and TProtocol type.  
 
 #### Prepare SDK
-Firstly a SDK is required to make a Thrift call, and specifically it's a **jar file** as the tool is developed by Java. You cann ignore this section if you already have one, otherwise, please generate it manually or use `jar_generator.sh`, as below:
+It's known that a SDK is required to for a client to make a Thrift call, and specifically it's a **jar file** here as the tool is developed by Java. You can ignore this section if you already have it, otherwise, please generate one manually or use `jar_generator.sh`, as shown below:
 ```bash
-# 1. Generate the Java source code. After execution, generate the `gen-java` folder under the current path
-$ Thrift -r --gen java /xxx/xxx.Thrift    
-# 2. Generate the Jar package through the Jar generator script which has three parameters: 1. Thrift version; 2. Java source code path (absolute path); 3. Location and name of the jar package
+# 1. Generate the Java source code. A `gen-java` folder will be created under the current directory
+$ thrift -r --gen java /xxx/xxx.Thrift    
+# 2. Generate the Jar package through the Jar generator script, which has three parameters: 1. Thrift version; 2. Java source code path (absolute path); 3. Location and name of the jar package
 $ sh <TOOL_HOME>/bin/jar_generator.sh version java_path jar_path  
 # Example: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx/xxx/xxx.jar
 ```        
 #### Prepare environment 
-As mentioned before, this tool will read an environment file `conf/Thrift.env` in default, or you could manually specify it by `-e <environment file>`. 
+As mentioned before, this tool will read an environment file specified by the `-e` parameter, and `conf/thrift.env` is the default file if not specified. 
 
-Several samples are provided in the conf directory, and it is recommended to use samples:
+Several samples are provided in the conf directory, and it is highly recommended to use samples:
 ```bash
 $ cd <TOOL_HOME>/conf
 # 1.  Copy a sample file and name it to `Thrift.env`
-$ cp xxx_sample.env Thrift.env
+$ cp xxx_sample.env thrift.env
 # 2. Check and modify the contents.（The `client_jar` means the location of the jar package which has been prepared in 'Prepare SDK' stage）
-$ vim Thrift.env
+$ vim thrift.env
 ```
 #### Start the tool
-Once the SDK and environment file are ready, start to benchmark as below:  
+Once the SDK and environment file are ready, start to benchmark:  
 ```bash
 $ cd <TOOL_HOME>/bin
-$ sh benchmark.sh [options] Thrift://<host>:<port>/<service>/<method>[?@<data_file>]
-# Example: sh benchmark.sh Thrift://127.0.0.1:8972/DemoService/noArgMethod
+$ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+# Example: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 
 # Command line options
 Below is a description of the command-line startup parameters, it can also be shown by `sh jar_generator.sh -h`
   * ###### -e environment file
-    Mainly including TTransport, TProtocol and client_jar. If not specified, the tool wil regard Thrift.env in the conf directory as the default configuration file   
+    An environment file that contains TTransport, TProtocol and client_jar configurations. A default file `thrift.env` will be used if not specified.   
     ```bash   
     # Example of content:
-    version=0.12.0
-    client_jar=/Users/didi/test.jar
-    transport=TFramedTransport(transport=TSocket)
-    protocol=TCompactProtocol 
+    version=0.11.0  
+		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+    transport=TSocket  
+    protocol=TBinaryProtocol 
     ```
     
    * ###### -q throughput 
