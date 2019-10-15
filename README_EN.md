@@ -5,8 +5,8 @@
 
 #### Features  
   * Simple Usage: you can use it through the command line after download
-  * Rich features: multiple versions of Thrift protocol are supported, as well as multiple TProtocol and TTransport
-  * Pressure model: support concurrency, throughput pressure models
+  * Rich features: multiple versions of Thrift protocol are supported, as well as multiple TProtocols and TTransports
+  * Two Pressure models: support concurrency, throughput pressure models
 
 # Download and Install
 
