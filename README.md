@@ -13,7 +13,7 @@
 [点击这里](http://XXX "Download")下载最新版本，或者通过命令行：
      
 ```bash
-curl -O http://XXX
+$ curl -O http://XXX
 ```
 下载完成后，解压缩即可。
 
@@ -49,8 +49,8 @@ $ vim thrift.env
 #### 启动工具 
 环境文件准备完毕，待测服务也在运行，可以通过命令进行压测，示例如下：  
 ```bash
-cd <TOOL_HOME>/bin
-sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+$ cd <TOOL_HOME>/bin
+$ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 #示例: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 
@@ -60,7 +60,7 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
     ```bash
     #环境文件内容示例:     
     version=0.11.0  
-	client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
     transport=TSocket  
     protocol=TBinaryProtocol 
     ```    
@@ -100,23 +100,23 @@ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file
 使用工具自带的例子，您只需三步，就可以运行第一个Thrift压测。
 1. 创建环境文件：去conf目录，从已有模板拷贝：
 	```bash
-	cd <TOOL_HOME>/conf
-	cp thrift_tsocket_sample.env thrift_env
+	$ cd <TOOL_HOME>/conf
+	$ cp thrift_tsocket_sample.env thrift_env
 	```
 2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
 	```bash
-	cd <TOOL_HOME>/demo
-	sh demo_thrift_server.sh -p 8972 
+	$ cd <TOOL_HOME>/demo
+	$ sh demo_thrift_server.sh -p 8972 
 	```
 3. 启动压测工具，进行压力测试
 	```bash
-	cd <TOOL_HOME>/bin
+	$ cd <TOOL_HOME>/bin
 	# 一个最简单的Thrift方法，不含任何参数
-	sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+	$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 	# 或者一个带参数的Thrift方法，需要指定数据文件
-	# sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+	#$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
 	# 或者手工指定配置文件
-	# sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+	#$ sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
 	```
 
 # FAQ

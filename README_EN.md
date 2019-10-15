@@ -16,7 +16,7 @@ It has been tested more on Mac, Centos. But test on other environments is not en
 #### Download
 [Click here](www.baidu.com) to download the latest version, or from the command line:
 ```bash
-curl -0 http://xxxx
+$ curl -0 http://xxxx
 ```
 Once the download is complete, unzip it.
 
@@ -29,25 +29,24 @@ To simplify the operation, the concept of "environment file" is extracted, inclu
 the SDK is required when thrift call occured. Because tool was developed using Java, so you need to prepare the Jar package. If you have it, ignored this section. If not, you can generate the Jar yourself, or refer to the Jar generator provided by this tool, as follows:
 ```bash
 # 1. Generate the Java source code. After execution, generate the `gen-java` folder under the current path
-thrift -r --gen java /xxx/xxx.thrift    
+$ thrift -r --gen java /xxx/xxx.thrift    
 # 2. Generate the Jar package through the Jar generator which has three parameters: 1. Thrift version; 2. Java source code path (absolute path); 3. Location and name of the jar package
-cd <TOOL_HOME>/bin
-sh jar_generator.sh version java_path jar_path  
+$ sh <TOOL_HOME>/bin/jar_generator.sh version java_path jar_path  
 # Example: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx/xxx/xxx.jar
 ```        
 #### Prepare environment 
 Tool reads the conf/thrift.env as default environment file. Also you can manually specify by `-e environment file`. Several sample environment files are provided in the conf directory, and it is recommended to make appropriate modifications based on the sample:
 ```bash
-cd <TOOL_HOME>/conf
+$ cd <TOOL_HOME>/conf
 # 1.  Copy a sample file and name it to `thrift.env`
-cp xxx_sample.env thrift.env
+$ cp xxx_sample.env thrift.env
 # 2. Check and Modify the contents. Where client_jar is the jar generate in Prepare SDK
-vim thrift.env
+$ vim thrift.env
 ```
 #### Start the tool
 ```bash
-cd <TOOL_HOME>/bin
-sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
+$ cd <TOOL_HOME>/bin
+$ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 # Example: sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
 ```
 ##### Startup parameter options
@@ -101,23 +100,23 @@ The following is a description of the command-line startup parameters and their 
 Using the demo which comes from the tool, you can run the first Thrift pressure test in just three steps.
 1. Create the configuration file, which you can copy directly from an existing sample in the conf directory:
     ```bash
-    cd <TOOL_HOME>/conf
-    cp thrift_tsocket_sample.env thrift.env
+    $ cd <TOOL_HOME>/conf
+    $ cp thrift_tsocket_sample.env thrift.env
     ```
 2. Start Thrift Server, and the tool provides a sample Thrift Server for a quick trial.
     ```bash
-    cd <TOOL_HOME>/demo
-    sh demo_thrift_server.sh -p 8972 
+    $ cd <TOOL_HOME>/demo
+    $ sh demo_thrift_server.sh -p 8972 
     ```
 3. Start the pressure measuring tool to conduct the pressure test.
     ```bash
-    cd <TOOL_HOME>/bin
+    $ cd <TOOL_HOME>/bin
     # the simplest Thrift method, no arguments
-    sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+    $ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
     # a Thrift method with arguments, you need to specify the data file
-    # sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+    #$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
     # specify the configuration file 
-    # sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+    #$ sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
     ```
 # FAQ
 1.  Q: When use `-e environment file` to specify environment file, the file path is relative path or absolute path?  
