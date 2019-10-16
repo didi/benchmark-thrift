@@ -125,9 +125,9 @@ Below is a description of the command-line startup parameters, it can also be sh
         ```
 # FAQ
 1.  Q: Is it an absolute path or relative path when specifying environment file by `-e <environment file>` parameter?  
-    A: Both are OK. The relative path is based on its relation to `benchmark.sh` file. 
+    A: Both are OK. The relative path is based on your current path. 
 2.  Q: Is it an absolute path or relative path when specifying client_jar in the environment file?  
-    A: Both are OK. The relative path is based on its relation to the environment file. 
+    A: Both are OK. The relative path is based on the directory where the environment file is located. 
 3.  Q: When starting the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured?   
     A: May be caused by the ? unable to identify in Thrift url, you can use `\?` to replace ? .
 # Contributing
