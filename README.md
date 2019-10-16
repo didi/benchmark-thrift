@@ -119,10 +119,10 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
     ```
 
 # FAQ
-1. `-e <environment file>`指定环境文件时，是相对目录还是绝对目录?  
-	答：二者均可，如果是相对目录，是相对于benchmark.sh文件
-2. 环境文件中指定client_jar包时，是相对目录还是绝对目录?  
-	答：二者均可，如果是相对目录，是相对于该环境文件
+1. `-e <environment file>`指定环境文件时，是相对路径还是绝对路径?  
+	答：二者均可，如果是相对路径，是相对于当前目录
+2. 环境文件中指定client_jar包时，是相对路径还是绝对路径?  
+	答：二者均可，如果是相对路径，是相对于该环境文件所在的目录
 3. 在执行启动命令时为什么出现`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`?  
     答：是因为Thrift url中的?需要转义，请用`\?`替换掉?
 
