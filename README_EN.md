@@ -1,5 +1,5 @@
 # benchark-thrift
-**benchmark-Thrift** is an open source application designed to load test Thrift applications. 
+**benchmark-thrift** is an open source application designed to load test Thrift applications. 
 > [中文版](README.md)  
 
 #### Features  
@@ -22,14 +22,14 @@ Once the download is complete, unzip it to any directory you like.
 **`Note: In this document, <TOOL_HOME> means the installation directory of the tool.`**
 
 # How to run it
-Please visit [this tutorial](https://Thrift.apache.org/tutorial/) if you are new to Thrift protocol. Comparing with HTTP queries, A Thrift RPC needs to configure a lot(version, TTranport type, TProtocol type and even a SDK, for example), which makes it a bit more complicated.  
+Please visit [this tutorial](https://thrift.apache.org/tutorial/) if you are new to Thrift protocol. Comparing with HTTP queries, A Thrift RPC needs to configure a lot(version, TTranport type, TProtocol type and even a SDK, for example), which makes it a bit more complicated.  
 To make things easy, "environment file" is introduced, which contains configurations that don't change often, such as Thrift version, TTransport type and TProtocol type.  
 
 #### Prepare SDK
 It's known that a SDK is required to for a client to make a Thrift call, and specifically it's a **jar file** here as the tool is developed by Java. You can ignore this section if you already have it, otherwise, please generate one manually or use `jar_generator.sh`, as shown below:
 ```bash
 # 1. Generate the Java source code. A `gen-java` folder will be created under the current directory
-$ thrift -r --gen java /xxx/xxx.Thrift    
+$ thrift -r --gen java /xxx/xxx.thrift    
 # 2. Generate the Jar package through the Jar generator script, which has three parameters: 1. Thrift version; 2. Java source code path (absolute path); 3. Location and name of the jar package
 $ sh <TOOL_HOME>/bin/jar_generator.sh version java_path jar_path  
 # Example: sh jar_generator.sh 0.11.0 /xxx/xxx/gen-java xxx/xxx/xxx.jar
@@ -40,7 +40,7 @@ As mentioned before, this tool will read an environment file specified by the `-
 Several samples are provided in the conf directory, and it is highly recommended to use samples:
 ```bash
 $ cd <TOOL_HOME>/conf
-# 1.  Copy a sample file and name it to `Thrift.env`
+# 1.  Copy a sample file and name it to `thrift.env`
 $ cp xxx_sample.env thrift.env
 # 2. Check and modify the contents.（The `client_jar` means the location of the jar package which has been prepared in 'Prepare SDK' stage）
 $ vim thrift.env
@@ -105,7 +105,7 @@ With a demo Thrift server supplied by the tool, you could run your first Thrift 
 1. Create an environment file, copying one from samples is suggested:
     ```bash
     $ cd <TOOL_HOME>/conf
-    $ cp Thrift_tsocket_sample.env Thrift.env
+    $ cp Thrift_tsocket_sample.env thrift.env
     ```
 2. Start the demo Thrift Server.
     ```bash
@@ -116,23 +116,23 @@ With a demo Thrift server supplied by the tool, you could run your first Thrift 
     ```bash
     $ cd <TOOL_HOME>/bin
     # the simplest Thrift method, no arguments
-    $ sh benchmark.sh Thrift://127.0.0.1:8972/DemoService/noArgMethod
+    $ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
     # a Thrift method with arguments, you need to specify the data file
-    #$ sh benchmark.sh Thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+    #$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
     # specify the configuration file 
-    #$ sh benchmark.sh -e ../conf/Thrift_socket_sample.env Thrift://127.0.0.1:8972/DemoService/noArgMethod
+    #$ sh benchmark.sh -e ../conf/Thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
     ```
 # FAQ
 1.  Q: Is it an absolute path or relative path when specifying environment file by `-e <environment file>` parameter?  
     A: Both are OK. The relative path is based on its relation to `benchmark.sh` file. 
 2.  Q: Is it an absolute path or relative path when specifying client_jar in the environment file?  
     A: Both are OK. The relative path is based on its relation to the environment file. 
-3.  Q: When starting the tool, why an error which like **`no matches found: Thrift://xxx/xxx/xxx/xx?@xxx`** occured?   
+3.  Q: When starting the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured?   
     A: May be caused by the ? unable to identify in Thrift url, you can use `\?` to replace ? .
 # Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
 # License
-Benchmark-Thrift is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file.
+benchmark-thrift is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file.
 
 

@@ -132,4 +132,4 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
 
 # 许可证
 
-Benchmark-thrift是根据ApacheLicense2.0授权的。请参阅[许可证文件](LICENSE)。
+benchmark-thrift是根据ApacheLicense2.0授权的。请参阅[许可证文件](LICENSE)。
