@@ -18,7 +18,30 @@ $ curl -O http://XXX
 下载完成后，在合适的目录解压缩即可。
 **`本文档后见的<TOOL_HOME>，表示该工具的安装目录`**
 
-# 如何运行
+# 快速上手(运行第一个thrift压测)
+使用工具自带的例子，您只需三步，就可以运行第一个Thrift压测。
+1. 创建环境文件：去conf目录，从已有模板拷贝：
+	```bash
+	$ cd <TOOL_HOME>/conf
+	$ cp thrift_tsocket_sample.env thrift_env
+	```
+2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
+	```bash
+	$ cd <TOOL_HOME>/demo
+	$ sh demo_thrift_server.sh -p 8972 
+	```
+3. 启动压测工具，进行压力测试
+	```bash
+	$ cd <TOOL_HOME>/bin
+	# 一个最简单的Thrift方法，不含任何参数
+	$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+	# 或者一个带参数的Thrift方法，需要指定数据文件
+	#$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+	# 或者手工指定配置文件
+	#$ sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+	```
+
+# 使用说明
 运行之前，请确保对[Thrift协议](https://thrift.apache.org/tutorial/)有一定的了解。Thrift远程调用需要匹配版本、TTranport、TProtocol类型，调用方还要拿到SDK（Jar、go module、或者IDL文件），相比HTTP协议，更为复杂。
 
 为简化操作，抽取了"环境文件"的概念，包含不常变化的Thrift版本、TTransport及TProtocol类型等配置项。
@@ -94,29 +117,6 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
     [2,0,1,9]
     {"key":"value"}
     ```
-
-# 快速上手(运行第一个thrift压测)
-使用工具自带的例子，您只需三步，就可以运行第一个Thrift压测。
-1. 创建环境文件：去conf目录，从已有模板拷贝：
-	```bash
-	$ cd <TOOL_HOME>/conf
-	$ cp thrift_tsocket_sample.env thrift_env
-	```
-2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
-	```bash
-	$ cd <TOOL_HOME>/demo
-	$ sh demo_thrift_server.sh -p 8972 
-	```
-3. 启动压测工具，进行压力测试
-	```bash
-	$ cd <TOOL_HOME>/bin
-	# 一个最简单的Thrift方法，不含任何参数
-	$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
-	# 或者一个带参数的Thrift方法，需要指定数据文件
-	#$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
-	# 或者手工指定配置文件
-	#$ sh benchmark.sh -e ../conf/thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
-	```
 
 # FAQ
 1. `-e <environment file>`指定环境文件时，是相对目录还是绝对目录?  

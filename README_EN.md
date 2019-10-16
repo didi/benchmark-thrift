@@ -21,7 +21,30 @@ Once the download is complete, unzip it to any directory you like.
 
 **`Note: In this document, <TOOL_HOME> means the installation directory of the tool.`**
 
-# How to run it
+# Quick Start
+With a demo Thrift server supplied by the tool, you could run your first Thrift load test in just three steps.
+1. Create an environment file, copying one from samples is suggested:
+    ```bash
+    $ cd <TOOL_HOME>/conf
+    $ cp Thrift_tsocket_sample.env thrift.env
+    ```
+2. Start the demo Thrift Server.
+    ```bash
+    $ cd <TOOL_HOME>/demo
+    $ sh demo_Thrift_server.sh -p 8972 
+    ```
+3. Start the tool to benchmark.
+    ```bash
+    $ cd <TOOL_HOME>/bin
+    # the simplest Thrift method, no arguments
+    $ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
+    # a Thrift method with arguments, you need to specify the data file
+    #$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
+    # specify the configuration file 
+    #$ sh benchmark.sh -e ../conf/Thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
+    ```
+
+# Tutorial
 Please visit [this tutorial](https://thrift.apache.org/tutorial/) if you are new to Thrift protocol. Comparing with HTTP queries, A Thrift RPC needs to configure a lot(version, TTranport type, TProtocol type and even a SDK, for example), which makes it a bit more complicated.  
 To make things easy, "environment file" is introduced, which contains configurations that don't change often, such as Thrift version, TTransport type and TProtocol type.  
 
@@ -100,28 +123,6 @@ Below is a description of the command-line startup parameters, it can also be sh
         [2,0,1,9]
         {"key":"value"}
         ```
-# Quick Start
-With a demo Thrift server supplied by the tool, you could run your first Thrift load test in just three steps.
-1. Create an environment file, copying one from samples is suggested:
-    ```bash
-    $ cd <TOOL_HOME>/conf
-    $ cp Thrift_tsocket_sample.env thrift.env
-    ```
-2. Start the demo Thrift Server.
-    ```bash
-    $ cd <TOOL_HOME>/demo
-    $ sh demo_Thrift_server.sh -p 8972 
-    ```
-3. Start the tool to benchmark.
-    ```bash
-    $ cd <TOOL_HOME>/bin
-    # the simplest Thrift method, no arguments
-    $ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/noArgMethod
-    # a Thrift method with arguments, you need to specify the data file
-    #$ sh benchmark.sh thrift://127.0.0.1:8972/DemoService/oneArgMethod?@../demo/data/oneArgMethod.text
-    # specify the configuration file 
-    #$ sh benchmark.sh -e ../conf/Thrift_socket_sample.env thrift://127.0.0.1:8972/DemoService/noArgMethod
-    ```
 # FAQ
 1.  Q: Is it an absolute path or relative path when specifying environment file by `-e <environment file>` parameter?  
     A: Both are OK. The relative path is based on its relation to `benchmark.sh` file. 
