@@ -41,6 +41,9 @@ function validate_env_file(){
   transport=""
   protocol=""
 
+  if [[ ${env_file} != "/"* ]]; then
+      client_jar=$(dirname ${env_file})/${client_jar}
+  fi
   if [[ ! -f "${env_file}" ]]; then
     if [[ ${use_e} == "false" ]];then
       printf "${__base}: environment file is missing\n"
@@ -163,7 +166,7 @@ function validate_and_parse_url(){
   if [[ ${length} -lt 5 ]]; then
     echo "${__base}: incorrect thrift url, thrift url should be like thrift://<host>:<port>/<service>/<method>[?@data_file]"
     echo "Example thrift://127.0.0.1:8972/DemoService/noArgMethod"
-    echo "(use\033[31m sh ${__base}.sh -h\033[0m too see more) "
+    echo "(use sh ${__base}.sh -h too see more) "
     exit 1
   fi
   host=${array[1]}
@@ -177,7 +180,8 @@ function validate_thrift_server(){
   local host=$1
   local port=$2
   local service=$3
-  nc -zw5 ${host} ${port} >/dev/null 2>&1 && is_server_started=$? || is_server_started=$?
+  is_server_started=1
+  nc -w 1 ${host} ${port} < /dev/null > /dev/null 2>&1 && is_server_started=0
   if [[ ${is_server_started} -ne 0 ]]; then
     if [[ "${host}" == "127.0.0.1" ]] && [[ "${service}" == "DemoService" ]]; then
       # If user is benchmarking demo-thrift-server
@@ -191,14 +195,14 @@ function validate_thrift_server(){
 }
 
 function print_usage_to_newbie(){
-  echo "${__base}: please read the \033[31mREADME.md\033[0m first! the address is\033[31m https://github.com/didichuxing/benchmark-thrift\033[0m"
+  echo "${__base}: please read the README.md first! the address is https://github.com/didichuxing/benchmark-thrift"
   exit 1
 }
 
 
 function print_usage_simple(){
- echo "Usage: sh ${__base}.sh [options] thrift://<host>:<port>/<service>/<method>[\?@<data_file>]"
- echo "(use\033[31m sh ${__base}.sh -h\033[0m too see more)"
+ echo "Usage: sh ${__base}.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]"
+ echo "(use sh ${__base}.sh -h too see more)"
 }
 
 function print_usage_normally(){
@@ -206,7 +210,7 @@ function print_usage_normally(){
   local demo_port=8972
   local demo_service="DemoService"
   printf "\
-Usage: sh ${__base}.sh [options] thrift://<host>:<port>/<service>/<method>[\?@<data_file>]
+Usage: sh ${__base}.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_file>]
 
 Options:
    -c <concurrency>       Number of multiple requests to make at a time
@@ -234,7 +238,7 @@ Examples:
     # 4. specify an environment file
     sh ${__base}.sh -e conf/tsocket.sample.env thrift://${demo_host}:${demo_port}/${demo_service}/noArgMethod
     # 5. specify arguments
-    sh ${__base}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod\?@${_demo_dir}/data/oneArgMethod.text
+    sh ${__base}.sh thrift://${demo_host}:${demo_port}/${demo_service}/oneArgMethod?@${_demo_dir}/data/oneArgMethod.text
 
 Run a demo quickly:
   1. Rename tsocket.sample.env to thrift.env in ${_conf_dir} directory
