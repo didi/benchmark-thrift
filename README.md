@@ -23,7 +23,7 @@ $ curl -O http://XXX
 1. 创建环境文件：去conf目录，从已有模板拷贝：
 	```bash
 	$ cd <TOOL_HOME>/conf
-	$ cp thrift_tsocket_sample.env thrift_env
+	$ cp thrift_tsocket_sample.env thrift.env
 	```
 2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
 	```bash
