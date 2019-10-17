@@ -21,13 +21,20 @@ function getdir(){
     done
 }
 
+
+
 declare -r HOME_DIR=$(cd $(dirname $0); cd ..; pwd)
 declare -r LIB_DIR="${HOME_DIR}/lib/thrift/$1"
 declare JAVA_FILES=""
+declare -r BASE_DIR=$(cd `dirname $0`; pwd)
 
 if [[ $3 == "" || $3 != *.jar ]]; then
     echo "输入正确的jar路径，确保以.jar结尾"
     exit 1
+fi
+
+if [[ ${3} != "/"* ]]; then
+      jar_path=${BASE_DIR}/$3
 fi
 
 if [[ -d classdir ]]; then
@@ -40,12 +47,14 @@ getdir $2
 
 echo "version   -> $1"
 echo "java path -> $2"
-echo "jar path  -> $3"
+echo "jar path  -> $jar_path"
 echo "classpath -> $jarfile"
 
-javac -classpath $jarfile -d classdir $JAVA_FILES
+javac -classpath $jarfile -d classdir $JAVA_FILES > /dev/null
 
-jar -cvf $3 classdir/*
+cd classdir
+jar -cvf $jar_path * > /dev/null
+cd ..
 rm -rf classdir
 
 
