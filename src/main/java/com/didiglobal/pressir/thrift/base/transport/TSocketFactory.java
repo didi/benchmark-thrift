@@ -29,7 +29,7 @@ public class TSocketFactory implements TTransportFactory<TSocket> {
             parameterTypes[2 + i] = int.class;
         }
         try {
-            this.constructor = TSocket.class.getConstructor(String.class, int.class, int.class);
+            this.constructor = TSocket.class.getConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Invalid construct method TSocket(" + Arrays.toString(parameterTypes) + ")");
         }
