@@ -28,6 +28,7 @@ $ curl -O http://XXX
 2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
 	```bash
 	$ cd <TOOL_HOME>/demo
+	# 可以使用nohup后台启动样例服务，如果后台启动，请在结束时自行关闭样例服务
 	$ sh demo_thrift_server.sh -p 8972 
 	```
 3. 启动压测工具，进行压力测试
@@ -82,7 +83,7 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
     ```bash
     #环境文件内容示例:     
     version=0.11.0  
-		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+	client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
     transport=TSocket  
     protocol=TBinaryProtocol 
     ```    
