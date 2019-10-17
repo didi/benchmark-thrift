@@ -46,7 +46,7 @@ function validate_env_file(){
   fi
   if [[ ! -f "${env_file}" ]]; then
     if [[ ${use_e} == "false" ]];then
-      printf "${__base}: environment file is missing\n"
+      printf "${__base}: default environment file(${_default_env_file}) is missing.\n"
       print_usage_to_newbie
     fi
     printf "${__base}: environment file(${env_file}) is missing\n"
@@ -195,7 +195,7 @@ function validate_thrift_server(){
 }
 
 function print_usage_to_newbie(){
-  echo "${__base}: please read the README.md first! the address is https://github.com/didichuxing/benchmark-thrift"
+  echo "${__base}: if you use benchmark thrift for the first time, please read the README.md first! the address is https://github.com/didichuxing/benchmark-thrift"
   exit 1
 }
 
