@@ -43,9 +43,9 @@ echo "java path -> $2"
 echo "jar path  -> $3"
 echo "classpath -> $jarfile"
 
-javac -classpath $jarfile -d classdir $JAVA_FILES > /dev/null
+javac -classpath $jarfile -d classdir $JAVA_FILES
 
-jar -cvf $3 classdir/* > /dev/null
+jar -cvf $3 classdir/*
 rm -rf classdir
 
 
