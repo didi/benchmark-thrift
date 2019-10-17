@@ -23,11 +23,12 @@ $ curl -O http://XXX
 1. 创建环境文件：去conf目录，从已有模板拷贝：
 	```bash
 	$ cd <TOOL_HOME>/conf
-	$ cp thrift_tsocket_sample.env thrift_env
+	$ cp thrift_tsocket_sample.env thrift.env
 	```
 2. 启动被测服务：工具提供了一个样例Thrift Server，可以一键启动： 
 	```bash
 	$ cd <TOOL_HOME>/demo
+	# 可以后台启动样例服务，如果后台启动，请在结束时自行关闭
 	$ sh demo_thrift_server.sh -p 8972 
 	```
 3. 启动压测工具，进行压力测试
@@ -47,7 +48,7 @@ $ curl -O http://XXX
 为简化操作，抽取了"环境文件"的概念，包含不常变化的Thrift版本、TTransport及TProtocol类型等配置项。
 
 #### 准备SDK
-Thrift调用需要待测服务的SDK，本工具使用Java开发，因此需要准备Jar包。如果您已有可忽略本小节，否则可自行生成，或参考本工具提供的Jar生成器，具体操作如下：
+Thrift调用需要待测服务的SDK，本工具使用Java开发，因此需要准备Jar包。如果Jar包已生成，请忽略本小节。否则请自行生成或参考本工具提供的Jar生成器生成Jar包，具体操作如下：
 
 ```bash
 # 第一步：生成Java源码，执行后会在当前路径下生成`gen-java`文件夹
@@ -82,7 +83,7 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
     ```bash
     #环境文件内容示例:     
     version=0.11.0  
-		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+	client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
     transport=TSocket  
     protocol=TBinaryProtocol 
     ```    
@@ -109,7 +110,7 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
     ``` 
  * ###### -v 打印版本号
  * ###### -h 打印帮助信息
- * ###### Where: data_file表示为一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的方法含有参数，那么必须指定参数文件。`文件内容应该为一行表示方法的一个参数`
+ * ###### Where: data_file表示为一个包含方法参数的本地文件，通过使用`@`识别为文件，如果目标服务的方法含有参数，那么必须指定参数文件，文件路径为绝对路径。`文件内容应该为一行表示方法的一个参数`
     ```bash
     #示例: 假设方法有四个参数，类型分别为i32、string、list<i32>以及struct，文件内容形式应为
     2019

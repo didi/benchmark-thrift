@@ -115,7 +115,7 @@ Below is a description of the command-line startup parameters, it can also be sh
    * ###### -v Print version number
    * ###### -h Display usage information  
    * ###### Where: <data_file>
-        A local file that contains request arguments, prefixed by a "@". If the Thrift method has parameters, <data_file> is necessary.
+        A local file that contains request arguments, prefixed by a "@". If the Thrift method has parameters, <data_file> is necessary. The file path should be an absolute path.
         ```bash
         # Example: suppose the method has four arguments of type i32, string, list, and struct. so the file content should be in the form of
         2019
