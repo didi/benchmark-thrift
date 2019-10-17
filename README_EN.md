@@ -83,7 +83,7 @@ Below is a description of the command-line startup parameters, it can also be sh
     ```bash   
     # Example of content:
     version=0.11.0  
-		client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
+	client_jar=../demo/lib/demo-thrift-server-0.0.1.jar
     transport=TSocket  
     protocol=TBinaryProtocol 
     ```
