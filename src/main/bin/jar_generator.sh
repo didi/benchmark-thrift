@@ -33,6 +33,7 @@ if [[ $3 == "" || $3 != *.jar ]]; then
     exit 1
 fi
 
+jar_path=${3}
 if [[ ${3} != "/"* ]]; then
       jar_path=${BASE_DIR}/$3
 fi
