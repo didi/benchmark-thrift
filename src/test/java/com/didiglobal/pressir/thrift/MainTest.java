@@ -29,8 +29,8 @@ public class MainTest {
         Main.main("-q", "100", "-t", "20s", "-e", thriftConf, "-u", "127.0.0.1:8090/Soda/getInfos?@"+paramConf);
     }
 
-    @org.junit.Test
-    public void shouldRunningWhenGivenRightParamsOnConcurrency() {
-        Main.main("-c", "2", "-t", "20s", "-e", thriftConf, "-u", "127.0.0.1:8090/Soda/getInfos?@"+paramConf);
-    }
+//    @org.junit.Test
+//    public void shouldRunningWhenGivenRightParamsOnConcurrency() {
+//        Main.main("-c", "2", "-t", "20s", "-e", thriftConf, "-u", "127.0.0.1:8090/Soda/getInfos?@"+paramConf);
+//    }
 }
