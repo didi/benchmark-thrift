@@ -10,10 +10,10 @@
 已在Mac、Centos等环境上多次测试，但其他环境上测试尚不充分，暂不支持Windows。
 需要JDK 8或更高版本的Java运行环境。
 #### 下载方法
-[点击这里](http://XXX "Download")下载最新版本，或者通过`wget`、`curl`命令：
+[点击这里](https://github.com/didichuxing/benchmark-thrift)下载最新版本，或者通过`wget`、`curl`命令：
      
 ```bash
-$ curl -O http://XXX
+$ curl -O https://github.com/didichuxing/benchmark-thrift
 ```
 下载完成后，在合适的目录解压缩即可。
 **`本文档后见的<TOOL_HOME>，表示该工具的安装目录`**
