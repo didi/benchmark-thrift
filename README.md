@@ -11,7 +11,7 @@
 需要JDK 8或更高版本的Java运行环境。
 #### 下载方法
 [点击这里](https://github.com/didichuxing/benchmark-thrift/raw/master/output/benchmark-thrift-0.0.1.zip)下载最新版本  
-下载完成后，在合适的目录解压缩即可。
+下载完成后，在合适的目录解压缩即可。  
 **`本文档后见的<TOOL_HOME>，表示该工具的安装目录`**
 
 # 快速上手(运行第一个thrift压测)
