@@ -13,10 +13,7 @@
 It has been tested a lot on Mac and Centos, but not so much on other operating systems. Windows is not supported so far. JDK 8 or a higher version is required.
 
 #### Download
-[Click here](www.baidu.com) to download the latest version. `wget` or `curl` command should also work:
-```bash
-$ curl -0 http://xxxx
-```
+[Click here](https://github.com/didichuxing/benchmark-thrift/raw/master/output/benchmark-thrift-0.0.1.zip) to download the latest version.   
 Once the download is complete, unzip it to any directory you like.
 
 **`Note: In this document, <TOOL_HOME> means the installation directory of the tool.`**
