@@ -1,6 +1,6 @@
 # benchark-thrift
 **benchmark-thrift** is an open source application designed to load test Thrift applications. 
-> [中文版](README.md)  
+> [中文版](README_CN.md)  
 
 #### Features  
   * **Out of the box**, just download a latest version and start to benchmark in command line
