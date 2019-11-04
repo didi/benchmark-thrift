@@ -48,7 +48,8 @@ class Statistic {
         TRANSPORT_EXCEPTION_TYPE_MAP.put(2, "Socket already open(connected)");
         TRANSPORT_EXCEPTION_TYPE_MAP.put(3, "Time out");
         TRANSPORT_EXCEPTION_TYPE_MAP.put(4, "End of file! Check connection or protocol type");
-        TRANSPORT_EXCEPTION_TYPE_MAP.put(5, "Corrupted data! Maybe read a negative frame size");
+        TRANSPORT_EXCEPTION_TYPE_MAP.put(5, "Corrupted data! Maybe read a negative frame size or frame size larger " +
+                "than max_length");
 
         PROTOCOL_EXCEPTION_TYPE_MAP.put(0, "Unknown");
         PROTOCOL_EXCEPTION_TYPE_MAP.put(1, "Required field types must be consistent");
