@@ -123,6 +123,12 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
 3. 在执行启动命令时为什么出现`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`?  
     答：是因为Thrift url中的?需要转义，请用`\?`替换掉?
 
+# 团队成员
+#### 主要负责人
+[王松](https://github.com/ddwangsong), [张晓庆](https://github.com/aqingsao), [黄东]()
+#### 主要成员
+[潘旭东](http://github.com/panxudong), [孟翔鹤哲](http://github.com/mxhz), [苗星](), [邓超升]()
+
 # 贡献
 
 请参阅[贡献指南](CONTRIBUTING.md)。

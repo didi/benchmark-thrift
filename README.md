@@ -127,6 +127,13 @@ Below is a description of the command-line startup parameters, it can also be sh
     A: Both are OK. The relative path is based on the directory where the environment file is located. 
 3.  Q: When starting the tool, why an error which like **`no matches found: thrift://xxx/xxx/xxx/xx?@xxx`** occured?   
     A: May be caused by the ? unable to identify in Thrift url, you can use `\?` to replace ? .
+
+# Team Members
+#### Owners
+[Wang Song](https://github.com/ddwangsong), [Zhang Xiaoqing](https://github.com/aqingsao), [Huang Dong]()
+#### Contributors
+[Pan Xudong](http://github.com/panxudong), [Meng Xianghezhe](http://github.com/mxhz), [Miao Xing](), [Deng Chaosheng]()
+
 # Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
