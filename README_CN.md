@@ -125,9 +125,9 @@ $ sh benchmark.sh [options] thrift://<host>:<port>/<service>/<method>[?@<data_fi
 
 # 团队成员
 #### 主要负责人
-[王松](https://github.com/ddwangsong), [张晓庆](https://github.com/aqingsao), [黄东]()
+[王松](https://github.com/ddwangsong), [张晓庆](https://github.com/aqingsao), [黄东](https://github.com/huangdong1101)
 #### 主要成员
-[潘旭东](http://github.com/panxudong), [孟翔鹤哲](http://github.com/mxhz), [苗星](), [邓超升]()
+[潘旭东](http://github.com/panxudong), [孟翔鹤哲](http://github.com/mxhz), [苗星](https://github.com/miaoxing-tech), [邓超升](https://github.com/Myhailin)
 
 # 贡献
 
