@@ -130,9 +130,9 @@ Below is a description of the command-line startup parameters, it can also be sh
 
 # Team Members
 #### Owners
-[Wang Song](https://github.com/ddwangsong), [Zhang Xiaoqing](https://github.com/aqingsao), [Huang Dong]()
+[Wang Song](https://github.com/ddwangsong), [Zhang Xiaoqing](https://github.com/aqingsao), [Huang Dong](https://github.com/huangdong1101)
 #### Contributors
-[Pan Xudong](http://github.com/panxudong), [Meng Xianghezhe](http://github.com/mxhz), [Miao Xing](), [Deng Chaosheng]()
+[Pan Xudong](http://github.com/panxudong), [Meng Xianghezhe](http://github.com/mxhz), [Miao Xing](https://github.com/miaoxing-tech), [Deng Chaosheng](https://github.com/Myhailin)
 
 # Contributing
 Welcome to contribute by creating issues or sending pull requests. See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
